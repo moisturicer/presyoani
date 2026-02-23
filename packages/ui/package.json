@@ -1,0 +1,30 @@
+{
+  "name": "@presyoani/ui",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Shared Tailwind components - Ani Design System",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./buttons": "./buttons.tsx",
+    "./cards": "./cards.tsx",
+    "./icons/*": "./icons/*.tsx"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@presyoani/config": "*",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "~5.9.3"
+  }
+}

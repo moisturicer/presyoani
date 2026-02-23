@@ -1,0 +1,16 @@
+{
+  "name": "@presyoani/config",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Shared Tailwind and TypeScript configs for PresyoAni",
+  "exports": {
+    "./tailwind": "./tailwind.config.ts",
+    "./tailwind-preset": "./tailwind.preset.ts",
+    "./tsconfig-base": "./tsconfig.base.json"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "typescript": "~5.9.3"
+  }
+}

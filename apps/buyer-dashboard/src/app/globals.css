@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* PresyoAni / AgriSnap Theme - Earth Green (#2D5A27), Harvest Gold (#F2BB05) */
+    --background: 90 20% 97%;
+    --foreground: 130 37% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 130 37% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 130 37% 12%;
+    --primary: 115 38% 25%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 45 93% 49%;
+    --secondary-foreground: 130 37% 12%;
+    --muted: 90 15% 93%;
+    --muted-foreground: 130 10% 40%;
+    --accent: 45 93% 49%;
+    --accent-foreground: 130 37% 12%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 90 15% 85%;
+    --input: 90 15% 85%;
+    --ring: 115 38% 25%;
+    --chart-1: 115 38% 25%;
+    --chart-2: 45 93% 49%;
+    --chart-3: 130 30% 40%;
+    --chart-4: 35 80% 55%;
+    --chart-5: 90 25% 60%;
+    --radius: 0.75rem;
+    --sidebar-background: 115 38% 20%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 45 93% 49%;
+    --sidebar-primary-foreground: 130 37% 12%;
+    --sidebar-accent: 115 30% 30%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 115 25% 30%;
+    --sidebar-ring: 45 93% 49%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
