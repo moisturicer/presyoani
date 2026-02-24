@@ -105,7 +105,7 @@ export default function LandingPage() {
           style={{ opacity: 0, animationFillMode: 'forwards' }}
         >
           <Link
-            href="/dashboard"
+            href="/login"
             className="group relative inline-flex items-center justify-center overflow-hidden rounded-xl bg-primary px-8 py-3.5 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.98]"
           >
             <span className="relative z-10">Get started</span>
