@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Sprout, Camera, BarChart3, LayoutDashboard, Bell, Leaf } from 'lucide-react'
+import { Sprout, Camera, BarChart3, LayoutDashboard, Bell } from 'lucide-react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
 const navItems = [
@@ -17,9 +18,9 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="flex w-64 flex-col border-r border-sidebar-border bg-sidebar">
+    <aside className="flex h-screen w-64 flex-shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
       <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6">
-        <Leaf className="h-8 w-8 text-sidebar-primary" />
+        <Image src="/PresyoAni-Light.svg" alt="" width={32} height={32} className="h-8 w-8 object-contain" />
         <span className="text-xl font-bold tracking-tight text-sidebar-foreground">
           PresyoAni
         </span>
