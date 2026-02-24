@@ -2,13 +2,15 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Map, BarChart3, Leaf } from 'lucide-react'
+import { Sprout, Camera, BarChart3, LayoutDashboard, Bell, Leaf } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/heatmaps', label: 'Heatmaps', icon: Map },
-  { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard/field', label: 'Field', icon: Sprout },
+  { href: '/dashboard/audit', label: 'Audit', icon: Camera },
+  { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/dashboard/alerts', label: 'Alerts', icon: Bell },
 ]
 
 export function Sidebar() {
