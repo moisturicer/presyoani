@@ -8,7 +8,7 @@ export default function DashboardPage() {
           Buyer Dashboard
         </h1>
         <p className="mt-0.5 text-sm text-muted-foreground">
-          Live harvest availability • Central Luzon
+          Live harvest availability • Cebu
         </p>
       </header>
       <BuyerDashboard />

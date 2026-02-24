@@ -19,12 +19,15 @@ export function Sidebar() {
 
   return (
     <aside className="flex h-screen w-64 flex-shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
-      <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6">
+      <Link
+        href="/"
+        className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6 transition-colors hover:bg-sidebar-accent/30"
+      >
         <Image src="/PresyoAni-Light.svg" alt="" width={32} height={32} className="h-8 w-8 object-contain" />
         <span className="text-xl font-bold tracking-tight text-sidebar-foreground">
           PresyoAni
         </span>
-      </div>
+      </Link>
       <nav className="flex-1 space-y-1 p-4">
         {navItems.map((item) => {
           const Icon = item.icon

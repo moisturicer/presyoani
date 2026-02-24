@@ -7,7 +7,6 @@ import {
   Phone,
   Leaf,
   Users,
-  Award,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -68,6 +67,7 @@ const harvests = [
   },
 ]
 
+// Hardcoded
 const mapPins = [
   { x: 25, y: 30, grade: 'A', crop: 'Tomato', size: 'lg' },
   { x: 55, y: 20, grade: 'A', crop: 'Rice', size: 'xl' },
@@ -97,17 +97,12 @@ export function BuyerDashboard() {
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-primary-foreground/80">
-              Your Impact (SDG 8)
+              Your Impact
             </p>
+            {/* Hardcoded */}
             <p className="text-xl font-bold text-primary-foreground">
               24 Farmers Supported
             </p>
-          </div>
-          <div className="flex flex-col items-center">
-            <Award className="h-6 w-6 text-secondary" />
-            <span className="mt-1 text-sm font-bold text-secondary">
-              480 pts
-            </span>
           </div>
         </CardContent>
       </Card>
@@ -116,10 +111,10 @@ export function BuyerDashboard() {
       <Card className="overflow-hidden border border-border">
         <CardHeader className="flex flex-row items-center justify-between pb-2 p-6">
           <CardTitle className="text-base font-bold">
-            Live Harvest Heatmap
+            Live Harvest Heatmap 
           </CardTitle>
           <Badge variant="outline" className="text-xs">
-            Central Luzon
+            Cebu
           </Badge>
         </CardHeader>
         <CardContent className="p-0">

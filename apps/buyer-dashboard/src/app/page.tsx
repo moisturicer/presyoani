@@ -44,7 +44,7 @@ export default function LandingPage() {
       />
 
       <div className="relative z-10 flex w-full max-w-2xl flex-col items-center text-center">
-        {/* Logo */}
+        
         <div
           className="mb-8 flex items-center justify-center rounded-2xl bg-primary/10 p-5 shadow-lg ring-1 ring-primary/10 animate-fade-in-up animate-glow-pulse"
           style={{ animationFillMode: 'both' }}
@@ -122,11 +122,6 @@ export default function LandingPage() {
           </Link>
         </div>
 
-        {/* Bottom accent line */}
-        <div
-          className="mt-16 h-1 w-24 rounded-full bg-gradient-to-r from-transparent via-secondary to-transparent opacity-80"
-          aria-hidden
-        />
       </div>
     </main>
   )
