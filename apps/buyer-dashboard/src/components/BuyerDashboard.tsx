@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { HarvestMap } from './HarvestMap'
 
 // Currently hardcoded for UI purposes
 const harvests = [
@@ -67,17 +68,6 @@ const harvests = [
   },
 ]
 
-// Hardcoded
-const mapPins = [
-  { x: 25, y: 30, grade: 'A', crop: 'Tomato', size: 'lg' },
-  { x: 55, y: 20, grade: 'A', crop: 'Rice', size: 'xl' },
-  { x: 40, y: 50, grade: 'B', crop: 'Corn', size: 'md' },
-  { x: 20, y: 65, grade: 'A', crop: 'Eggplant', size: 'sm' },
-  { x: 60, y: 45, grade: 'A', crop: 'Onion', size: 'lg' },
-  { x: 75, y: 35, grade: 'B', crop: 'Rice', size: 'md' },
-  { x: 35, y: 75, grade: 'A', crop: 'Tomato', size: 'sm' },
-]
-
 export function BuyerDashboard() {
   const [selectedFilter, setSelectedFilter] = useState('All')
   const filters = ['All', 'Tomato', 'Rice', 'Corn', 'Eggplant', 'Onion']
@@ -109,7 +99,7 @@ export function BuyerDashboard() {
 
       {/* Heatmap / Map View */}
       <Card className="overflow-hidden border border-border">
-        <CardHeader className="flex flex-row items-center justify-between pb-2 p-6">
+        <CardHeader className="flex flex-row items-center justify-between p-6 pb-2">
           <CardTitle className="text-base font-bold">
             Live Harvest Heatmap 
           </CardTitle>
@@ -118,75 +108,7 @@ export function BuyerDashboard() {
           </Badge>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="relative h-64 bg-primary/5 overflow-hidden">
-            {/* Simulated map background */}
-            <div className="absolute inset-0">
-              {[...Array(8)].map((_, i) => (
-                <div
-                  key={`h-${i}`}
-                  className="absolute h-px w-full bg-primary/5"
-                  style={{ top: `${(i + 1) * 12}%` }}
-                />
-              ))}
-              {[...Array(8)].map((_, i) => (
-                <div
-                  key={`v-${i}`}
-                  className="absolute w-px h-full bg-primary/5"
-                  style={{ left: `${(i + 1) * 12}%` }}
-                />
-              ))}
-            </div>
-
-            {/* Map pins */}
-            {mapPins.map((pin, i) => {
-              const sizeMap = { sm: 24, md: 32, lg: 40, xl: 48 }
-              const s = sizeMap[pin.size as keyof typeof sizeMap]
-              return (
-                <div
-                  key={i}
-                  className="absolute flex flex-col items-center"
-                  style={{
-                    left: `${pin.x}%`,
-                    top: `${pin.y}%`,
-                    transform: 'translate(-50%, -50%)',
-                  }}
-                >
-                  <div
-                    className="absolute rounded-full bg-primary/15"
-                    style={{ width: s * 2, height: s * 2 }}
-                  />
-                  <div
-                    className={`relative z-10 flex items-center justify-center rounded-full border-2 ${
-                      pin.grade === 'A'
-                        ? 'border-primary bg-primary text-primary-foreground'
-                        : 'border-secondary bg-secondary text-secondary-foreground'
-                    }`}
-                    style={{ width: s * 0.7, height: s * 0.7 }}
-                  >
-                    <Leaf
-                      className="h-3 w-3"
-                      style={{
-                        width: s * 0.3,
-                        height: s * 0.3,
-                      }}
-                    />
-                  </div>
-                </div>
-              )
-            })}
-
-            {/* Map Legend */}
-            <div className="absolute bottom-3 left-3 flex gap-3 rounded-lg bg-card/90 p-2.5 backdrop-blur-sm border border-border">
-              <div className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-full bg-primary" />
-                <span className="text-xs font-medium text-foreground">Grade A</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-full bg-secondary" />
-                <span className="text-xs font-medium text-foreground">Grade B</span>
-              </div>
-            </div>
-          </div>
+          <HarvestMap />
         </CardContent>
       </Card>
 

@@ -20,5 +20,8 @@
   "packageManager": "npm@10.0.0",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4"
   }
 }
