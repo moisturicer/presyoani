@@ -2,7 +2,7 @@ import type { Config } from 'tailwindcss'
 
 /**
  * PresyoAni Design System - Shared Tailwind preset
- * Brand colors & fonts for farmer-mobile and buyer-dashboard
+ * Brand colors & fonts for the buyer dashboard
  */
 const presyoaniPreset: Partial<Config> = {
   theme: {

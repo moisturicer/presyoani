@@ -1,6 +1,6 @@
 # PresyoAni
 
-**PresyoAni** (meaning *Harvest Price*) is an **offline-first** digital assistant for rural smallholder farmers in the Philippines. It helps farmers **verify harvest quality**, **see fair market prices**, and **connect directly to buyers**—even in areas with **little to no internet signal**.
+**PresyoAni** (meaning *Harvest Price*) started as an **offline-first** digital assistant for rural smallholder farmers in the Philippines. This repo now focuses on the **buyer-facing dashboard**, which helps institutional buyers and partners **see live harvest availability**, **inspect fair market prices**, and **connect directly to verified supply**.
 
 **SDG Alignment:** **SDG 8 – Decent Work and Economic Growth**  
 **Tagline:** *Empower farmers offline. Sell fairly online.*
@@ -28,10 +28,10 @@ Smallholder farmers—who power much of the Philippine food supply—often sell 
 ## Target Users / Beneficiaries
 
 ### Primary
-- **Smallholder farmers in last-mile rural communities** with intermittent or no connectivity.
+- **Institutional buyers & FMCG corporations** seeking verifiable ethical sourcing and supply transparency.
 
 ### Secondary
-- **Institutional buyers & FMCG corporations** seeking verifiable ethical sourcing and supply transparency.
+- **Smallholder farmers and cooperatives** who benefit indirectly from improved price transparency and demand visibility.
 - **LGUs and policymakers** using localized crop, yield, and price data for planning and stabilization.
 - **Agricultural cooperatives** improving bargaining power through aggregated harvest intelligence.
 
@@ -126,18 +126,14 @@ PresyoAni isn’t “just another marketplace.” It’s **resilient rural data 
 
 ---
 
-## Tech Stack (MVP)
+## Tech Stack (Buyer Dashboard)
 
-PresyoAni is built as an **offline-first PWA** with **on-device AI** and lightweight cloud sync.
+The current codebase focuses on the **buyer dashboard**.
 
-- **PWA App Shell:** React + Vite
-- **Offline Storage:** IndexedDB (Dexie.js)
-- **Edge AI (On-device):** TensorFlow.js (lightweight model / heuristics)
-- **Sync Engine:** network listeners + API relay; foreground/manual sync option included
-- **Backend (lightweight):** Firebase / Supabase (synced harvest records and buyer profiles)
-- **Buyer Dashboard:** Next.js + Tailwind (read-only availability / heatmap)
-- **SMS Handshake:** Twilio SMS API (buyer interest → farmer SMS; replies logged)
-- **Price Data (MVP):** simulated dataset / curated CSV (scraping deferred post-MVP)
+- **Web App:** Next.js (App Router) + React
+- **Styling:** Tailwind CSS + shared PresyoAni design tokens
+- **Maps:** Leaflet for the Cebu harvest heatmap
+- **Build tooling:** Turborepo for monorepo orchestration
 
 ---
 

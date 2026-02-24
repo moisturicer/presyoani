@@ -2,17 +2,15 @@
   "name": "presyo-ani",
   "private": true,
   "version": "0.1.0",
-  "description": "Offline-first mobile-primary app for farmers - PresyoAni",
+  "description": "Buyer dashboard for PresyoAni",
   "workspaces": [
-    "apps/*",
+    "apps/buyer-dashboard",
     "packages/*"
   ],
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "dev:mobile": "turbo run dev --filter=farmer-mobile",
-    "dev:dashboard": "turbo run dev --filter=buyer-dashboard"
+    "dev": "turbo run dev --filter=buyer-dashboard",
+    "build": "turbo run build --filter=buyer-dashboard",
+    "lint": "turbo run lint --filter=buyer-dashboard"
   },
   "devDependencies": {
     "turbo": "^2.3.0"

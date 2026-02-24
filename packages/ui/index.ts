@@ -1,6 +1,6 @@
 /**
  * PresyoAni UI - Ani Design System
- * Shared components for farmer-mobile and buyer-dashboard
+ * Shared components for the buyer dashboard
  */
 
 export * from './buttons'

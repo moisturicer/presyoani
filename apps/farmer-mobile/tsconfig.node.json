@@ -1,8 +1,0 @@
-{
-  "extends": "@presyoani/config/tsconfig-base",
-  "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-    "types": ["node"]
-  },
-  "include": ["vite.config.ts"]
-}
