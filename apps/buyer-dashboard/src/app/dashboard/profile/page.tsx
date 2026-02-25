@@ -1,11 +1,73 @@
+/* eslint-disable @next/next/no-img-element */
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, MapPin, ShoppingBag, UserCircle } from 'lucide-react'
+import { supabase } from '@/lib/supabaseClient'
+
+type BuyerProfile = {
+  fullName: string
+  email: string
+  organization: string | null
+  roleLabel: string
+}
 
 export default function ProfilePage() {
+  const [profile, setProfile] = useState<BuyerProfile | null>(null)
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+
+  useEffect(() => {
+    let isMounted = true
+
+    supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        if (!isMounted) return
+
+        const user = data.user
+        if (!user) {
+          router.replace('/login')
+          return
+        }
+
+        const meta = user.user_metadata ?? {}
+        const first = (meta.first_name as string | undefined) ?? ''
+        const last = (meta.last_name as string | undefined) ?? ''
+        const organization = (meta.organization_name as string | undefined) ?? null
+        const role = (meta.role as string | undefined) ?? 'buyer'
+
+        const fullName =
+          [first, last].filter(Boolean).join(' ') || user.email || 'Buyer account'
+
+        setProfile({
+          fullName,
+          email: user.email ?? 'Unknown email',
+          organization,
+          roleLabel: role === 'buyer' ? 'Buyer' : role,
+        })
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false)
+      })
+  }, [router])
+
+  const initials = useMemo(() => {
+    const source = profile?.fullName || profile?.email || ''
+    if (!source) return 'B'
+    const parts = source.trim().split(/\s+/)
+    if (parts.length === 1) {
+      return parts[0].slice(0, 2).toUpperCase()
+    }
+    return (parts[0][0] + parts[1][0]).toUpperCase()
+  }, [profile])
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-background via-background to-background/95">
       <div className="mx-auto flex max-w-5xl flex-col gap-4 px-6 pb-8 pt-6">
@@ -39,15 +101,21 @@ export default function ProfilePage() {
             <CardHeader className="flex flex-row items-center gap-3 pb-3">
               <Avatar className="h-12 w-12">
                 <AvatarFallback>
-                  <span className="text-sm font-semibold">JB</span>
+                  <span className="text-sm font-semibold">
+                    {initials}
+                  </span>
                 </AvatarFallback>
               </Avatar>
               <div>
                 <CardTitle className="text-base font-semibold text-foreground">
-                  Juan Buyer
+                  {loading ? 'Loading buyer...' : profile?.fullName ?? 'Buyer account'}
                 </CardTitle>
                 <p className="text-xs text-muted-foreground">
-                  Buyer • Supermarket / Retail
+                  {loading
+                    ? 'Fetching buyer details'
+                    : `${profile?.roleLabel ?? 'Buyer'}${
+                        profile?.organization ? ` • ${profile.organization}` : ''
+                      }`}
                 </p>
               </div>
             </CardHeader>
@@ -68,19 +136,27 @@ export default function ProfilePage() {
                   <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                     Full name
                   </dt>
-                  <dd className="text-sm text-foreground">Juan Dela Cruz</dd>
+                  <dd className="text-sm text-foreground">
+                    {loading ? 'Loading...' : profile?.fullName ?? 'Not set'}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                     Email
                   </dt>
-                  <dd className="text-sm text-foreground">buyer@example.ph</dd>
+                  <dd className="text-sm text-foreground">
+                    {loading ? 'Loading...' : profile?.email ?? 'Not set'}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                     Organization
                   </dt>
-                  <dd className="text-sm text-foreground">Cebu Fresh Mart</dd>
+                  <dd className="text-sm text-foreground">
+                    {loading
+                      ? 'Loading...'
+                      : profile?.organization ?? 'Add your organization from your account'}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
@@ -112,14 +188,27 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent className="space-y-2 text-xs text-muted-foreground">
                 <p>
-                  This profile represents a <span className="font-semibold text-foreground">buyer</span> in the
-                  PresyoAni pilot. In the full product, farmers would have their own mirrored
-                  profiles highlighting farm location, crops, and certifications.
+                  Your buyer profile is shared with farmers you connect with on{' '}
+                  <span className="font-semibold text-foreground">PresyoAni</span>. It helps them understand who they
+                  are negotiating with – your organization, approximate scale, and preferred crops – so they can decide
+                  what to offer and when to reach out.
                 </p>
               </CardContent>
             </Card>
           </div>
         </section>
+        <div className="mt-6 flex justify-center">
+          <Button
+            type="button"
+            className="inline-flex items-center justify-center rounded-full bg-red-900/90 px-8 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-900"
+            onClick={async () => {
+              await supabase.auth.signOut()
+              router.replace('/login')
+            }}
+          >
+            Log out
+          </Button>
+        </div>
       </div>
     </main>
   )
