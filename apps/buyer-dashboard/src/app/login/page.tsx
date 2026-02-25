@@ -8,17 +8,61 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { supabase } from '@/lib/supabaseClient'
 
 type Mode = 'login' | 'signup'
 
 export default function AuthPage() {
   const [mode, setMode] = useState<Mode>('login')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [organization, setOrganization] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    // No real auth for now – just navigate to the dashboard
-    router.push('/dashboard')
+    setError(null)
+    setIsSubmitting(true)
+
+    try {
+      if (mode === 'login') {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+
+        if (signInError) {
+          setError(signInError.message)
+          return
+        }
+      } else {
+        const { error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              role: 'buyer',
+              first_name: firstName,
+              last_name: lastName,
+              organization_name: organization,
+            },
+          },
+        })
+
+        if (signUpError) {
+          setError(signUpError.message)
+          return
+        }
+      }
+
+      router.push('/dashboard')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -136,13 +180,25 @@ export default function AuthPage() {
                     <label className="block text-xs font-medium text-muted-foreground">
                       First name
                     </label>
-                    <Input required placeholder="Juan" className="h-10 text-sm" />
+                    <Input
+                      required
+                      placeholder="Juan"
+                      className="h-10 text-sm"
+                      value={firstName}
+                      onChange={(event) => setFirstName(event.target.value)}
+                    />
                   </div>
                   <div className="space-y-1.5">
                     <label className="block text-xs font-medium text-muted-foreground">
                       Last name
                     </label>
-                    <Input required placeholder="Dela Cruz" className="h-10 text-sm" />
+                    <Input
+                      required
+                      placeholder="Dela Cruz"
+                      className="h-10 text-sm"
+                      value={lastName}
+                      onChange={(event) => setLastName(event.target.value)}
+                    />
                   </div>
                 </div>
               )}
@@ -156,6 +212,8 @@ export default function AuthPage() {
                   required
                   placeholder="you@company.ph"
                   className="h-10 text-sm"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
                 />
               </div>
 
@@ -168,6 +226,8 @@ export default function AuthPage() {
                     required
                     placeholder="Supermarket, distributor, restaurant..."
                     className="h-10 text-sm"
+                    value={organization}
+                    onChange={(event) => setOrganization(event.target.value)}
                   />
                 </div>
               )}
@@ -181,21 +241,38 @@ export default function AuthPage() {
                   required
                   placeholder="Enter a secure password"
                   className="h-10 text-sm"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
                 />
               </div>
 
               <Button
                 type="submit"
+                disabled={isSubmitting}
                 className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition hover:bg-primary/90"
               >
-                {mode === 'login' ? 'Continue to dashboard' : 'Create account'}
+                {isSubmitting
+                  ? mode === 'login'
+                    ? 'Signing in...'
+                    : 'Creating account...'
+                  : mode === 'login'
+                    ? 'Continue to dashboard'
+                    : 'Create account'}
               </Button>
             </form>
 
-            <p className="text-xs text-muted-foreground">
-              No real authentication is wired yet. For this prototype, any details you enter will
-              simply bring you to the buyer dashboard.
-            </p>
+            {error && (
+              <p className="text-xs font-medium text-destructive">
+                {error}
+              </p>
+            )}
+
+            {mode === 'signup' && !error && (
+              <p className="text-xs text-muted-foreground">
+                After signing up, you may receive a verification email depending on your Supabase
+                auth settings.
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
