@@ -22,6 +22,7 @@ export default function AuthPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const [isRegistered, setIsRegistered] = useState(false)
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -40,7 +41,7 @@ export default function AuthPage() {
           return
         }
       } else {
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -55,6 +56,11 @@ export default function AuthPage() {
 
         if (signUpError) {
           setError(signUpError.message)
+          return
+        }
+
+        if (!data.session) {
+          setIsRegistered(true)
           return
         }
       }
@@ -172,7 +178,30 @@ export default function AuthPage() {
               </div>
             </div>
           </CardHeader>
+
           <CardContent className="space-y-4">
+            {isRegistered ? (
+              <div className="text-center py-4 space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-2xl">
+                  📧
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-sm font-bold">Check your inbox</h3>
+                  <p className="text-xs text-muted-foreground">
+                    We've sent a verification link to <span className="font-semibold text-foreground">{email}</span>. 
+                    Please confirm your email before logging in.
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => { setIsRegistered(false); setMode('login'); }}
+                  variant="outline"
+                  className="w-full rounded-xl"
+                >
+                  Return to Login
+                </Button>
+              </div>
+            ) : (
+              <>
             <form onSubmit={handleSubmit} className="space-y-4">
               {mode === 'signup' && (
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -268,15 +297,18 @@ export default function AuthPage() {
             )}
 
             {mode === 'signup' && !error && (
-              <p className="text-xs text-muted-foreground">
-                After signing up, you may receive a verification email depending on your Supabase
-                auth settings.
-              </p>
-            )}
-          </CardContent>
-        </Card>
+                <p className="text-xs text-muted-foreground">
+                  After signing up, you may receive a verification email depending on your Supabase
+                  auth settings.
+                </p>
+              )}
+            </>
+          )}
+        </CardContent>
+      </Card>
       </div>
     </main>
   )
 }
+
 
