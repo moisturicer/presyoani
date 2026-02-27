@@ -5,7 +5,9 @@ import httpx
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
-from fastapi.responses import PlainTextResponse, JSONResponse
+from fastapi.responses import PlainTextResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from supabase import create_client, Client
 
 load_dotenv()
@@ -15,12 +17,16 @@ app = FastAPI()
 # config
 token = os.getenv("FB_PAGE_ACCESS_TOKEN")
 verify_token = os.getenv("FB_VERIFY_TOKEN")
+page_id = os.getenv("FB_PAGE_ID")
 url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
 # init supabase
 supabase: Client = create_client(url, key)
 
+# mount static and templates for the pwa scanner
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
 # send msg helper
 async def send_fb_message(recipient_id, message_payload):
@@ -32,10 +38,13 @@ async def send_fb_message(recipient_id, message_payload):
         })
 
 
-# root route so it doesnt say not found
+# root route
 @app.get("/")
-async def read_root():
-    return {"status": "bot is up"}
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "fb_page_id": page_id
+    })
 
 
 # fb verify
@@ -109,6 +118,8 @@ async def receive_message(request: Request):
                                     }
                                 }
                                 await send_fb_message(sender_id, buttons)
+                            else:
+                                await send_fb_message(sender_id, {"text": f"no price found for {crop}"})
                     except Exception as e:
                         print(f"error: {e}")
 
