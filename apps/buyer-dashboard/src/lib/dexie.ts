@@ -6,7 +6,7 @@ export interface CommodityPrice {
     specification: string;
     unit: string;
     price: number;
-    date_updated: Date;    
+    date_updated: Date;
 }
 
 export class CommodityDB extends Dexie {
@@ -14,9 +14,9 @@ export class CommodityDB extends Dexie {
 
     constructor() {
         super("CommodityDatabase");
-        this.version(2).stores({
-        prices: '++id, commodity, date_updated'
-    });
+        this.version(1).stores({
+            prices: '++id, commodity, date_updated'
+        });
     }
 }
 
