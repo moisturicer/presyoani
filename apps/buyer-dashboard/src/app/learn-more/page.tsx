@@ -9,7 +9,7 @@ import {
   MapPin,
   MessageSquare,
   Globe,
-  Landmark,
+  // Landmark,
   Leaf,
   Lightbulb,
   MessageCircle,
