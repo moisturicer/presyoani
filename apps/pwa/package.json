@@ -1,0 +1,8 @@
+{
+  "name": "farmer-pwa",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "python main.py",
+    "start": "python main.py"
+  }
+}
