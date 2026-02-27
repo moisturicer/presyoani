@@ -87,7 +87,7 @@ async def receive_message(request: Request):
                             grade = parts[2]
 
                             # get price from db
-                            res = supabase.table("prices").select("price") \
+                            res = supabase.table("dpi_prices").select("price") \
                                 .ilike("commodity", f"%{crop}%") \
                                 .order("date_updated", desc=True).limit(1).execute()
 
