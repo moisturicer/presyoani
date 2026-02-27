@@ -28,11 +28,22 @@ async def read_root(request: Request):
 @app.get("/webhook")
 async def verify(request: Request):
     params = request.query_params
-    if params.get("hub.mode") == "subscribe" and params.get("hub.verify_token") == FB_VERIFY_TOKEN:
+    mode = params.get("hub.mode")
+    token = params.get("hub.verify_token")
+    challenge = params.get("hub.challenge")
 
-        challenge = params.get("hub.challenge")
+    print(f"--- WEBHOOK ATTEMPT ---")
+    print(f"Expected Token: '{FB_VERIFY_TOKEN}'")
+    print(f"Received Token: '{token}'")
+    print(f"Mode: {mode}")
+
+    if mode == "subscribe" and token == FB_VERIFY_TOKEN:
+        print("VERIFICATION SUCCESS")
         return PlainTextResponse(content=str(challenge))
+
+    print("VERIFICATION FAILED")
     return PlainTextResponse(content="Verification Failed", status_code=403)
+
 
 @app.post("/webhook")
 async def receive_message(request: Request):
