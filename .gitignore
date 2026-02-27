@@ -30,3 +30,7 @@ npm-debug.log*
 
 # TypeScript
 *.tsbuildinfo
+
+#PWA
+apps/pwa/.venv/
+apps/pwa/__pycache__/
