@@ -19,8 +19,8 @@ export function Sidebar() {
     return (
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-sm">
         <div className="flex h-16 items-center justify-center px-3 sm:px-6">
-          <Link
-            href="/"
+        <Link
+            href="/dashboard"
             className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground shadow-sm ring-1 ring-primary/40 transition-all hover:bg-primary/90 hover:ring-primary/50"
           >
             <Image
@@ -52,7 +52,7 @@ export function Sidebar() {
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-sm">
       <div className="relative flex h-16 items-center px-3 sm:px-6">
         <Link
-          href="/"
+          href="/dashboard"
           className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground shadow-sm ring-1 ring-primary/40 transition-all hover:bg-primary/90 hover:ring-primary/50"
         >
           <Image
