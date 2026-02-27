@@ -77,6 +77,21 @@ export function BuyerDashboard() {
       ? harvests
       : harvests.filter((h) => h.crop === selectedFilter)
 
+  /**
+   * Modified handleConnect:
+   * Instead of just the ID, we send a string like "Tomato (500kg)" 
+   * so ManyChat can show the details immediately.
+   */
+  const handleConnect = (harvest: typeof harvests[0]) => {
+    // Format: Crop_Name_Volume (we replace spaces with underscores for URL safety)
+    const productInfo = encodeURIComponent(`${harvest.crop} (${harvest.volume})`);
+    
+    // Final URL with specific ref code and the hardcoded payload
+    const manyChatUrl = `https://m.me/938478252689737?ref=w50968964--${productInfo}`;
+    
+    window.open(manyChatUrl, '_blank');
+  }
+
   return (
     <div className="flex flex-col gap-6 p-6">
       {/* ESG Impact Banner */}
@@ -206,6 +221,7 @@ export function BuyerDashboard() {
                   <Button
                     size="sm"
                     className="h-10 gap-2 bg-primary text-primary-foreground shrink-0"
+                    onClick={() => handleConnect(harvest)}
                   >
                     <Phone className="h-4 w-4" />
                     Connect
