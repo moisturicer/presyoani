@@ -6,17 +6,17 @@ export class SyncService {
 
     static async syncCommodities() {
 
-        const latestLocal = await db.prices.orderBy('created_at').last() as CommodityPrice | undefined;
+        const latestLocal = await db.prices.orderBy("date_updated").last() as CommodityPrice | undefined;
 
-        const lastTimestamp = latestLocal?.created_at ?? new Date(0).toISOString();
+        const lastTimestamp = latestLocal?.date_updated ?? new Date(0).toISOString();
 
         console.log(`Syncing prices updated after: ${new Date(lastTimestamp)}`);
 
         const { data, error } = await supabase
-            .from('commodity_prices') 
+            .from('dpi_prices') 
             .select('*')
-            .gt('created_at', lastTimestamp) 
-            .order('created_at', { ascending: true })
+            .gt('date_updated', lastTimestamp) 
+            .order('date_updated', { ascending: true })
             .limit(1000);
 
         if (error) {
@@ -40,14 +40,3 @@ export class SyncService {
     }
 }
 
-// this code is for the main app or entry but further clarification is needed
-// import { SyncService } from './services/SyncService';
-
-
-// window.addEventListener('online', async () => {
-//  
-//   const lastEntry = await db.prices.orderBy('timestamp').last();
-//   const startTime = lastEntry ? lastEntry.timestamp : 0;
-  
-//   SyncService.startSync(startTime);
-// });
