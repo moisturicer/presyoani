@@ -8,7 +8,7 @@ export class SyncService {
 
         const latestLocal = await db.prices.orderBy('created_at').last() as CommodityPrice | undefined;
 
-        const lastTimestamp = latestLocal?.created_at ?? 0;
+        const lastTimestamp = latestLocal?.created_at ?? new Date(0).toISOString();
 
         console.log(`Syncing prices updated after: ${new Date(lastTimestamp)}`);
 
