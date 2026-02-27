@@ -38,7 +38,7 @@ async def send_fb_message(recipient_id, message_payload):
         })
 
 
-# root route (this loads your index.html scanner!)
+# root route
 @app.get("/")
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {
