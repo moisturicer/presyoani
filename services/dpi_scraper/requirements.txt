@@ -1,0 +1,7 @@
+requests
+beautifulsoup4
+pdfplumber
+pandas
+lxml
+python-dotenv
+supabase==1.0.0
