@@ -9,6 +9,9 @@ dist/
 out/
 .turbo/
 
+#.venv
+.venv
+
 # Env
 .env
 .env.local

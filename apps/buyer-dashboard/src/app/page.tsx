@@ -1,10 +1,29 @@
 'use client'
 
+import { useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { BarChart3, Shield, Users } from 'lucide-react'
+import { SyncService } from '../service/sync_service'
 
 export default function LandingPage() {
+  
+  useEffect(() => {
+    const runSync = () => {
+      SyncService.syncCommodities().catch(err => 
+          console.error("Manual sync failed:", err)
+      );
+    };
+
+    runSync();
+
+    window.addEventListener('online', runSync);
+
+    return () => {
+      window.removeEventListener('online', runSync);
+    };
+  }, []);
+  
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 landing-bg">
       {/* Grain overlay */}
