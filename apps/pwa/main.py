@@ -5,7 +5,7 @@ import httpx
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, JSONResponse
 from supabase import create_client, Client
 
 load_dotenv()
@@ -13,61 +13,52 @@ load_dotenv()
 app = FastAPI()
 
 # config
-FB_PAGE_ACCESS_TOKEN = os.getenv("FB_PAGE_ACCESS_TOKEN")
-FB_VERIFY_TOKEN = os.getenv("FB_VERIFY_TOKEN")
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+token = os.getenv("FB_PAGE_ACCESS_TOKEN")
+verify_token = os.getenv("FB_VERIFY_TOKEN")
+url = os.getenv("SUPABASE_URL")
+key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
-# initialize supabase
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+# init supabase
+supabase: Client = create_client(url, key)
 
 
-# helper functions
+# send msg helper
 async def send_fb_message(recipient_id, message_payload):
-    """Sends a message or template to a user via Facebook Graph API"""
-    url = f"https://graph.facebook.com/v19.0/me/messages?access_token={FB_PAGE_ACCESS_TOKEN}"
+    fb_url = f"https://graph.facebook.com/v19.0/me/messages?access_token={token}"
     async with httpx.AsyncClient() as client:
-        await client.post(url, json={
+        await client.post(fb_url, json={
             "recipient": {"id": recipient_id},
             "message": message_payload
         })
 
 
-def decode_farmer_data(hashed_string):
-    """
-    Decodes the string from the PWA.
-    Assumes the PWA sends a Base64 encoded JSON string.
-    Example JSON: {"crop": "Corn (Yellow)", "grade": "A", "weight": 10}
-    """
-    try:
-        decoded_bytes = base64.b64decode(hashed_string)
-        return json.loads(decoded_bytes.decode('utf-8'))
-    except:
-        return None
+# root route so it doesnt say not found
+@app.get("/")
+async def read_root():
+    return {"status": "bot is up"}
 
 
-# routes
+# fb verify
 @app.get("/webhook")
 async def verify(request: Request):
-    """Handles Facebook Webhook Verification"""
     params = request.query_params
-    if params.get("hub.mode") == "subscribe" and params.get("hub.verify_token") == FB_VERIFY_TOKEN:
+    if params.get("hub.mode") == "subscribe" and params.get("hub.verify_token") == verify_token:
         return PlainTextResponse(content=str(params.get("hub.challenge")))
-    return PlainTextResponse(content="Verification Failed", status_code=403)
+    return PlainTextResponse(content="failed", status_code=403)
 
 
+# main webhook logic
 @app.post("/webhook")
 async def receive_message(request: Request):
     data = await request.json()
-    print(f"DEBUG: Received Data: {data}")
 
     if data.get("object") == "page":
         for entry in data.get("entry"):
             for messaging_event in entry.get("messaging"):
                 sender_id = messaging_event["sender"]["id"]
-                ref_data = None
 
-                # catch ref data
+                # catch the scan from pwa
+                ref_data = None
                 if "referral" in messaging_event:
                     ref_data = messaging_event["referral"].get("ref")
                 elif "postback" in messaging_event and "referral" in messaging_event["postback"]:
@@ -75,56 +66,71 @@ async def receive_message(request: Request):
 
                 if ref_data:
                     try:
-                        # decode
+                        # decode scan data
                         decoded = base64.urlsafe_b64decode(ref_data + "===").decode('utf-8')
-                        print(f"DEBUG: Decoded String: {decoded}")
-
                         parts = decoded.split("|")
 
                         if len(parts) >= 4:
-                            version = parts[0]
                             crop = parts[1]
                             qty = parts[2]
                             grade = parts[3]
-                            response = supabase.table("prices").select("price") \
+
+                            # get price from db
+                            res = supabase.table("prices").select("price") \
                                 .ilike("commodity", f"%{crop}%") \
                                 .order("date_updated", desc=True).limit(1).execute()
 
-                            if response.data:
-                                market_price = float(response.data[0]['price'])
-                                total_value = market_price * float(qty)
+                            if res.data:
+                                p = float(res.data[0]['price'])
+                                total = p * float(qty)
 
-                                reply = (
-                                    f"🍅 {crop.capitalize()} Scan Results:\n"
-                                    f"Grade: {grade}\n"
-                                    f"Weight: {qty}kg\n\n"
-                                    f"Current Market: P{market_price:.2f}/kg\n"
-                                    f"Estimated Total: P{total_value:,.2f}"
+                                msg = (
+                                    f"🍅 {crop.lower()} scan\n"
+                                    f"grade: {grade}\n"
+                                    f"weight: {qty}kg\n\n"
+                                    f"price: p{p:.2f}/kg\n"
+                                    f"total: p{total:,.2f}"
                                 )
 
+                                # reply with sell button
                                 buttons = {
                                     "attachment": {
                                         "type": "template",
                                         "payload": {
                                             "template_type": "button",
-                                            "text": reply,
+                                            "text": msg,
                                             "buttons": [{
                                                 "type": "postback",
-                                                "title": "Sell Produce Now",
+                                                "title": "sell now",
                                                 "payload": json.dumps(
-                                                    {"action": "LIST", "c": crop, "g": grade, "q": qty,
-                                                     "p": market_price})
+                                                    {"action": "LIST", "c": crop, "g": grade, "q": qty, "p": p})
                                             }]
                                         }
                                     }
                                 }
                                 await send_fb_message(sender_id, buttons)
-                            else:
-                                await send_fb_message(sender_id,
-                                                      {"text": f"Sorry, I couldn't find a price for {crop}."})
-
                     except Exception as e:
-                        print(f"CRASH ERROR: {e}")
+                        print(f"error: {e}")
+
+                # catch sell button click
+                elif "postback" in messaging_event:
+                    payload_raw = messaging_event["postback"].get("payload")
+                    try:
+                        p_load = json.loads(payload_raw)
+                        if p_load.get("action") == "LIST":
+                            # save to market table
+                            supabase.table("market_listings").insert({
+                                "farmer_psid": sender_id,
+                                "commodity": p_load['c'],
+                                "grade": p_load['g'],
+                                "weight": p_load['q'],
+                                "price": p_load['p'],
+                                "status": "available"
+                            }).execute()
+
+                            await send_fb_message(sender_id, {"text": "listed on dashboard ✅"})
+                    except:
+                        pass
 
     return PlainTextResponse("EVENT_RECEIVED", status_code=200)
 
@@ -132,4 +138,3 @@ async def receive_message(request: Request):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run("main:app", host="0.0.0.0", port=port)
-
