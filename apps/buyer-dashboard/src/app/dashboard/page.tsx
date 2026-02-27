@@ -4,8 +4,11 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { BuyerDashboard } from '@/components/BuyerDashboard'
 import { supabase } from '@/lib/supabaseClient'
+import { SyncService } from '../../service/sync_service'
 
 export const dynamic = 'force-dynamic'
+
+let hasSyncedGlobal = false;
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -27,6 +30,27 @@ export default function DashboardPage() {
       isMounted = false
     }
   }, [router])
+
+  useEffect(() => {
+
+    if (hasSyncedGlobal) return;
+
+   const runSync = () => {
+      SyncService.syncCommodities()
+        .then(() => {
+          hasSyncedGlobal = true; 
+        })
+        .catch(err => console.error("Manual sync failed:", err));
+    };
+
+    runSync();
+
+    window.addEventListener('online', runSync);
+
+    return () => {
+      window.removeEventListener('online', runSync);
+    };
+  }, []);
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background via-background to-background/95">
