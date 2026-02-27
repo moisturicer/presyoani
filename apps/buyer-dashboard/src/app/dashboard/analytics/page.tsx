@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -9,10 +11,13 @@ import {
   AlertTriangle,
   Cloud,
 } from 'lucide-react'
+import { supabase } from '@/lib/supabaseClient'
 
 // Simulated trend data (9 days)
 const trendValues = [32, 34, 36, 35, 38, 40, 42, 43, 45]
 const maxTrend = Math.max(...trendValues)
+
+export const dynamic = 'force-dynamic'
 
 const otherCrops = [
   { name: 'Rice', price: 52, change: 2, up: true },
@@ -22,6 +27,26 @@ const otherCrops = [
 ]
 
 export default function AnalyticsPage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    let isMounted = true
+
+    supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        if (!isMounted) return
+
+        if (!data.user) {
+          router.replace('/login')
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [router])
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-background via-background to-background/95">
       <div className="mx-auto flex max-w-5xl flex-col gap-4 px-6 pb-8 pt-6">
