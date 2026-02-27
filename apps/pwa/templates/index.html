@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PresyoAni Live Scan</title>
+    <link rel="manifest" href="/static/manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite/dist/tf-tflite.min.js"></script>
+    <style>
+        body { font-family: sans-serif; margin: 0; background: #000; color: white; overflow: hidden; }
+        #camera-container { position: relative; width: 100vw; height: 100vh; }
+        video { width: 100%; height: 100%; object-fit: cover; }
+        .controls { position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; box-sizing: border-box; background: linear-gradient(transparent, rgba(0,0,0,0.8)); }
+        .card { background: white; color: black; padding: 20px; border-radius: 20px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+        .btn { background: #2ecc71; color: white; padding: 15px; border: none; border-radius: 50px; width: 100%; font-weight: bold; font-size: 18px; }
+        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:100; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div id="loading">
+    <div style="border: 4px solid #f3f3f3; border-top: 4px solid #2ecc71; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite;"></div>
+    <p>Initializing PresyoAni AI...</p>
+</div>
+
+<div id="camera-container">
+    <video id="video" autoplay playsinline></video>
+    <div class="controls">
+        <div class="card">
+            <select id="crop-type">
+                <option value="tomato">Tomato</option>
+                <option value="chili">Chili</option>
+                <option value="sweet_potato">Sweet Potato</option>
+            </select>
+            <input type="number" id="quantity" placeholder="Weight in kg (e.g. 5.5)" inputmode="decimal">
+            <button class="btn" id="scan-btn">⚡ SCAN & SEND</button>
+        </div>
+    </div>
+</div>
+
+<canvas id="canvas" style="display:none;"></canvas>
+
+<script>
+    let model;
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const PAGE_ID = "{{ fb_page_id }}";
+
+    async function init() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+            video.srcObject = stream;
+            model = await tflite.loadTFLiteModel('/static/model.tflite');
+            document.getElementById('loading').style.display = 'none';
+        } catch (err) {
+            alert("Camera or Model Error. Use HTTPS!");
+        }
+    }
+
+    document.getElementById('scan-btn').addEventListener('click', async () => {
+        const qty = document.getElementById('quantity').value;
+        const crop = document.getElementById('crop-type').value;
+        if (!qty || qty <= 0) return alert("Enter weight!");
+
+        // capture & AI grade
+        const ctx = canvas.getContext('2d');
+        canvas.width = 416; canvas.height = 416;
+        ctx.drawImage(video, 0, 0, 416, 416);
+
+        const tensor = tf.tidy(() => tf.browser.fromPixels(canvas).div(255.0).expandDims(0));
+        const prediction = await model.predict(tensor);
+        const data = await prediction.data();
+
+        // YOLOv8 matrix scan [1, 9, 3549]
+        let maxFresh = 0, maxRotten = 0;
+        for (let i = 0; i < 3549; i++) {
+            // fresh classes
+            maxFresh = Math.max(maxFresh, data[4*3549+i], data[7*3549+i]);
+            // rotten classes
+            maxRotten = Math.max(maxRotten, data[5*3549+i], data[6*3549+i], data[8*3549+i]);
+        }
+
+        let grade = "D";
+        if (maxFresh > maxRotten) {
+            if (maxFresh > 0.85) grade = "A";
+            else if (maxFresh > 0.65) grade = "B";
+            else grade = "C";
+        }
+
+        // generate the verification string
+        const rawData = `v1|${crop}|${qty}|${grade}|${Date.now()}`;
+
+        // create the hash and clean it (removing characters fb doesn't like)
+        let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+
+        // use the 'ref' parameter to send data to the bot
+        // Note: Messenger box will be empty, farmer needs to send any msg to trigger bot
+        window.location.href = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
+    });
+
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/static/sw.js');
+    init();
+</script>
+</body>
+</html>
