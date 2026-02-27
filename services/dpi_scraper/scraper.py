@@ -74,7 +74,6 @@ def fetch_price_monitoring_page():
     response.raise_for_status()
     return response.text
 
-
 # Extract latest pdf
 def find_latest_dpi_pdf(html):
     soup = BeautifulSoup(html, "lxml")
@@ -102,7 +101,6 @@ def find_latest_dpi_pdf(html):
     title = link_tag.get_text(strip=True)
 
     return title, pdf_url
-
 
 # Download latest pdf
 def download_pdf(pdf_url, title):
