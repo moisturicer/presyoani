@@ -1,6 +1,33 @@
+'use client'
+
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { BuyerDashboard } from '@/components/BuyerDashboard'
+import { supabase } from '@/lib/supabaseClient'
+
+export const dynamic = 'force-dynamic'
 
 export default function DashboardPage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    let isMounted = true
+
+    supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        if (!isMounted) return
+
+        if (!data.user) {
+          router.replace('/login')
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [router])
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-background via-background to-background/95">
       <div className="mx-auto flex max-w-5xl flex-col gap-4 px-6 pb-8 pt-6">
