@@ -37,3 +37,9 @@ npm-debug.log*
 #PWA
 apps/pwa/.venv/
 apps/pwa/__pycache__/
+
+# Python
+venv/
+__pycache__/
+*.pyc
+.env
