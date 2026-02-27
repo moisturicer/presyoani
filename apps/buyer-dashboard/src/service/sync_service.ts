@@ -1,27 +1,42 @@
-import { db } from '../lib/dexie'
+import { CommodityPrice, db } from '../lib/dexie'
+import { supabase } from '../lib/supabaseClient'
+
 
 export class SyncService {
 
-    static async startSync(offsetTimestamp: number = 0) {
-        console.log("Sync started from: ", new Date(offsetTimestamp));
+    static async syncCommodities() {
 
-        try {
-            const response = await fetch(`/api/prices?since=${offsetTimestamp}`);
-            const data = await response.json();
+        const latestLocal = await db.prices.orderBy('created_at').last() as CommodityPrice | undefined;
 
-            if (data && data.length > 0) {
-                
-                await db.prices.bulkPut(data);
+        const lastTimestamp = latestLocal?.created_at ?? 0;
 
-                const lastTs = data[data.length - 1].timestamp;
+        console.log(`Syncing prices updated after: ${new Date(lastTimestamp)}`);
 
-                await this.startSync(lastTs);
-            } else {
-                console.log("Sync complete. Local database is up to date");
-            }
-        } catch (error) {
-            console.error("Sync interrupted: ", error);
+        const { data, error } = await supabase
+            .from('commodity_prices') 
+            .select('*')
+            .gt('created_at', lastTimestamp) 
+            .order('created_at', { ascending: true })
+            .limit(1000);
+
+        if (error) {
+            console.error('Supabase fetch error:', error);
+            return;
         }
+
+        if (data && data.length > 0) {
+            
+            await db.prices.bulkPut(data);
+            
+            console.log(`Successfully synced ${data.length} records.`);
+
+            if (data.length === 1000) {
+                await this.syncCommodities();
+            }
+        } else {
+            console.log('Local database is already up to date.');
+        }
+        
     }
 }
 

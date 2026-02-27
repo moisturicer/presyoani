@@ -14,8 +14,8 @@ export class CommodityDB extends Dexie {
 
     constructor() {
         super("CommodityDatabase");
-        this.version(1).stores({
-        prices: '++id, commodity'
+        this.version(2).stores({
+        prices: '++id, commodity, created_at'
     });
     }
 }
