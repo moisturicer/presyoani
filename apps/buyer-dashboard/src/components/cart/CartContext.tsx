@@ -21,6 +21,7 @@ const CartContext = createContext<CartContextValue | undefined>(undefined)
 
 const STORAGE_KEY = 'buyer-dashboard-cart'
 
+// Hardcoded items for UI purposes
 const DEFAULT_ITEMS: CartItem[] = [
   {
     id: 101,
