@@ -8,6 +8,8 @@ import { SyncService } from '../../service/sync_service'
 
 export const dynamic = 'force-dynamic'
 
+let hasSyncedGlobal = false;
+
 export default function DashboardPage() {
   const router = useRouter()
 
@@ -30,10 +32,15 @@ export default function DashboardPage() {
   }, [router])
 
   useEffect(() => {
-    const runSync = () => {
-      SyncService.syncCommodities().catch(err => 
-          console.error("Manual sync failed:", err)
-      );
+
+    if (hasSyncedGlobal) return;
+
+   const runSync = () => {
+      SyncService.syncCommodities()
+        .then(() => {
+          hasSyncedGlobal = true; 
+        })
+        .catch(err => console.error("Manual sync failed:", err));
     };
 
     runSync();
