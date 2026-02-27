@@ -24,14 +24,14 @@ export class SyncService {
             return;
         }
 
-        if (data && data.length > 0) {
-            
-            await db.prices.bulkPut(data);
-            
-            console.log(`Successfully synced ${data.length} records.`);
+        console.log('Raw data from Supabase:', data); 
 
-            if (data.length === 1000) {
-                await this.syncCommodities();
+        if (data && data.length > 0) {
+            try {
+                await db.prices.bulkPut(data);
+                console.log(`Successfully synced ${data.length} records.`);
+            } catch (dbError) {
+                console.error('Dexie storage error:', dbError); 
             }
         } else {
             console.log('Local database is already up to date.');
