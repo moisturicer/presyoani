@@ -64,7 +64,7 @@ export default function AnalyticsPage() {
     return () => {
       isMounted = false
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [])
 
   useEffect(() => {
@@ -107,9 +107,9 @@ export default function AnalyticsPage() {
   const sortedOtherCrops = [...filteredOtherCrops].sort((a, b) => {
     const getGroupPriority = (crop: CropAnalytics) => {
       if (crop.changeFromPrev == null) return 1
-      if (crop.up === false) return 0 // most decrease first
+      if (crop.up === false) return 0 // most decrease
       if (crop.up === null) return 1 // neutral
-      if (crop.up === true) return 2 // increases last
+      if (crop.up === true) return 2 // increase
       return 1
     }
 
