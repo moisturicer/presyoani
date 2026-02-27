@@ -59,55 +59,72 @@ async def verify(request: Request):
 @app.post("/webhook")
 async def receive_message(request: Request):
     data = await request.json()
+    print(f"DEBUG: Received Data: {data}")
 
     if data.get("object") == "page":
         for entry in data.get("entry"):
             for messaging_event in entry.get("messaging"):
                 sender_id = messaging_event["sender"]["id"]
-
                 ref_data = None
 
-                if "postback" in messaging_event and "referral" in messaging_event["postback"]:
-                    ref_data = messaging_event["postback"]["referral"].get("ref")
-
-                elif "referral" in messaging_event:
+                # catch ref data
+                if "referral" in messaging_event:
                     ref_data = messaging_event["referral"].get("ref")
+                elif "postback" in messaging_event and "referral" in messaging_event["postback"]:
+                    ref_data = messaging_event["postback"]["referral"].get("ref")
 
                 if ref_data:
                     try:
+                        # decode
                         decoded = base64.urlsafe_b64decode(ref_data + "===").decode('utf-8')
-                        crop, qty, grade = decoded.split("|")
+                        print(f"DEBUG: Decoded String: {decoded}")
 
-                        response = supabase.table("prices") \
-                            .select("price") \
-                            .ilike("commodity", f"%{crop}%") \
-                            .order("date_updated", desc=True) \
-                            .limit(1).execute()
+                        parts = decoded.split("|")
 
-                        if response.data:
-                            market_price = float(response.data[0]['price'])
-                            total_value = market_price * float(qty)
+                        if len(parts) >= 4:
+                            version = parts[0]
+                            crop = parts[1]
+                            qty = parts[2]
+                            grade = parts[3]
+                            response = supabase.table("prices").select("price") \
+                                .ilike("commodity", f"%{crop}%") \
+                                .order("date_updated", desc=True).limit(1).execute()
 
-                            reply = f"✅ AI Scan Successful!\n\nCrop: {crop}\nGrade: {grade}\nWeight: {qty}kg\n\nMarket Price: P{market_price}/kg\nTotal: P{total_value:,.2f}"
+                            if response.data:
+                                market_price = float(response.data[0]['price'])
+                                total_value = market_price * float(qty)
 
-                            # Send message with button
-                            await send_fb_message(sender_id, {
-                                "attachment": {
-                                    "type": "template",
-                                    "payload": {
-                                        "template_type": "button",
-                                        "text": reply,
-                                        "buttons": [{
-                                            "type": "postback",
-                                            "title": "Sell This Produce",
-                                            "payload": json.dumps(
-                                                {"action": "LIST", "c": crop, "g": grade, "q": qty, "p": market_price})
-                                        }]
+                                reply = (
+                                    f"🍅 {crop.capitalize()} Scan Results:\n"
+                                    f"Grade: {grade}\n"
+                                    f"Weight: {qty}kg\n\n"
+                                    f"Current Market: P{market_price:.2f}/kg\n"
+                                    f"Estimated Total: P{total_value:,.2f}"
+                                )
+
+                                buttons = {
+                                    "attachment": {
+                                        "type": "template",
+                                        "payload": {
+                                            "template_type": "button",
+                                            "text": reply,
+                                            "buttons": [{
+                                                "type": "postback",
+                                                "title": "Sell Produce Now",
+                                                "payload": json.dumps(
+                                                    {"action": "LIST", "c": crop, "g": grade, "q": qty,
+                                                     "p": market_price})
+                                            }]
+                                        }
                                     }
                                 }
-                            })
+                                await send_fb_message(sender_id, buttons)
+                            else:
+                                await send_fb_message(sender_id,
+                                                      {"text": f"Sorry, I couldn't find a price for {crop}."})
+
                     except Exception as e:
-                        print(f"Error decoding ref: {e}")
+                        print(f"CRASH ERROR: {e}")
 
     return PlainTextResponse("EVENT_RECEIVED", status_code=200)
 
