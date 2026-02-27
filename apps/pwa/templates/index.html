@@ -56,52 +56,62 @@
             model = await tflite.loadTFLiteModel('/static/model.tflite');
             document.getElementById('loading').style.display = 'none';
         } catch (err) {
-            alert("Camera or Model Error. Use HTTPS!");
+            alert("Camera Error. Please use HTTPS.");
         }
     }
 
     document.getElementById('scan-btn').addEventListener('click', async () => {
         const qty = document.getElementById('quantity').value;
         const crop = document.getElementById('crop-type').value;
-        if (!qty || qty <= 0) return alert("Enter weight!");
+        if (!qty || qty <= 0) return alert("Please enter weight first!");
 
-        // capture & AI grade
+        // capture image
         const ctx = canvas.getContext('2d');
         canvas.width = 416; canvas.height = 416;
         ctx.drawImage(video, 0, 0, 416, 416);
 
+        // AI prediction
         const tensor = tf.tidy(() => tf.browser.fromPixels(canvas).div(255.0).expandDims(0));
         const prediction = await model.predict(tensor);
         const data = await prediction.data();
 
-        // YOLOv8 matrix scan [1, 9, 3549]
+        // grading & rejection standards
         let maxFresh = 0, maxRotten = 0;
         for (let i = 0; i < 3549; i++) {
-            // fresh classes
-            maxFresh = Math.max(maxFresh, data[4*3549+i], data[7*3549+i]);
-            // rotten classes
-            maxRotten = Math.max(maxRotten, data[5*3549+i], data[6*3549+i], data[8*3549+i]);
+            maxFresh = Math.max(maxFresh, data[4*3549+i], data[7*3549+i]); // Fresh classes
+            maxRotten = Math.max(maxRotten, data[5*3549+i], data[6*3549+i], data[8*3549+i]); // Rotten classes
         }
 
-        let grade = "D";
-        if (maxFresh > maxRotten) {
-            if (maxFresh > 0.85) grade = "A";
-            else if (maxFresh > 0.65) grade = "B";
-            else grade = "C";
+        let grade = "REJECT";
+
+        // check for empty / unidentifiable snaps first
+        if (maxFresh < 0.25 && maxRotten < 0.25) {
+            return alert("AI could not identify a crop. Please take a clearer photo closer to the produce.");
         }
 
-        // generate the verification string
-        const rawData = `v1|${crop}|${qty}|${grade}|${Date.now()}`;
+        // check for rotten/rejected produce
+        if (maxRotten > maxFresh && maxRotten > 0.40) {
+            grade = "REJECT";
+            alert("REJECTED: Produce appears rotten or damaged. Cannot list on market.");
+            return;
+        }
 
-        // create the hash and clean it (removing characters fb doesn't like)
+        // grading logic
+        if (maxFresh > 0.75) grade = "A";
+        else if (maxFresh > 0.45) grade = "B";
+        else if (maxFresh > 0.25) grade = "C";
+        else grade = "D";
+
+        // generate the ref data
+        // Format: crop|qty|grade
+        const rawData = `${crop}|${qty}|${grade}`;
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-        // use the 'ref' parameter to send data to the bot
-        // Note: Messenger box will be empty, farmer needs to send any msg to trigger bot
+        // open messenger with the 'ref' parameter
+        // This triggers a 'messaging_referral' event in your Python code
         window.location.href = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
     });
 
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/static/sw.js');
     init();
 </script>
 </body>
