@@ -77,12 +77,14 @@ async def receive_message(request: Request):
                     try:
                         # decode scan data
                         decoded = base64.urlsafe_b64decode(ref_data + "===").decode('utf-8')
+                        print(f"decoded ref data: {decoded}")  # prints to render logs
+
                         parts = decoded.split("|")
 
-                        if len(parts) >= 4:
-                            crop = parts[1]
-                            qty = parts[2]
-                            grade = parts[3]
+                        if len(parts) >= 3:
+                            crop = parts[0]
+                            qty = parts[1]
+                            grade = parts[2]
 
                             # get price from db
                             res = supabase.table("prices").select("price") \
