@@ -20,7 +20,7 @@ export function BuyerDashboard() {
   const [selectedFilter, setSelectedFilter] = useState('All')
   const [listings, setListings] = useState<CombinedListing[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const { addItem } = useCart()
+  const { addItem, items: cartItems } = useCart()
 
   useEffect(() => {
     let cancelled = false
@@ -223,16 +223,21 @@ export function BuyerDashboard() {
                       <span>{harvest.farmerLabel}</span>
                     </div>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-10 gap-2 shrink-0"
-                    onClick={() => handleAddToCart(harvest)}
-                    disabled={isLoading}
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                    Add to cart
-                  </Button>
+                  {(() => {
+                    const inCart = cartItems.some((item) => item.id === harvest.id)
+                    return (
+                      <Button
+                        variant={inCart ? 'outline' : 'outline'}
+                        size="sm"
+                        className="h-10 gap-2 shrink-0"
+                        onClick={() => handleAddToCart(harvest)}
+                        disabled={isLoading}
+                      >
+                        <ShoppingCart className="h-4 w-4" />
+                        {inCart ? 'Already in cart' : 'Add to cart'}
+                      </Button>
+                    )
+                  })()}
                 </div>
               </CardContent>
             </Card>
