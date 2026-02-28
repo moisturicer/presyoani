@@ -3,8 +3,8 @@ const ASSETS = [
   '/',
   '/static/manifest.json',
   '/static/model.tflite',
-  'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js',
-  'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite/dist/tf-tflite.min.js'
+  '/static/tf.min.js',
+  '/static/tf-tflite.min.js'
 ];
 
 self.addEventListener('install', (e) => {
