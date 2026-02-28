@@ -72,16 +72,11 @@ export function HarvestMap({ points = [] }: { points?: HarvestMapPoint[] }) {
 
     layer.clearLayers()
 
-    const effectivePoints =
-      points.length > 0
-        ? points
-        : [
-            { id: 1, lat: 10.3157, lng: 123.8854, weightKg: 500, label: 'Cebu City' },
-            { id: 2, lat: 10.3236, lng: 123.9223, weightKg: 800, label: 'Mandaue City' },
-            { id: 3, lat: 10.2447, lng: 123.8494, weightKg: 300, label: 'Talisay City' },
-          ]
+    if (!points.length) {
+      return
+    }
 
-    effectivePoints.forEach((p) => {
+    points.forEach((p) => {
       const radius = Math.max(1500, Math.min(7000, (p.weightKg ?? 100) * 20))
       const circle = L.circle([p.lat, p.lng], {
         radius,

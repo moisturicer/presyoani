@@ -28,6 +28,7 @@ export function BuyerDashboard() {
 
     fetchListingsWithFarmers()
       .then((rows) => {
+        console.log('[BuyerDashboard] Fetched listings:', rows)
         if (!cancelled) {
           setListings(rows)
         }
