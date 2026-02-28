@@ -1,164 +1,1613 @@
-commodity,specification,price,date_updated
-Imported Commercial Rice - Basmati Rice,,200.83,2026-02-27
-Imported Commercial Rice - Glutinous Rice,,61.19,2026-02-27
-Imported Commercial Rice - Jasponica/Japonica Rice,,63.15,2026-02-27
-Imported Commercial Rice - Other Special Rice,,60.79,2026-02-27
-Imported Commercial Rice - Premium,,57.48,2026-02-27
-Imported Commercial Rice - Well Milled,,47.37,2026-02-27
-Imported Commercial Rice - Regular Milled,,41.31,2026-02-27
-Local Commercial Rice - Glutinous Rice,,73.69,2026-02-27
-Local Commercial Rice - Other Special Rice,,59.01,2026-02-27
-Local Commercial Rice - Premium,,52.59,2026-02-27
-Local Commercial Rice - Well Milled,,46.06,2026-02-27
-Local Commercial Rice - Regular Milled,,41.07,2026-02-27
-Corn (White),,76.88,2026-02-27
-Corn (Yellow),,78.07,2026-02-27
-"Corn Grits (White, Food Grade)",,120.0,2026-02-27
-"Corn Grits (Yellow, Food Grade)",,120.0,2026-02-27
-"Corn Cracked (Yellow, Feed Grade)",,50.0,2026-02-27
-Corn Grits (Feed Grade),,46.67,2026-02-27
-Mungbean,,130.25,2026-02-27
-Alumahan (Indian Mackerel),,354.0,2026-02-27
-"Bangus, Large",,255.63,2026-02-27
-"Bangus, Medium",Medium (3-4 pcs/kg),232.68,2026-02-27
-"Galunggong, Local","Male, Medium (12-14 pcs/kg)",347.56,2026-02-27
-"Galunggong, Imported","Male, Medium (12-14 pcs/kg)",307.69,2026-02-27
-"Pampano, Local",,495.56,2026-02-27
-"Pampano, Imported",,407.64,2026-02-27
-"Salmon Belly, Imported",,421.38,2026-02-27
-"Salmon Head, Imported",,222.14,2026-02-27
-Sardines (Tamban),,146.0,2026-02-27
-"Squid (Pusit Bisaya), Local",Medium,473.57,2026-02-27
-"Squid, Imported",,218.0,2026-02-27
+commodity,specification,price,date_updated,id
+Imported Commercial Rice - Basmati Rice,,200.83,2026-02-27,1
+Imported Commercial Rice - Glutinous Rice,,61.19,2026-02-27,2
+Imported Commercial Rice - Jasponica/Japonica Rice,,63.15,2026-02-27,3
+Imported Commercial Rice - Other Special Rice,,60.79,2026-02-27,4
+Imported Commercial Rice - Premium,,57.48,2026-02-27,5
+Imported Commercial Rice - Well Milled,,47.37,2026-02-27,6
+Imported Commercial Rice - Regular Milled,,41.31,2026-02-27,7
+Local Commercial Rice - Glutinous Rice,,73.69,2026-02-27,8
+Local Commercial Rice - Other Special Rice,,59.01,2026-02-27,9
+Local Commercial Rice - Premium,,52.59,2026-02-27,10
+Local Commercial Rice - Well Milled,,46.06,2026-02-27,11
+Local Commercial Rice - Regular Milled,,41.07,2026-02-27,12
+Corn (White),,76.88,2026-02-27,13
+Corn (Yellow),,78.07,2026-02-27,14
+"Corn Grits (White, Food Grade)",,120.0,2026-02-27,15
+"Corn Grits (Yellow, Food Grade)",,120.0,2026-02-27,16
+"Corn Cracked (Yellow, Feed Grade)",,50.0,2026-02-27,17
+Corn Grits (Feed Grade),,46.67,2026-02-27,18
+Mungbean,,130.25,2026-02-27,19
+Alumahan (Indian Mackerel),,354.0,2026-02-27,20
+"Bangus, Large",,255.63,2026-02-27,21
+"Bangus, Medium",Medium (3-4 pcs/kg),232.68,2026-02-27,22
+"Galunggong, Local","Male, Medium (12-14 pcs/kg)",347.56,2026-02-27,23
+"Galunggong, Imported","Male, Medium (12-14 pcs/kg)",307.69,2026-02-27,24
+"Pampano, Local",,495.56,2026-02-27,25
+"Pampano, Imported",,407.64,2026-02-27,26
+"Salmon Belly, Imported",,421.38,2026-02-27,27
+"Salmon Head, Imported",,222.14,2026-02-27,28
+Sardines (Tamban),,146.0,2026-02-27,29
+"Squid (Pusit Bisaya), Local",Medium,473.57,2026-02-27,30
+"Squid, Imported",,218.0,2026-02-27,31
 "Tambakol (Yellow-Fin Tuna),
-Local","Medium, Fresh or Chilled",317.36,2026-02-27
-Tilapia,Medium (5-6 pcs/kg),153.94,2026-02-27
-"Beef Brisket, Local",Meat with Bones,429.24,2026-02-27
-"Beef Brisket, Imported",,380.0,2026-02-27
-"Beef Chuck, Local",,413.61,2026-02-27
-"Beef Forequarter, Local",,480.0,2026-02-27
-"Beef Fore Limb, Local",,461.43,2026-02-27
-"Beef Flank, Local",,443.18,2026-02-27
-"Beef Loin, Local",,562.0,2026-02-27
-"Beef Plate, Local",,415.38,2026-02-27
-"Beef Rib Eye, Local",,437.14,2026-02-27
-"Beef Rib Set, Local",,413.14,2026-02-27
-"Beef Rump, Local",Lean Meat/ Tapadera,483.68,2026-02-27
-"Beef Rump, Imported",,375.0,2026-02-27
-"Beef Short Ribs, Local",,421.25,2026-02-27
-"Beef Sirloin, Local",,484.03,2026-02-27
-"Beef Striploin, Local",,488.75,2026-02-27
-"Beef Tenderloin, Local",,676.61,2026-02-27
-"Beef Tongue, Local",,545.0,2026-02-27
-"Pork Belly (Liempo), Local",,381.83,2026-02-27
-"Pork Belly (Liempo), Imported",,312.77,2026-02-27
-"Pork Boston Shoulder, Local",,357.5,2026-02-27
-"Pork Chop, Local",,332.41,2026-02-27
-"Pork Chop, Imported",,251.67,2026-02-27
-"Pork Fore Shank, Local",,320.83,2026-02-27
-"Pork Fore Shank, Imported",,226.67,2026-02-27
-"Pork Head, Local",,257.56,2026-02-27
-"Pork Head, Imported",,200.0,2026-02-27
-"Pork Hind Leg (Pigue), Local",,330.14,2026-02-27
-"Pork Hind Leg (Pigue), Imported",,252.76,2026-02-27
-"Pork Hind Shank, Local",,315.38,2026-02-27
-"Pork Hind Shank, Imported",,216.67,2026-02-27
-"Pork Loin, Local",,377.68,2026-02-27
-"Pork Loin, Imported",,278.0,2026-02-27
-"Pork Offals, Local",,249.72,2026-02-27
-"Pork Offals, Imported",,152.63,2026-02-27
+Local","Medium, Fresh or Chilled",317.36,2026-02-27,32
+Tilapia,Medium (5-6 pcs/kg),153.94,2026-02-27,33
+"Beef Brisket, Local",Meat with Bones,429.24,2026-02-27,34
+"Beef Brisket, Imported",,380.0,2026-02-27,35
+"Beef Chuck, Local",,413.61,2026-02-27,36
+"Beef Forequarter, Local",,480.0,2026-02-27,37
+"Beef Fore Limb, Local",,461.43,2026-02-27,38
+"Beef Flank, Local",,443.18,2026-02-27,39
+"Beef Loin, Local",,562.0,2026-02-27,40
+"Beef Plate, Local",,415.38,2026-02-27,41
+"Beef Rib Eye, Local",,437.14,2026-02-27,42
+"Beef Rib Set, Local",,413.14,2026-02-27,43
+"Beef Rump, Local",Lean Meat/ Tapadera,483.68,2026-02-27,44
+"Beef Rump, Imported",,375.0,2026-02-27,45
+"Beef Short Ribs, Local",,421.25,2026-02-27,46
+"Beef Sirloin, Local",,484.03,2026-02-27,47
+"Beef Striploin, Local",,488.75,2026-02-27,48
+"Beef Tenderloin, Local",,676.61,2026-02-27,49
+"Beef Tongue, Local",,545.0,2026-02-27,50
+"Pork Belly (Liempo), Local",,381.83,2026-02-27,51
+"Pork Belly (Liempo), Imported",,312.77,2026-02-27,52
+"Pork Boston Shoulder, Local",,357.5,2026-02-27,53
+"Pork Chop, Local",,332.41,2026-02-27,54
+"Pork Chop, Imported",,251.67,2026-02-27,55
+"Pork Fore Shank, Local",,320.83,2026-02-27,56
+"Pork Fore Shank, Imported",,226.67,2026-02-27,57
+"Pork Head, Local",,257.56,2026-02-27,58
+"Pork Head, Imported",,200.0,2026-02-27,59
+"Pork Hind Leg (Pigue), Local",,330.14,2026-02-27,60
+"Pork Hind Leg (Pigue), Imported",,252.76,2026-02-27,61
+"Pork Hind Shank, Local",,315.38,2026-02-27,62
+"Pork Hind Shank, Imported",,216.67,2026-02-27,63
+"Pork Loin, Local",,377.68,2026-02-27,64
+"Pork Loin, Imported",,278.0,2026-02-27,65
+"Pork Offals, Local",,249.72,2026-02-27,66
+"Pork Offals, Imported",,152.63,2026-02-27,67
 "Pork Picnic Shoulder (Kasim),
-Local",,329.34,2026-02-27
+Local",,329.34,2026-02-27,68
 "Pork Picnic Shoulder (Kasim),
-Imported",,254.8,2026-02-27
-"Pork Rind/Skin, Local",,106.67,2026-02-27
-"Pork Spare Ribs, Local",,322.33,2026-02-27
-"Pork Spare Ribs, Imported",,244.17,2026-02-27
-"Carabeef Forequarter, Local",,326.67,2026-02-27
-"Carabeef Meat, Local",,370.0,2026-02-27
-"Carabeef Rump Steak, Local",,380.0,2026-02-27
-"Chicken Breast, Local",,220.0,2026-02-27
-"Chicken Breast, Local",,230.0,2026-02-27
-"Chicken Breast, Local",,210.13,2026-02-27
-"Chicken Drumstick, Local",,226.73,2026-02-27
-"Chicken Drumstick, Local",,230.0,2026-02-27
-"Chicken Drumstick, Local","Unbranded, Fresh",217.12,2026-02-27
-"Chicken Feet, Local",,144.51,2026-02-27
-Chicken Leg Quarter,Magnolia,224.49,2026-02-27
-Chicken Leg Quarter,Bounty Fresh,230.0,2026-02-27
-Chicken Leg Quarter,"Unbranded, Fresh",211.75,2026-02-27
-"Chicken Leg Quarter, Imported",,165.5,2026-02-27
-"Chicken Liver, Local",,232.43,2026-02-27
-"Chicken Neck, Local",,141.5,2026-02-27
-"Chicken Rind/Skin, Local",,148.4,2026-02-27
-"Chicken Thigh, Local",,215.06,2026-02-27
-"Chicken Wing, Local",Magnolia,225.5,2026-02-27
-"Chicken Wing, Local",Bounty Fresh,230.0,2026-02-27
-"Chicken Wing, Local","Unbranded, Fresh",216.27,2026-02-27
-"Whole Chicken, Local",Magnolia,208.48,2026-02-27
-"Whole Chicken, Local",Bounty Fresh,210.0,2026-02-27
-"Whole Chicken, Local",Fully Dressed,197.7,2026-02-27
-"Chicken Egg (White, Medium)",56-60 grams/pc,8.18,2026-02-27
-Ampalaya,4-5 pcs/kg,126.07,2026-02-27
-"Chilli (Green), Local",Haba/Panigang,101.16,2026-02-27
-Eggplant,3-4 Small Bundles,74.56,2026-02-27
-Native Pechay,3-4 Small Bundles,71.86,2026-02-27
-Pole Sitao,3-4 Small Bundles,133.1,2026-02-27
-Squash,Suprema Variety,60.89,2026-02-27
-Tomato,15-18 pcs/kg,61.79,2026-02-27
-"Bell Pepper (Green), Local",Medium (151-250gm/pc),228.94,2026-02-27
-"Bell Pepper (Red), Local",Medium (151-250gm/pc),230.5,2026-02-27
+Imported",,254.8,2026-02-27,69
+"Pork Rind/Skin, Local",,106.67,2026-02-27,70
+"Pork Spare Ribs, Local",,322.33,2026-02-27,71
+"Pork Spare Ribs, Imported",,244.17,2026-02-27,72
+"Carabeef Forequarter, Local",,326.67,2026-02-27,73
+"Carabeef Meat, Local",,370.0,2026-02-27,74
+"Carabeef Rump Steak, Local",,380.0,2026-02-27,75
+"Chicken Breast, Local",,220.0,2026-02-27,76
+"Chicken Breast, Local",,230.0,2026-02-27,77
+"Chicken Breast, Local",,210.13,2026-02-27,78
+"Chicken Drumstick, Local",,226.73,2026-02-27,79
+"Chicken Drumstick, Local",,230.0,2026-02-27,80
+"Chicken Drumstick, Local","Unbranded, Fresh",217.12,2026-02-27,81
+"Chicken Feet, Local",,144.51,2026-02-27,82
+Chicken Leg Quarter,Magnolia,224.49,2026-02-27,83
+Chicken Leg Quarter,Bounty Fresh,230.0,2026-02-27,84
+Chicken Leg Quarter,"Unbranded, Fresh",211.75,2026-02-27,85
+"Chicken Leg Quarter, Imported",,165.5,2026-02-27,86
+"Chicken Liver, Local",,232.43,2026-02-27,87
+"Chicken Neck, Local",,141.5,2026-02-27,88
+"Chicken Rind/Skin, Local",,148.4,2026-02-27,89
+"Chicken Thigh, Local",,215.06,2026-02-27,90
+"Chicken Wing, Local",Magnolia,225.5,2026-02-27,91
+"Chicken Wing, Local",Bounty Fresh,230.0,2026-02-27,92
+"Chicken Wing, Local","Unbranded, Fresh",216.27,2026-02-27,93
+"Whole Chicken, Local",Magnolia,208.48,2026-02-27,94
+"Whole Chicken, Local",Bounty Fresh,210.0,2026-02-27,95
+"Whole Chicken, Local",Fully Dressed,197.7,2026-02-27,96
+"Chicken Egg (White, Medium)",56-60 grams/pc,8.18,2026-02-27,97
+Ampalaya,4-5 pcs/kg,126.07,2026-02-27,98
+"Chilli (Green), Local",Haba/Panigang,101.16,2026-02-27,99
+Eggplant,3-4 Small Bundles,74.56,2026-02-27,100
+Native Pechay,3-4 Small Bundles,71.86,2026-02-27,101
+Pole Sitao,3-4 Small Bundles,133.1,2026-02-27,102
+Squash,Suprema Variety,60.89,2026-02-27,103
+Tomato,15-18 pcs/kg,61.79,2026-02-27,104
+"Bell Pepper (Green), Local",Medium (151-250gm/pc),228.94,2026-02-27,105
+"Bell Pepper (Red), Local",Medium (151-250gm/pc),230.5,2026-02-27,106
 "Broccoli, Local","Medium (8-10 cm
-diameter/bunch hd)",147.14,2026-02-27
-"Broccoli, Imported",,207.12,2026-02-27
+diameter/bunch hd)",147.14,2026-02-27,107
+"Broccoli, Imported",,207.12,2026-02-27,108
 "Cauliflower, Local","Medium (8-10 cm
-diameter/bunch hd)",111.22,2026-02-27
-Cabbage (Rare Ball),510 gm - 1 kg/head,73.1,2026-02-27
-Cabbage (Scorpio),750 gm - 1 kg/head,81.11,2026-02-27
-Cabbage (Wonder Ball),510 gm - 1 kg/head,74.7,2026-02-27
-"Carrots, Local",8-10 pcs/kg,106.35,2026-02-27
-"Carrots, Imported",,105.26,2026-02-27
-Celery,Medium (501-800 g),156.53,2026-02-27
-Chayote,Medium (301-400 g),54.29,2026-02-27
-"Habichuelas/Baguio Beans, Local",,109.86,2026-02-27
-Pechay Baguio,,79.54,2026-02-27
-Lettuce (Green Ice),,158.87,2026-02-27
+diameter/bunch hd)",111.22,2026-02-27,109
+Cabbage (Rare Ball),510 gm - 1 kg/head,73.1,2026-02-27,110
+Cabbage (Scorpio),750 gm - 1 kg/head,81.11,2026-02-27,111
+Cabbage (Wonder Ball),510 gm - 1 kg/head,74.7,2026-02-27,112
+"Carrots, Local",8-10 pcs/kg,106.35,2026-02-27,113
+"Carrots, Imported",,105.26,2026-02-27,114
+Celery,Medium (501-800 g),156.53,2026-02-27,115
+Chayote,Medium (301-400 g),54.29,2026-02-27,116
+"Habichuelas/Baguio Beans, Local",,109.86,2026-02-27,117
+Pechay Baguio,,79.54,2026-02-27,118
+Lettuce (Green Ice),,158.87,2026-02-27,119
 Lettuce (Iceberg),"Medium (301-450 cm
-diameter/bunch hd)",205.0,2026-02-27
-Lettuce (Romaine),,166.43,2026-02-27
-"White Potato, Local",10-12 pcs/kg,109.73,2026-02-27
-"Chilli (Red), Local",,180.94,2026-02-27
-"Garlic, Native/Local",,366.67,2026-02-27
-"Garlic, Imported",,147.98,2026-02-27
-"Ginger, Local",,154.71,2026-02-27
-"Ginger, Imported",,157.14,2026-02-27
-"Red Onion, Local",,116.43,2026-02-27
-"Red Onion, Imported",,106.0,2026-02-27
-"Red Onion, Imported",,102.59,2026-02-27
-"White Onion, Local",,97.36,2026-02-27
-"White Onion, Imported",,118.22,2026-02-27
-"White Onion, Imported",,107.24,2026-02-27
-Avocado,,306.04,2026-02-27
-Banana (Lakatan),,99.37,2026-02-27
-Banana (Latundan),,75.54,2026-02-27
-Banana (Saba),,55.65,2026-02-27
-Calamansi,,132.44,2026-02-27
-Mango (Carabao),,196.99,2026-02-27
-Melon,,105.54,2026-02-27
-Papaya,,73.07,2026-02-27
-Pomelo,,185.25,2026-02-27
-Watermelon,,84.19,2026-02-27
-Salt (Rock),,21.38,2026-02-27
-Salt (Iodized),,38.73,2026-02-27
-Sugar (Refined),,82.0,2026-02-27
-Sugar (Washed),,74.96,2026-02-27
-Sugar (Brown),,73.45,2026-02-27
-Cooking Oil (Palm),350 ml/bottle,35.82,2026-02-27
-Cooking Oil (Palm),1 Liter/bottle,90.54,2026-02-27
-Cooking Oil (Coconut),350 ml/bottle,58.88,2026-02-27
-Cooking Oil (Coconut),1 Liter/bottle,160.57,2026-02-27
-Cooking Oil (Minola),500 ml/bottle,90.0,2026-02-27
-Cooking Oil (Minola),"1,000 ml/bottle",140.0,2026-02-27
-Cooking Oil (Spring),"1,000 ml/bottle",149.63,2026-02-27
+diameter/bunch hd)",205.0,2026-02-27,120
+Lettuce (Romaine),,166.43,2026-02-27,121
+"White Potato, Local",10-12 pcs/kg,109.73,2026-02-27,122
+"Chilli (Red), Local",,180.94,2026-02-27,123
+"Garlic, Native/Local",,366.67,2026-02-27,124
+"Garlic, Imported",,147.98,2026-02-27,125
+"Ginger, Local",,154.71,2026-02-27,126
+"Ginger, Imported",,157.14,2026-02-27,127
+"Red Onion, Local",,116.43,2026-02-27,128
+"Red Onion, Imported",,106.0,2026-02-27,129
+"Red Onion, Imported",,102.59,2026-02-27,130
+"White Onion, Local",,97.36,2026-02-27,131
+"White Onion, Imported",,118.22,2026-02-27,132
+"White Onion, Imported",,107.24,2026-02-27,133
+Avocado,,306.04,2026-02-27,134
+Banana (Lakatan),,99.37,2026-02-27,135
+Banana (Latundan),,75.54,2026-02-27,136
+Banana (Saba),,55.65,2026-02-27,137
+Calamansi,,132.44,2026-02-27,138
+Mango (Carabao),,196.99,2026-02-27,139
+Melon,,105.54,2026-02-27,140
+Papaya,,73.07,2026-02-27,141
+Pomelo,,185.25,2026-02-27,142
+Watermelon,,84.19,2026-02-27,143
+Salt (Rock),,21.38,2026-02-27,144
+Salt (Iodized),,38.73,2026-02-27,145
+Sugar (Refined),,82.0,2026-02-27,146
+Sugar (Washed),,74.96,2026-02-27,147
+Sugar (Brown),,73.45,2026-02-27,148
+Cooking Oil (Palm),350 ml/bottle,35.82,2026-02-27,149
+Cooking Oil (Palm),1 Liter/bottle,90.54,2026-02-27,150
+Cooking Oil (Coconut),350 ml/bottle,58.88,2026-02-27,151
+Cooking Oil (Coconut),1 Liter/bottle,160.57,2026-02-27,152
+Cooking Oil (Minola),500 ml/bottle,90.0,2026-02-27,153
+Cooking Oil (Minola),"1,000 ml/bottle",140.0,2026-02-27,154
+Cooking Oil (Spring),"1,000 ml/bottle",149.63,2026-02-27,155
 "Cooking Oil (Palm Olein, Jolly
-Brand)","1,000 ml/bottle",151.82,2026-02-27
+Brand)","1,000 ml/bottle",151.82,2026-02-27,156
+Imported Commercial Rice - Basmati Rice,,200.83,2026-02-26,157
+Imported Commercial Rice - Glutinous Rice,,61.19,2026-02-26,158
+Imported Commercial Rice - Jasponica/Japonica Rice,,63.15,2026-02-26,159
+Imported Commercial Rice - Other Special Rice,,60.79,2026-02-26,160
+Imported Commercial Rice - Premium,,57.49,2026-02-26,161
+Imported Commercial Rice - Well Milled,,47.32,2026-02-26,162
+Imported Commercial Rice - Regular Milled,,41.31,2026-02-26,163
+Local Commercial Rice - Glutinous Rice,,73.69,2026-02-26,164
+Local Commercial Rice - Other Special Rice,,59.01,2026-02-26,165
+Local Commercial Rice - Premium,,52.62,2026-02-26,166
+Local Commercial Rice - Well Milled,,46.26,2026-02-26,167
+Local Commercial Rice - Regular Milled,,41.07,2026-02-26,168
+Corn (White),,76.88,2026-02-26,169
+Corn (Yellow),,78.03,2026-02-26,170
+"Corn Grits (White, Food Grade)",,120.0,2026-02-26,171
+"Corn Grits (Yellow, Food Grade)",,120.0,2026-02-26,172
+"Corn Cracked (Yellow, Feed Grade)",,50.0,2026-02-26,173
+Corn Grits (Feed Grade),,46.67,2026-02-26,174
+Mungbean,,130.08,2026-02-26,175
+Alumahan (Indian Mackerel),,358.64,2026-02-26,176
+"Bangus, Large",,256.07,2026-02-26,177
+"Bangus, Medium",Medium (3-4 pcs/kg),233.53,2026-02-26,178
+"Galunggong, Local","Male, Medium (12-14 pcs/kg)",346.96,2026-02-26,179
+"Galunggong, Imported","Male, Medium (12-14 pcs/kg)",306.67,2026-02-26,180
+"Pampano, Local",,495.56,2026-02-26,181
+"Pampano, Imported",,408.41,2026-02-26,182
+"Salmon Belly, Imported",,422.19,2026-02-26,183
+"Salmon Head, Imported",,222.82,2026-02-26,184
+Sardines (Tamban),,144.44,2026-02-26,185
+"Squid (Pusit Bisaya), Local",Medium,475.14,2026-02-26,186
+"Squid, Imported",,218.0,2026-02-26,187
+"Tambakol (Yellow-Fin Tuna),
+Local","Medium, Fresh or Chilled",317.36,2026-02-26,188
+Tilapia,Medium (5-6 pcs/kg),153.65,2026-02-26,189
+"Beef Brisket, Local",Meat with Bones,429.24,2026-02-26,190
+"Beef Brisket, Imported",,380.0,2026-02-26,191
+"Beef Chuck, Local",,413.61,2026-02-26,192
+"Beef Forequarter, Local",,480.0,2026-02-26,193
+"Beef Fore Limb, Local",,461.43,2026-02-26,194
+"Beef Flank, Local",,443.18,2026-02-26,195
+"Beef Loin, Local",,562.0,2026-02-26,196
+"Beef Plate, Local",,415.38,2026-02-26,197
+"Beef Rib Eye, Local",,437.14,2026-02-26,198
+"Beef Rib Set, Local",,413.14,2026-02-26,199
+"Beef Rump, Local",Lean Meat/ Tapadera,483.68,2026-02-26,200
+"Beef Rump, Imported",,375.0,2026-02-26,201
+"Beef Short Ribs, Local",,421.25,2026-02-26,202
+"Beef Sirloin, Local",,484.03,2026-02-26,203
+"Beef Striploin, Local",,488.75,2026-02-26,204
+"Beef Tenderloin, Local",,676.25,2026-02-26,205
+"Beef Tongue, Local",,545.0,2026-02-26,206
+"Pork Belly (Liempo), Local",,381.97,2026-02-26,207
+"Pork Belly (Liempo), Imported",,312.77,2026-02-26,208
+"Pork Boston Shoulder, Local",,357.5,2026-02-26,209
+"Pork Chop, Local",,333.05,2026-02-26,210
+"Pork Chop, Imported",,251.67,2026-02-26,211
+"Pork Fore Shank, Local",,321.6,2026-02-26,212
+"Pork Fore Shank, Imported",,226.67,2026-02-26,213
+"Pork Head, Local",,259.1,2026-02-26,214
+"Pork Head, Imported",,200.0,2026-02-26,215
+"Pork Hind Leg (Pigue), Local",,331.25,2026-02-26,216
+"Pork Hind Leg (Pigue), Imported",,253.57,2026-02-26,217
+"Pork Hind Shank, Local",,316.92,2026-02-26,218
+"Pork Hind Shank, Imported",,216.67,2026-02-26,219
+"Pork Loin, Local",,377.79,2026-02-26,220
+"Pork Loin, Imported",,278.0,2026-02-26,221
+"Pork Offals, Local",,250.14,2026-02-26,222
+"Pork Offals, Imported",,152.63,2026-02-26,223
+"Pork Picnic Shoulder (Kasim),
+Local",,329.9,2026-02-26,224
+"Pork Picnic Shoulder (Kasim),
+Imported",,254.8,2026-02-26,225
+"Pork Rind/Skin, Local",,106.67,2026-02-26,226
+"Pork Spare Ribs, Local",,323.09,2026-02-26,227
+"Pork Spare Ribs, Imported",,244.17,2026-02-26,228
+"Carabeef Forequarter, Local",,326.67,2026-02-26,229
+"Carabeef Meat, Local",,370.0,2026-02-26,230
+"Carabeef Rump Steak, Local",,380.0,2026-02-26,231
+"Chicken Breast, Local",,220.0,2026-02-26,232
+"Chicken Breast, Local",,230.0,2026-02-26,233
+"Chicken Breast, Local",,210.63,2026-02-26,234
+"Chicken Drumstick, Local",,226.73,2026-02-26,235
+"Chicken Drumstick, Local",,230.0,2026-02-26,236
+"Chicken Drumstick, Local","Unbranded, Fresh",217.12,2026-02-26,237
+"Chicken Feet, Local",,144.51,2026-02-26,238
+Chicken Leg Quarter,Magnolia,224.49,2026-02-26,239
+Chicken Leg Quarter,Bounty Fresh,230.0,2026-02-26,240
+Chicken Leg Quarter,"Unbranded, Fresh",211.75,2026-02-26,241
+"Chicken Leg Quarter, Imported",,165.5,2026-02-26,242
+"Chicken Liver, Local",,232.43,2026-02-26,243
+"Chicken Neck, Local",,141.5,2026-02-26,244
+"Chicken Rind/Skin, Local",,148.4,2026-02-26,245
+"Chicken Thigh, Local",,215.06,2026-02-26,246
+"Chicken Wing, Local",Magnolia,225.5,2026-02-26,247
+"Chicken Wing, Local",Bounty Fresh,230.0,2026-02-26,248
+"Chicken Wing, Local","Unbranded, Fresh",216.27,2026-02-26,249
+"Whole Chicken, Local",Magnolia,208.48,2026-02-26,250
+"Whole Chicken, Local",Bounty Fresh,210.0,2026-02-26,251
+"Whole Chicken, Local",Fully Dressed,198.36,2026-02-26,252
+"Chicken Egg (White, Medium)",56-60 grams/pc,8.18,2026-02-26,253
+Ampalaya,4-5 pcs/kg,126.3,2026-02-26,254
+"Chilli (Green), Local",Haba/Panigang,101.23,2026-02-26,255
+Eggplant,3-4 Small Bundles,74.59,2026-02-26,256
+Native Pechay,3-4 Small Bundles,71.86,2026-02-26,257
+Pole Sitao,3-4 Small Bundles,134.15,2026-02-26,258
+Squash,Suprema Variety,60.86,2026-02-26,259
+Tomato,15-18 pcs/kg,62.13,2026-02-26,260
+"Bell Pepper (Green), Local",Medium (151-250gm/pc),233.41,2026-02-26,261
+"Bell Pepper (Red), Local",Medium (151-250gm/pc),233.24,2026-02-26,262
+"Broccoli, Local","Medium (8-10 cm
+diameter/bunch hd)",144.67,2026-02-26,263
+"Broccoli, Imported",,208.91,2026-02-26,264
+"Cauliflower, Local","Medium (8-10 cm
+diameter/bunch hd)",111.12,2026-02-26,265
+Cabbage (Rare Ball),510 gm - 1 kg/head,73.41,2026-02-26,266
+Cabbage (Scorpio),750 gm - 1 kg/head,81.48,2026-02-26,267
+Cabbage (Wonder Ball),510 gm - 1 kg/head,75.97,2026-02-26,268
+"Carrots, Local",8-10 pcs/kg,104.04,2026-02-26,269
+"Carrots, Imported",,102.5,2026-02-26,270
+Celery,Medium (501-800 g),156.84,2026-02-26,271
+Chayote,Medium (301-400 g),54.46,2026-02-26,272
+"Habichuelas/Baguio Beans, Local",,108.82,2026-02-26,273
+Pechay Baguio,,79.82,2026-02-26,274
+Lettuce (Green Ice),,160.31,2026-02-26,275
+Lettuce (Iceberg),"Medium (301-450 cm
+diameter/bunch hd)",214.5,2026-02-26,276
+Lettuce (Romaine),,168.77,2026-02-26,277
+"White Potato, Local",10-12 pcs/kg,111.7,2026-02-26,278
+"Chilli (Red), Local",,179.84,2026-02-26,279
+"Garlic, Native/Local",,366.67,2026-02-26,280
+"Garlic, Imported",,149.14,2026-02-26,281
+"Ginger, Local",,155.07,2026-02-26,282
+"Ginger, Imported",,160.0,2026-02-26,283
+"Red Onion, Local",,117.37,2026-02-26,284
+"Red Onion, Imported",,104.87,2026-02-26,285
+"Red Onion, Imported",,102.59,2026-02-26,286
+"White Onion, Local",,99.01,2026-02-26,287
+"White Onion, Imported",,118.26,2026-02-26,288
+"White Onion, Imported",,107.02,2026-02-26,289
+Avocado,,306.73,2026-02-26,290
+Banana (Lakatan),,99.37,2026-02-26,291
+Banana (Latundan),,75.54,2026-02-26,292
+Banana (Saba),,55.65,2026-02-26,293
+Calamansi,,132.57,2026-02-26,294
+Mango (Carabao),,196.99,2026-02-26,295
+Melon,,105.54,2026-02-26,296
+Papaya,,73.07,2026-02-26,297
+Pomelo,,184.33,2026-02-26,298
+Watermelon,,84.19,2026-02-26,299
+Salt (Rock),,21.38,2026-02-26,300
+Salt (Iodized),,38.73,2026-02-26,301
+Sugar (Refined),,82.0,2026-02-26,302
+Sugar (Washed),,74.96,2026-02-26,303
+Sugar (Brown),,73.45,2026-02-26,304
+Cooking Oil (Palm),350 ml/bottle,35.86,2026-02-26,305
+Cooking Oil (Palm),1 Liter/bottle,90.57,2026-02-26,306
+Cooking Oil (Coconut),350 ml/bottle,58.88,2026-02-26,307
+Cooking Oil (Coconut),1 Liter/bottle,160.57,2026-02-26,308
+Cooking Oil (Minola),500 ml/bottle,90.0,2026-02-26,309
+Cooking Oil (Minola),"1,000 ml/bottle",140.0,2026-02-26,310
+Cooking Oil (Spring),"1,000 ml/bottle",149.63,2026-02-26,311
+"Cooking Oil (Palm Olein, Jolly
+Brand)","1,000 ml/bottle",151.82,2026-02-26,312
+Imported Commercial Rice - Basmati Rice,,200.83,2026-02-25,313
+Imported Commercial Rice - Glutinous Rice,,61.22,2026-02-25,314
+Imported Commercial Rice - Jasponica/Japonica Rice,,63.15,2026-02-25,315
+Imported Commercial Rice - Other Special Rice,,60.79,2026-02-25,316
+Imported Commercial Rice - Premium,,57.29,2026-02-25,317
+Imported Commercial Rice - Well Milled,,47.32,2026-02-25,318
+Imported Commercial Rice - Regular Milled,,41.24,2026-02-25,319
+Local Commercial Rice - Glutinous Rice,,73.94,2026-02-25,320
+Local Commercial Rice - Other Special Rice,,58.93,2026-02-25,321
+Local Commercial Rice - Premium,,52.5,2026-02-25,322
+Local Commercial Rice - Well Milled,,45.99,2026-02-25,323
+Local Commercial Rice - Regular Milled,,40.98,2026-02-25,324
+Corn (White),,75.63,2026-02-25,325
+Corn (Yellow),,77.71,2026-02-25,326
+"Corn Grits (White, Food Grade)",,120.0,2026-02-25,327
+"Corn Grits (Yellow, Food Grade)",,120.0,2026-02-25,328
+"Corn Cracked (Yellow, Feed Grade)",,50.0,2026-02-25,329
+Corn Grits (Feed Grade),,46.67,2026-02-25,330
+Mungbean,,130.16,2026-02-25,331
+Alumahan (Indian Mackerel),,356.0,2026-02-25,332
+"Bangus, Large",,256.61,2026-02-25,333
+"Bangus, Medium",Medium (3-4 pcs/kg),232.99,2026-02-25,334
+"Galunggong, Local","Male, Medium (12-14 pcs/kg)",345.92,2026-02-25,335
+"Galunggong, Imported","Male, Medium (12-14 pcs/kg)",309.23,2026-02-25,336
+"Pampano, Local",,495.56,2026-02-25,337
+"Pampano, Imported",,408.14,2026-02-25,338
+"Salmon Belly, Imported",,423.17,2026-02-25,339
+"Salmon Head, Imported",,223.1,2026-02-25,340
+Sardines (Tamban),,140.91,2026-02-25,341
+"Squid (Pusit Bisaya), Local",Medium,475.62,2026-02-25,342
+"Squid, Imported",,216.88,2026-02-25,343
+"Tambakol (Yellow-Fin Tuna),
+Local","Medium, Fresh or Chilled",320.55,2026-02-25,344
+Tilapia,Medium (5-6 pcs/kg),153.65,2026-02-25,345
+"Beef Brisket, Local",Meat with Bones,429.12,2026-02-25,346
+"Beef Brisket, Imported",,380.0,2026-02-25,347
+"Beef Chuck, Local",,413.61,2026-02-25,348
+"Beef Forequarter, Local",,480.0,2026-02-25,349
+"Beef Fore Limb, Local",,461.43,2026-02-25,350
+"Beef Flank, Local",,443.18,2026-02-25,351
+"Beef Loin, Local",,562.0,2026-02-25,352
+"Beef Plate, Local",,415.38,2026-02-25,353
+"Beef Rib Eye, Local",,437.14,2026-02-25,354
+"Beef Rib Set, Local",,413.14,2026-02-25,355
+"Beef Rump, Local",Lean Meat/ Tapadera,483.68,2026-02-25,356
+"Beef Rump, Imported",,375.0,2026-02-25,357
+"Beef Short Ribs, Local",,421.25,2026-02-25,358
+"Beef Sirloin, Local",,484.35,2026-02-25,359
+"Beef Striploin, Local",,488.75,2026-02-25,360
+"Beef Tenderloin, Local",,676.61,2026-02-25,361
+"Beef Tongue, Local",,545.0,2026-02-25,362
+"Pork Belly (Liempo), Local",,382.03,2026-02-25,363
+"Pork Belly (Liempo), Imported",,312.77,2026-02-25,364
+"Pork Boston Shoulder, Local",,357.5,2026-02-25,365
+"Pork Chop, Local",,333.12,2026-02-25,366
+"Pork Chop, Imported",,251.67,2026-02-25,367
+"Pork Fore Shank, Local",,321.6,2026-02-25,368
+"Pork Fore Shank, Imported",,226.67,2026-02-25,369
+"Pork Head, Local",,259.1,2026-02-25,370
+"Pork Head, Imported",,200.0,2026-02-25,371
+"Pork Hind Leg (Pigue), Local",,331.25,2026-02-25,372
+"Pork Hind Leg (Pigue), Imported",,253.57,2026-02-25,373
+"Pork Hind Shank, Local",,316.92,2026-02-25,374
+"Pork Hind Shank, Imported",,216.67,2026-02-25,375
+"Pork Loin, Local",,377.79,2026-02-25,376
+"Pork Loin, Imported",,278.0,2026-02-25,377
+"Pork Offals, Local",,250.56,2026-02-25,378
+"Pork Offals, Imported",,152.63,2026-02-25,379
+"Pork Picnic Shoulder (Kasim),
+Local",,329.9,2026-02-25,380
+"Pork Picnic Shoulder (Kasim),
+Imported",,254.8,2026-02-25,381
+"Pork Rind/Skin, Local",,106.67,2026-02-25,382
+"Pork Spare Ribs, Local",,323.35,2026-02-25,383
+"Pork Spare Ribs, Imported",,244.17,2026-02-25,384
+"Carabeef Forequarter, Local",,326.67,2026-02-25,385
+"Carabeef Meat, Local",,370.0,2026-02-25,386
+"Carabeef Rump Steak, Local",,380.0,2026-02-25,387
+"Chicken Breast, Local",,220.41,2026-02-25,388
+"Chicken Breast, Local",,230.0,2026-02-25,389
+"Chicken Breast, Local",,210.77,2026-02-25,390
+"Chicken Drumstick, Local",,227.35,2026-02-25,391
+"Chicken Drumstick, Local",,230.0,2026-02-25,392
+"Chicken Drumstick, Local","Unbranded, Fresh",217.31,2026-02-25,393
+"Chicken Feet, Local",,144.51,2026-02-25,394
+Chicken Leg Quarter,Magnolia,224.49,2026-02-25,395
+Chicken Leg Quarter,Bounty Fresh,230.0,2026-02-25,396
+Chicken Leg Quarter,"Unbranded, Fresh",211.93,2026-02-25,397
+"Chicken Leg Quarter, Imported",,165.5,2026-02-25,398
+"Chicken Liver, Local",,231.21,2026-02-25,399
+"Chicken Neck, Local",,141.6,2026-02-25,400
+"Chicken Rind/Skin, Local",,148.8,2026-02-25,401
+"Chicken Thigh, Local",,215.51,2026-02-25,402
+"Chicken Wing, Local",Magnolia,226.1,2026-02-25,403
+"Chicken Wing, Local",Bounty Fresh,230.0,2026-02-25,404
+"Chicken Wing, Local","Unbranded, Fresh",216.46,2026-02-25,405
+"Whole Chicken, Local",Magnolia,209.26,2026-02-25,406
+"Whole Chicken, Local",Bounty Fresh,210.0,2026-02-25,407
+"Whole Chicken, Local",Fully Dressed,198.39,2026-02-25,408
+"Chicken Egg (White, Medium)",56-60 grams/pc,8.19,2026-02-25,409
+Ampalaya,4-5 pcs/kg,127.07,2026-02-25,410
+"Chilli (Green), Local",Haba/Panigang,101.09,2026-02-25,411
+Eggplant,3-4 Small Bundles,74.29,2026-02-25,412
+Native Pechay,3-4 Small Bundles,72.14,2026-02-25,413
+Pole Sitao,3-4 Small Bundles,134.51,2026-02-25,414
+Squash,Suprema Variety,60.72,2026-02-25,415
+Tomato,15-18 pcs/kg,62.65,2026-02-25,416
+"Bell Pepper (Green), Local",Medium (151-250gm/pc),228.95,2026-02-25,417
+"Bell Pepper (Red), Local",Medium (151-250gm/pc),233.05,2026-02-25,418
+"Broccoli, Local","Medium (8-10 cm
+diameter/bunch hd)",148.46,2026-02-25,419
+"Broccoli, Imported",,209.51,2026-02-25,420
+"Cauliflower, Local","Medium (8-10 cm
+diameter/bunch hd)",110.73,2026-02-25,421
+Cabbage (Rare Ball),510 gm - 1 kg/head,74.37,2026-02-25,422
+Cabbage (Scorpio),750 gm - 1 kg/head,82.31,2026-02-25,423
+Cabbage (Wonder Ball),510 gm - 1 kg/head,76.87,2026-02-25,424
+"Carrots, Local",8-10 pcs/kg,101.99,2026-02-25,425
+"Carrots, Imported",,102.0,2026-02-25,426
+Celery,Medium (501-800 g),156.63,2026-02-25,427
+Chayote,Medium (301-400 g),54.66,2026-02-25,428
+"Habichuelas/Baguio Beans, Local",,109.17,2026-02-25,429
+Pechay Baguio,,79.88,2026-02-25,430
+Lettuce (Green Ice),,160.41,2026-02-25,431
+Lettuce (Iceberg),"Medium (301-450 cm
+diameter/bunch hd)",214.15,2026-02-25,432
+Lettuce (Romaine),,168.04,2026-02-25,433
+"White Potato, Local",10-12 pcs/kg,114.29,2026-02-25,434
+"Chilli (Red), Local",,175.91,2026-02-25,435
+"Garlic, Native/Local",,366.67,2026-02-25,436
+"Garlic, Imported",,149.35,2026-02-25,437
+"Ginger, Local",,154.96,2026-02-25,438
+"Ginger, Imported",,157.5,2026-02-25,439
+"Red Onion, Local",,119.65,2026-02-25,440
+"Red Onion, Imported",,105.0,2026-02-25,441
+"Red Onion, Imported",,102.69,2026-02-25,442
+"White Onion, Local",,102.54,2026-02-25,443
+"White Onion, Imported",,118.48,2026-02-25,444
+"White Onion, Imported",,107.66,2026-02-25,445
+Avocado,,310.19,2026-02-25,446
+Banana (Lakatan),,99.37,2026-02-25,447
+Banana (Latundan),,75.42,2026-02-25,448
+Banana (Saba),,55.54,2026-02-25,449
+Calamansi,,132.85,2026-02-25,450
+Mango (Carabao),,197.11,2026-02-25,451
+Melon,,105.54,2026-02-25,452
+Papaya,,73.09,2026-02-25,453
+Pomelo,,183.67,2026-02-25,454
+Watermelon,,84.19,2026-02-25,455
+Salt (Rock),,21.43,2026-02-25,456
+Salt (Iodized),,38.77,2026-02-25,457
+Sugar (Refined),,81.99,2026-02-25,458
+Sugar (Washed),,74.94,2026-02-25,459
+Sugar (Brown),,73.43,2026-02-25,460
+Cooking Oil (Palm),350 ml/bottle,35.87,2026-02-25,461
+Cooking Oil (Palm),1 Liter/bottle,90.61,2026-02-25,462
+Cooking Oil (Coconut),350 ml/bottle,58.93,2026-02-25,463
+Cooking Oil (Coconut),1 Liter/bottle,160.57,2026-02-25,464
+Cooking Oil (Minola),500 ml/bottle,90.0,2026-02-25,465
+Cooking Oil (Minola),"1,000 ml/bottle",140.0,2026-02-25,466
+Cooking Oil (Spring),"1,000 ml/bottle",149.63,2026-02-25,467
+"Cooking Oil (Palm Olein, Jolly
+Brand)","1,000 ml/bottle",151.82,2026-02-25,468
+Imported Commercial Rice - Basmati Rice,,200.83,2026-02-24,469
+Imported Commercial Rice - Glutinous Rice,,61.22,2026-02-24,470
+Imported Commercial Rice - Jasponica/Japonica Rice,,63.61,2026-02-24,471
+Imported Commercial Rice - Other Special Rice,,60.79,2026-02-24,472
+Imported Commercial Rice - Premium,,57.04,2026-02-24,473
+Imported Commercial Rice - Well Milled,,47.19,2026-02-24,474
+Imported Commercial Rice - Regular Milled,,41.24,2026-02-24,475
+Local Commercial Rice - Glutinous Rice,,77.07,2026-02-24,476
+Local Commercial Rice - Other Special Rice,,58.91,2026-02-24,477
+Local Commercial Rice - Premium,,52.19,2026-02-24,478
+Local Commercial Rice - Well Milled,,45.88,2026-02-24,479
+Local Commercial Rice - Regular Milled,,41.0,2026-02-24,480
+Corn (White),,76.67,2026-02-24,481
+Corn (Yellow),,77.5,2026-02-24,482
+"Corn Grits (White, Food Grade)",,120.0,2026-02-24,483
+"Corn Grits (Yellow, Food Grade)",,120.0,2026-02-24,484
+"Corn Cracked (Yellow, Feed Grade)",,50.0,2026-02-24,485
+Corn Grits (Feed Grade),,45.0,2026-02-24,486
+Mungbean,,129.54,2026-02-24,487
+Alumahan (Indian Mackerel),,355.53,2026-02-24,488
+"Bangus, Large",,258.04,2026-02-24,489
+"Bangus, Medium",Medium (3-4 pcs/kg),233.97,2026-02-24,490
+"Galunggong, Local","Male, Medium (12-14 pcs/kg)",356.59,2026-02-24,491
+"Galunggong, Imported","Male, Medium (12-14 pcs/kg)",306.67,2026-02-24,492
+"Pampano, Local",,495.56,2026-02-24,493
+"Pampano, Imported",,409.25,2026-02-24,494
+"Salmon Belly, Imported",,424.33,2026-02-24,495
+"Salmon Head, Imported",,224.0,2026-02-24,496
+Sardines (Tamban),,157.0,2026-02-24,497
+"Squid (Pusit Bisaya), Local",Medium,481.79,2026-02-24,498
+"Squid, Imported",,219.29,2026-02-24,499
+"Tambakol (Yellow-Fin Tuna),
+Local","Medium, Fresh or Chilled",326.8,2026-02-24,500
+Tilapia,Medium (5-6 pcs/kg),152.83,2026-02-24,501
+"Beef Brisket, Local",Meat with Bones,429.3,2026-02-24,502
+"Beef Brisket, Imported",,380.0,2026-02-24,503
+"Beef Chuck, Local",,413.61,2026-02-24,504
+"Beef Forequarter, Local",,480.0,2026-02-24,505
+"Beef Fore Limb, Local",,461.43,2026-02-24,506
+"Beef Flank, Local",,443.18,2026-02-24,507
+"Beef Loin, Local",,562.0,2026-02-24,508
+"Beef Plate, Local",,415.38,2026-02-24,509
+"Beef Rib Eye, Local",,437.14,2026-02-24,510
+"Beef Rib Set, Local",,413.14,2026-02-24,511
+"Beef Rump, Local",Lean Meat/ Tapadera,485.06,2026-02-24,512
+"Beef Rump, Imported",,375.0,2026-02-24,513
+"Beef Short Ribs, Local",,421.25,2026-02-24,514
+"Beef Sirloin, Local",,484.35,2026-02-24,515
+"Beef Striploin, Local",,488.75,2026-02-24,516
+"Beef Tenderloin, Local",,676.61,2026-02-24,517
+"Beef Tongue, Local",,545.0,2026-02-24,518
+"Pork Belly (Liempo), Local",,384.48,2026-02-24,519
+"Pork Belly (Liempo), Imported",,314.29,2026-02-24,520
+"Pork Boston Shoulder, Local",,357.5,2026-02-24,521
+"Pork Chop, Local",,334.43,2026-02-24,522
+"Pork Chop, Imported",,252.0,2026-02-24,523
+"Pork Fore Shank, Local",,319.64,2026-02-24,524
+"Pork Fore Shank, Imported",,226.67,2026-02-24,525
+"Pork Head, Local",,259.1,2026-02-24,526
+"Pork Head, Imported",,200.0,2026-02-24,527
+"Pork Hind Leg (Pigue), Local",,333.13,2026-02-24,528
+"Pork Hind Leg (Pigue), Imported",,255.45,2026-02-24,529
+"Pork Hind Shank, Local",,317.38,2026-02-24,530
+"Pork Hind Shank, Imported",,218.0,2026-02-24,531
+"Pork Loin, Local",,380.94,2026-02-24,532
+"Pork Loin, Imported",,240.0,2026-02-24,533
+"Pork Offals, Local",,255.24,2026-02-24,534
+"Pork Offals, Imported",,157.86,2026-02-24,535
+"Pork Picnic Shoulder (Kasim),
+Local",,331.59,2026-02-24,536
+"Pork Picnic Shoulder (Kasim),
+Imported",,255.76,2026-02-24,537
+"Pork Rind/Skin, Local",,106.67,2026-02-24,538
+"Pork Spare Ribs, Local",,324.77,2026-02-24,539
+"Pork Spare Ribs, Imported",,244.17,2026-02-24,540
+"Carabeef Forequarter, Local",,326.67,2026-02-24,541
+"Carabeef Meat, Local",,373.33,2026-02-24,542
+"Carabeef Rump Steak, Local",,393.33,2026-02-24,543
+"Chicken Breast, Local",,222.82,2026-02-24,544
+"Chicken Breast, Local",,230.0,2026-02-24,545
+"Chicken Breast, Local",,210.84,2026-02-24,546
+"Chicken Drumstick, Local",,226.41,2026-02-24,547
+"Chicken Drumstick, Local",,230.0,2026-02-24,548
+"Chicken Drumstick, Local","Unbranded, Fresh",216.28,2026-02-24,549
+"Chicken Feet, Local",,144.79,2026-02-24,550
+Chicken Leg Quarter,Magnolia,226.15,2026-02-24,551
+Chicken Leg Quarter,Bounty Fresh,230.0,2026-02-24,552
+Chicken Leg Quarter,"Unbranded, Fresh",211.35,2026-02-24,553
+"Chicken Leg Quarter, Imported",,171.0,2026-02-24,554
+"Chicken Liver, Local",,230.31,2026-02-24,555
+"Chicken Neck, Local",,140.32,2026-02-24,556
+"Chicken Rind/Skin, Local",,148.8,2026-02-24,557
+"Chicken Thigh, Local",,215.51,2026-02-24,558
+"Chicken Wing, Local",Magnolia,225.88,2026-02-24,559
+"Chicken Wing, Local",Bounty Fresh,230.0,2026-02-24,560
+"Chicken Wing, Local","Unbranded, Fresh",216.29,2026-02-24,561
+"Whole Chicken, Local",Magnolia,209.84,2026-02-24,562
+"Whole Chicken, Local",Bounty Fresh,210.0,2026-02-24,563
+"Whole Chicken, Local",Fully Dressed,198.46,2026-02-24,564
+"Chicken Egg (White, Medium)",56-60 grams/pc,8.19,2026-02-24,565
+Ampalaya,4-5 pcs/kg,128.18,2026-02-24,566
+"Chilli (Green), Local",Haba/Panigang,103.59,2026-02-24,567
+Eggplant,3-4 Small Bundles,74.38,2026-02-24,568
+Native Pechay,3-4 Small Bundles,72.84,2026-02-24,569
+Pole Sitao,3-4 Small Bundles,132.14,2026-02-24,570
+Squash,Suprema Variety,61.18,2026-02-24,571
+Tomato,15-18 pcs/kg,63.5,2026-02-24,572
+"Bell Pepper (Green), Local",Medium (151-250gm/pc),227.85,2026-02-24,573
+"Bell Pepper (Red), Local",Medium (151-250gm/pc),230.85,2026-02-24,574
+"Broccoli, Local","Medium (8-10 cm
+diameter/bunch hd)",149.23,2026-02-24,575
+"Broccoli, Imported",,211.06,2026-02-24,576
+"Cauliflower, Local","Medium (8-10 cm
+diameter/bunch hd)",111.04,2026-02-24,577
+Cabbage (Rare Ball),510 gm - 1 kg/head,75.17,2026-02-24,578
+Cabbage (Scorpio),750 gm - 1 kg/head,83.7,2026-02-24,579
+Cabbage (Wonder Ball),510 gm - 1 kg/head,76.75,2026-02-24,580
+"Carrots, Local",8-10 pcs/kg,99.77,2026-02-24,581
+"Carrots, Imported",,99.41,2026-02-24,582
+Celery,Medium (501-800 g),159.67,2026-02-24,583
+Chayote,Medium (301-400 g),55.15,2026-02-24,584
+"Habichuelas/Baguio Beans, Local",,106.94,2026-02-24,585
+Pechay Baguio,,80.9,2026-02-24,586
+Lettuce (Green Ice),,165.0,2026-02-24,587
+Lettuce (Iceberg),"Medium (301-450 cm
+diameter/bunch hd)",224.62,2026-02-24,588
+Lettuce (Romaine),,171.89,2026-02-24,589
+"White Potato, Local",10-12 pcs/kg,114.53,2026-02-24,590
+"Chilli (Red), Local",,178.97,2026-02-24,591
+"Garlic, Native/Local",,375.0,2026-02-24,592
+"Garlic, Imported",,149.52,2026-02-24,593
+"Ginger, Local",,152.81,2026-02-24,594
+"Ginger, Imported",,157.5,2026-02-24,595
+"Red Onion, Local",,119.62,2026-02-24,596
+"Red Onion, Imported",,104.08,2026-02-24,597
+"Red Onion, Imported",,101.3,2026-02-24,598
+"White Onion, Local",,102.12,2026-02-24,599
+"White Onion, Imported",,118.44,2026-02-24,600
+"White Onion, Imported",,104.83,2026-02-24,601
+Avocado,,315.0,2026-02-24,602
+Banana (Lakatan),,99.29,2026-02-24,603
+Banana (Latundan),,75.55,2026-02-24,604
+Banana (Saba),,55.39,2026-02-24,605
+Calamansi,,133.33,2026-02-24,606
+Mango (Carabao),,200.13,2026-02-24,607
+Melon,,106.43,2026-02-24,608
+Papaya,,72.33,2026-02-24,609
+Pomelo,,183.73,2026-02-24,610
+Watermelon,,80.51,2026-02-24,611
+Salt (Rock),,21.65,2026-02-24,612
+Salt (Iodized),,38.97,2026-02-24,613
+Sugar (Refined),,82.46,2026-02-24,614
+Sugar (Washed),,75.44,2026-02-24,615
+Sugar (Brown),,73.94,2026-02-24,616
+Cooking Oil (Palm),350 ml/bottle,35.91,2026-02-24,617
+Cooking Oil (Palm),1 Liter/bottle,90.79,2026-02-24,618
+Cooking Oil (Coconut),350 ml/bottle,58.26,2026-02-24,619
+Cooking Oil (Coconut),1 Liter/bottle,159.74,2026-02-24,620
+Cooking Oil (Minola),500 ml/bottle,90.0,2026-02-24,621
+Cooking Oil (Minola),"1,000 ml/bottle",140.0,2026-02-24,622
+Cooking Oil (Spring),"1,000 ml/bottle",149.57,2026-02-24,623
+"Cooking Oil (Palm Olein, Jolly
+Brand)","1,000 ml/bottle",151.82,2026-02-24,624
+Imported Commercial Rice - Basmati Rice,,207.86,2026-02-23,625
+Imported Commercial Rice - Glutinous Rice,,61.22,2026-02-23,626
+Imported Commercial Rice - Jasponica/Japonica Rice,,63.15,2026-02-23,627
+Imported Commercial Rice - Other Special Rice,,60.83,2026-02-23,628
+Imported Commercial Rice - Premium,,57.36,2026-02-23,629
+Imported Commercial Rice - Well Milled,,47.07,2026-02-23,630
+Imported Commercial Rice - Regular Milled,,41.44,2026-02-23,631
+Local Commercial Rice - Glutinous Rice,,73.94,2026-02-23,632
+Local Commercial Rice - Other Special Rice,,58.93,2026-02-23,633
+Local Commercial Rice - Premium,,52.38,2026-02-23,634
+Local Commercial Rice - Well Milled,,45.97,2026-02-23,635
+Local Commercial Rice - Regular Milled,,41.16,2026-02-23,636
+Corn (White),,76.67,2026-02-23,637
+Corn (Yellow),,78.72,2026-02-23,638
+"Corn Grits (White, Food Grade)",,120.0,2026-02-23,639
+"Corn Grits (Yellow, Food Grade)",,120.0,2026-02-23,640
+"Corn Cracked (Yellow, Feed Grade)",,50.0,2026-02-23,641
+Corn Grits (Feed Grade),,46.67,2026-02-23,642
+Mungbean,,129.74,2026-02-23,643
+Alumahan (Indian Mackerel),,350.63,2026-02-23,644
+"Bangus, Large",,257.26,2026-02-23,645
+"Bangus, Medium",Medium (3-4 pcs/kg),233.76,2026-02-23,646
+"Galunggong, Local","Male, Medium (12-14 pcs/kg)",347.57,2026-02-23,647
+"Galunggong, Imported","Male, Medium (12-14 pcs/kg)",305.33,2026-02-23,648
+"Pampano, Local",,508.89,2026-02-23,649
+"Pampano, Imported",,407.19,2026-02-23,650
+"Salmon Belly, Imported",,420.47,2026-02-23,651
+"Salmon Head, Imported",,221.76,2026-02-23,652
+Sardines (Tamban),,155.45,2026-02-23,653
+"Squid (Pusit Bisaya), Local",Medium,479.06,2026-02-23,654
+"Squid, Imported",,216.88,2026-02-23,655
+"Tambakol (Yellow-Fin Tuna),
+Local","Medium, Fresh or Chilled",322.08,2026-02-23,656
+Tilapia,Medium (5-6 pcs/kg),153.18,2026-02-23,657
+"Beef Brisket, Local",Meat with Bones,428.75,2026-02-23,658
+"Beef Brisket, Imported",,380.0,2026-02-23,659
+"Beef Chuck, Local",,413.61,2026-02-23,660
+"Beef Forequarter, Local",,480.0,2026-02-23,661
+"Beef Fore Limb, Local",,461.43,2026-02-23,662
+"Beef Flank, Local",,443.18,2026-02-23,663
+"Beef Loin, Local",,562.0,2026-02-23,664
+"Beef Plate, Local",,415.38,2026-02-23,665
+"Beef Rib Eye, Local",,437.14,2026-02-23,666
+"Beef Rib Set, Local",,411.47,2026-02-23,667
+"Beef Rump, Local",Lean Meat/ Tapadera,483.72,2026-02-23,668
+"Beef Rump, Imported",,375.0,2026-02-23,669
+"Beef Short Ribs, Local",,418.16,2026-02-23,670
+"Beef Sirloin, Local",,483.77,2026-02-23,671
+"Beef Striploin, Local",,488.75,2026-02-23,672
+"Beef Tenderloin, Local",,676.61,2026-02-23,673
+"Beef Tongue, Local",,545.0,2026-02-23,674
+"Pork Belly (Liempo), Local",,382.4,2026-02-23,675
+"Pork Belly (Liempo), Imported",,312.77,2026-02-23,676
+"Pork Boston Shoulder, Local",,357.5,2026-02-23,677
+"Pork Chop, Local",,332.93,2026-02-23,678
+"Pork Chop, Imported",,251.67,2026-02-23,679
+"Pork Fore Shank, Local",,321.23,2026-02-23,680
+"Pork Fore Shank, Imported",,226.67,2026-02-23,681
+"Pork Head, Local",,259.1,2026-02-23,682
+"Pork Head, Imported",,200.0,2026-02-23,683
+"Pork Hind Leg (Pigue), Local",,331.47,2026-02-23,684
+"Pork Hind Leg (Pigue), Imported",,254.07,2026-02-23,685
+"Pork Hind Shank, Local",,317.38,2026-02-23,686
+"Pork Hind Shank, Imported",,216.67,2026-02-23,687
+"Pork Loin, Local",,377.66,2026-02-23,688
+"Pork Loin, Imported",,278.0,2026-02-23,689
+"Pork Offals, Local",,250.56,2026-02-23,690
+"Pork Offals, Imported",,152.63,2026-02-23,691
+"Pork Picnic Shoulder (Kasim),
+Local",,329.97,2026-02-23,692
+"Pork Picnic Shoulder (Kasim),
+Imported",,254.8,2026-02-23,693
+"Pork Rind/Skin, Local",,106.67,2026-02-23,694
+"Pork Spare Ribs, Local",,323.12,2026-02-23,695
+"Pork Spare Ribs, Imported",,244.17,2026-02-23,696
+"Carabeef Forequarter, Local",,326.67,2026-02-23,697
+"Carabeef Meat, Local",,370.0,2026-02-23,698
+"Carabeef Rump Steak, Local",,380.0,2026-02-23,699
+"Chicken Breast, Local",,220.0,2026-02-23,700
+"Chicken Breast, Local",,230.0,2026-02-23,701
+"Chicken Breast, Local",,210.02,2026-02-23,702
+"Chicken Drumstick, Local",,227.23,2026-02-23,703
+"Chicken Drumstick, Local",,230.0,2026-02-23,704
+"Chicken Drumstick, Local","Unbranded, Fresh",216.57,2026-02-23,705
+"Chicken Feet, Local",,144.51,2026-02-23,706
+Chicken Leg Quarter,Magnolia,224.26,2026-02-23,707
+Chicken Leg Quarter,Bounty Fresh,230.0,2026-02-23,708
+Chicken Leg Quarter,"Unbranded, Fresh",211.16,2026-02-23,709
+"Chicken Leg Quarter, Imported",,165.5,2026-02-23,710
+"Chicken Liver, Local",,231.24,2026-02-23,711
+"Chicken Neck, Local",,141.63,2026-02-23,712
+"Chicken Rind/Skin, Local",,149.57,2026-02-23,713
+"Chicken Thigh, Local",,214.94,2026-02-23,714
+"Chicken Wing, Local",Magnolia,226.35,2026-02-23,715
+"Chicken Wing, Local",Bounty Fresh,230.0,2026-02-23,716
+"Chicken Wing, Local","Unbranded, Fresh",215.91,2026-02-23,717
+"Whole Chicken, Local",Magnolia,208.94,2026-02-23,718
+"Whole Chicken, Local",Bounty Fresh,210.0,2026-02-23,719
+"Whole Chicken, Local",Fully Dressed,198.01,2026-02-23,720
+"Chicken Egg (White, Medium)",56-60 grams/pc,8.2,2026-02-23,721
+Ampalaya,4-5 pcs/kg,128.63,2026-02-23,722
+"Chilli (Green), Local",Haba/Panigang,104.23,2026-02-23,723
+Eggplant,3-4 Small Bundles,75.58,2026-02-23,724
+Native Pechay,3-4 Small Bundles,72.52,2026-02-23,725
+Pole Sitao,3-4 Small Bundles,132.39,2026-02-23,726
+Squash,Suprema Variety,60.93,2026-02-23,727
+Tomato,15-18 pcs/kg,64.38,2026-02-23,728
+"Bell Pepper (Green), Local",Medium (151-250gm/pc),232.89,2026-02-23,729
+"Bell Pepper (Red), Local",Medium (151-250gm/pc),232.17,2026-02-23,730
+"Broccoli, Local","Medium (8-10 cm
+diameter/bunch hd)",160.83,2026-02-23,731
+"Broccoli, Imported",,213.27,2026-02-23,732
+"Cauliflower, Local","Medium (8-10 cm
+diameter/bunch hd)",111.95,2026-02-23,733
+Cabbage (Rare Ball),510 gm - 1 kg/head,75.4,2026-02-23,734
+Cabbage (Scorpio),750 gm - 1 kg/head,87.2,2026-02-23,735
+Cabbage (Wonder Ball),510 gm - 1 kg/head,77.84,2026-02-23,736
+"Carrots, Local",8-10 pcs/kg,98.77,2026-02-23,737
+"Carrots, Imported",,100.59,2026-02-23,738
+Celery,Medium (501-800 g),159.9,2026-02-23,739
+Chayote,Medium (301-400 g),55.03,2026-02-23,740
+"Habichuelas/Baguio Beans, Local",,104.09,2026-02-23,741
+Pechay Baguio,,80.92,2026-02-23,742
+Lettuce (Green Ice),,167.01,2026-02-23,743
+Lettuce (Iceberg),"Medium (301-450 cm
+diameter/bunch hd)",228.21,2026-02-23,744
+Lettuce (Romaine),,170.82,2026-02-23,745
+"White Potato, Local",10-12 pcs/kg,114.52,2026-02-23,746
+"Chilli (Red), Local",,181.71,2026-02-23,747
+"Garlic, Native/Local",,366.67,2026-02-23,748
+"Garlic, Imported",,149.76,2026-02-23,749
+"Ginger, Local",,154.62,2026-02-23,750
+"Ginger, Imported",,164.17,2026-02-23,751
+"Red Onion, Local",,120.79,2026-02-23,752
+"Red Onion, Imported",,107.39,2026-02-23,753
+"Red Onion, Imported",,103.39,2026-02-23,754
+"White Onion, Local",,105.9,2026-02-23,755
+"White Onion, Imported",,113.55,2026-02-23,756
+"White Onion, Imported",,109.85,2026-02-23,757
+Avocado,,313.46,2026-02-23,758
+Banana (Lakatan),,98.98,2026-02-23,759
+Banana (Latundan),,75.37,2026-02-23,760
+Banana (Saba),,55.33,2026-02-23,761
+Calamansi,,132.82,2026-02-23,762
+Mango (Carabao),,199.76,2026-02-23,763
+Melon,,105.62,2026-02-23,764
+Papaya,,72.02,2026-02-23,765
+Pomelo,,183.67,2026-02-23,766
+Watermelon,,80.66,2026-02-23,767
+Salt (Rock),,21.38,2026-02-23,768
+Salt (Iodized),,38.71,2026-02-23,769
+Sugar (Refined),,81.99,2026-02-23,770
+Sugar (Washed),,74.94,2026-02-23,771
+Sugar (Brown),,73.43,2026-02-23,772
+Cooking Oil (Palm),350 ml/bottle,35.85,2026-02-23,773
+Cooking Oil (Palm),1 Liter/bottle,90.65,2026-02-23,774
+Cooking Oil (Coconut),350 ml/bottle,58.88,2026-02-23,775
+Cooking Oil (Coconut),1 Liter/bottle,160.1,2026-02-23,776
+Cooking Oil (Minola),500 ml/bottle,90.0,2026-02-23,777
+Cooking Oil (Minola),"1,000 ml/bottle",140.0,2026-02-23,778
+Cooking Oil (Spring),"1,000 ml/bottle",149.63,2026-02-23,779
+"Cooking Oil (Palm Olein, Jolly
+Brand)","1,000 ml/bottle",151.82,2026-02-23,780
+Imported Commercial Rice - Basmati Rice,,176.67,2026-02-22,781
+Imported Commercial Rice - Glutinous Rice,,63.0,2026-02-22,782
+Imported Commercial Rice - Jasponica/Japonica Rice,,62.0,2026-02-22,783
+Imported Commercial Rice - Other Special Rice,,61.0,2026-02-22,784
+Imported Commercial Rice - Premium,,55.67,2026-02-22,785
+Imported Commercial Rice - Well Milled,,47.25,2026-02-22,786
+Imported Commercial Rice - Regular Milled,,41.25,2026-02-22,787
+Imported Commercial Rice - Glutinous Rice,,75.0,2026-02-22,788
+Imported Commercial Rice - Other Special Rice,,59.0,2026-02-22,789
+Imported Commercial Rice - Premium,,52.3,2026-02-22,790
+Imported Commercial Rice - Well Milled,,46.86,2026-02-22,791
+Imported Commercial Rice - Regular Milled,,41.14,2026-02-22,792
+Corn (Yellow),,82.5,2026-02-22,793
+Corn Grits (Feed Grade),,40.0,2026-02-22,794
+Mungbean,,131.0,2026-02-22,795
+Alumahan (Indian Mackerel),,353.33,2026-02-22,796
+"Bangus, Large",,265.56,2026-02-22,797
+"Bangus, Medium",Medium (3-4 pcs/kg),235.0,2026-02-22,798
+"Galunggong, Local","Male, Medium (12-14 pcs/kg)",337.14,2026-02-22,799
+"Galunggong, Imported","Male, Medium (12-14 pcs/kg)",312.5,2026-02-22,800
+"Pampano, Imported",,415.0,2026-02-22,801
+"Salmon Belly, Imported",,392.86,2026-02-22,802
+"Salmon Head, Imported",,241.0,2026-02-22,803
+Sardines (Tamban),,130.0,2026-02-22,804
+"Squid (Pusit Bisaya), Local",Medium,477.5,2026-02-22,805
+"Squid, Imported",,240.0,2026-02-22,806
+"Tambakol (Yellow-Fin Tuna),
+Local","Medium, Fresh or Chilled",330.0,2026-02-22,807
+Tilapia,Medium (5-6 pcs/kg),156.0,2026-02-22,808
+"Beef Brisket, Local",Meat with Bones,440.0,2026-02-22,809
+"Beef Brisket, Imported",,380.0,2026-02-22,810
+"Beef Chuck, Local",,418.0,2026-02-22,811
+"Beef Forequarter, Local",,497.5,2026-02-22,812
+"Beef Fore Limb, Local",,470.0,2026-02-22,813
+"Beef Flank, Local",,447.5,2026-02-22,814
+"Beef Loin, Local",,610.0,2026-02-22,815
+"Beef Plate, Local",,400.0,2026-02-22,816
+"Beef Rib Eye, Local",,480.0,2026-02-22,817
+"Beef Rib Set, Local",,423.33,2026-02-22,818
+"Beef Rump, Local",Lean Meat/ Tapadera,493.5,2026-02-22,819
+"Beef Short Ribs, Local",,441.25,2026-02-22,820
+"Beef Sirloin, Local",,495.63,2026-02-22,821
+"Beef Striploin, Local",,493.0,2026-02-22,822
+"Beef Tenderloin, Local",,767.5,2026-02-22,823
+"Beef Tongue, Local",,450.0,2026-02-22,824
+"Pork Belly (Liempo), Local",,387.0,2026-02-22,825
+"Pork Belly (Liempo), Imported",,316.0,2026-02-22,826
+"Pork Boston Shoulder, Local",,363.33,2026-02-22,827
+"Pork Chop, Local",,337.5,2026-02-22,828
+"Pork Chop, Imported",,250.0,2026-02-22,829
+"Pork Fore Shank, Local",,320.0,2026-02-22,830
+"Pork Head, Local",,232.5,2026-02-22,831
+"Pork Hind Leg (Pigue), Local",,336.5,2026-02-22,832
+"Pork Hind Shank, Local",,340.0,2026-02-22,833
+"Pork Hind Shank, Imported",,220.0,2026-02-22,834
+"Pork Loin, Local",,397.14,2026-02-22,835
+"Pork Offals, Local",,285.0,2026-02-22,836
+"Pork Offals, Imported",,140.0,2026-02-22,837
+"Pork Picnic Shoulder (Kasim),
+Local",,333.0,2026-02-22,838
+"Pork Picnic Shoulder (Kasim),
+Imported",,258.0,2026-02-22,839
+"Pork Rind/Skin, Local",,100.0,2026-02-22,840
+"Pork Spare Ribs, Local",,339.5,2026-02-22,841
+"Pork Spare Ribs, Imported",,240.0,2026-02-22,842
+"Chicken Breast, Local",,215.83,2026-02-22,843
+"Chicken Breast, Local",,220.0,2026-02-22,844
+"Chicken Breast, Local",,213.13,2026-02-22,845
+"Chicken Drumstick, Local",,219.17,2026-02-22,846
+"Chicken Drumstick, Local",,220.0,2026-02-22,847
+"Chicken Drumstick, Local","Unbranded, Fresh",220.0,2026-02-22,848
+"Chicken Feet, Local",,151.43,2026-02-22,849
+Chicken Leg Quarter,Magnolia,219.17,2026-02-22,850
+Chicken Leg Quarter,Bounty Fresh,220.0,2026-02-22,851
+Chicken Leg Quarter,"Unbranded, Fresh",215.63,2026-02-22,852
+"Chicken Liver, Local",,231.25,2026-02-22,853
+"Chicken Neck, Local",,146.67,2026-02-22,854
+"Chicken Rind/Skin, Local",,155.0,2026-02-22,855
+"Chicken Thigh, Local",,223.57,2026-02-22,856
+"Chicken Wing, Local",Magnolia,212.5,2026-02-22,857
+"Chicken Wing, Local",Bounty Fresh,220.0,2026-02-22,858
+"Chicken Wing, Local","Unbranded, Fresh",219.38,2026-02-22,859
+"Whole Chicken, Local",Magnolia,208.57,2026-02-22,860
+"Whole Chicken, Local",Bounty Fresh,200.0,2026-02-22,861
+"Whole Chicken, Local",Fully Dressed,207.0,2026-02-22,862
+"Chicken Egg (White, Medium)",56-60 grams/pc,8.24,2026-02-22,863
+Ampalaya,4-5 pcs/kg,131.0,2026-02-22,864
+"Chilli (Green), Local",Haba/Panigang,108.0,2026-02-22,865
+Eggplant,3-4 Small Bundles,75.5,2026-02-22,866
+Native Pechay,3-4 Small Bundles,73.0,2026-02-22,867
+Pole Sitao,3-4 Small Bundles,135.0,2026-02-22,868
+Squash,Suprema Variety,63.5,2026-02-22,869
+Tomato,15-18 pcs/kg,67.0,2026-02-22,870
+"Bell Pepper (Green), Local",Medium (151-250gm/pc),258.57,2026-02-22,871
+"Bell Pepper (Red), Local",Medium (151-250gm/pc),245.0,2026-02-22,872
+"Broccoli, Local","Medium (8-10 cm
+diameter/bunch hd)",180.0,2026-02-22,873
+"Broccoli, Imported",,213.75,2026-02-22,874
+"Cauliflower, Local","Medium (8-10 cm
+diameter/bunch hd)",108.89,2026-02-22,875
+Cabbage (Rare Ball),510 gm - 1 kg/head,83.33,2026-02-22,876
+Cabbage (Wonder Ball),510 gm - 1 kg/head,83.0,2026-02-22,877
+"Carrots, Local",8-10 pcs/kg,106.0,2026-02-22,878
+"Carrots, Imported",,110.0,2026-02-22,879
+Celery,Medium (501-800 g),183.33,2026-02-22,880
+Chayote,Medium (301-400 g),58.0,2026-02-22,881
+"Habichuelas/Baguio Beans, Local",,105.0,2026-02-22,882
+Pechay Baguio,,84.5,2026-02-22,883
+Lettuce (Green Ice),,207.5,2026-02-22,884
+Lettuce (Iceberg),"Medium (301-450 cm
+diameter/bunch hd)",255.0,2026-02-22,885
+Lettuce (Romaine),,226.67,2026-02-22,886
+"White Potato, Local",10-12 pcs/kg,117.5,2026-02-22,887
+"Chilli (Red), Local",,202.0,2026-02-22,888
+"Garlic, Native/Local",,400.0,2026-02-22,889
+"Garlic, Imported",,156.0,2026-02-22,890
+"Ginger, Local",,157.78,2026-02-22,891
+"Ginger, Imported",,180.0,2026-02-22,892
+"Red Onion, Local",,121.0,2026-02-22,893
+"Red Onion, Imported",,113.33,2026-02-22,894
+"Red Onion, Imported",,100.0,2026-02-22,895
+"White Onion, Local",,100.0,2026-02-22,896
+"White Onion, Imported",,106.0,2026-02-22,897
+"White Onion, Imported",,108.75,2026-02-22,898
+Avocado,,285.0,2026-02-22,899
+Banana (Lakatan),,104.5,2026-02-22,900
+Banana (Latundan),,77.78,2026-02-22,901
+Banana (Saba),,57.0,2026-02-22,902
+Calamansi,,135.0,2026-02-22,903
+Mango (Carabao),,199.0,2026-02-22,904
+Melon,,100.0,2026-02-22,905
+Papaya,,74.44,2026-02-22,906
+Pomelo,,182.86,2026-02-22,907
+Watermelon,,79.44,2026-02-22,908
+Salt (Rock),,21.56,2026-02-22,909
+Salt (Iodized),,48.29,2026-02-22,910
+Sugar (Refined),,80.2,2026-02-22,911
+Sugar (Washed),,73.3,2026-02-22,912
+Sugar (Brown),,73.2,2026-02-22,913
+Cooking Oil (Palm),350 ml/bottle,35.88,2026-02-22,914
+Cooking Oil (Palm),1 Liter/bottle,93.5,2026-02-22,915
+Cooking Oil (Coconut),350 ml/bottle,58.29,2026-02-22,916
+Cooking Oil (Coconut),1 Liter/bottle,159.38,2026-02-22,917
+"Cooking Oil (Palm Olein, Jolly
+Brand)","1,000 ml/bottle",150.0,2026-02-22,918
+Imported Commercial Rice - Basmati Rice,,217.5,2026-02-21,919
+Imported Commercial Rice - Glutinous Rice,,61.34,2026-02-21,920
+Imported Commercial Rice - Jasponica/Japonica Rice,,63.31,2026-02-21,921
+Imported Commercial Rice - Other Special Rice,,60.63,2026-02-21,922
+Imported Commercial Rice - Premium,,56.84,2026-02-21,923
+Imported Commercial Rice - Well Milled,,48.28,2026-02-21,924
+Imported Commercial Rice - Regular Milled,,42.21,2026-02-21,925
+Local Commercial Rice - Glutinous Rice,,75.13,2026-02-21,926
+Local Commercial Rice - Other Special Rice,,58.78,2026-02-21,927
+Local Commercial Rice - Premium,,52.08,2026-02-21,928
+Local Commercial Rice - Well Milled,,45.91,2026-02-21,929
+Local Commercial Rice - Regular Milled,,40.98,2026-02-21,930
+Corn (White),,80.77,2026-02-21,931
+Corn (Yellow),,78.87,2026-02-21,932
+"Corn Grits (White, Food Grade)",,120.0,2026-02-21,933
+"Corn Grits (Yellow, Food Grade)",,120.0,2026-02-21,934
+"Corn Cracked (Yellow, Feed Grade)",,50.0,2026-02-21,935
+Corn Grits (Feed Grade),,46.67,2026-02-21,936
+Mungbean,,129.36,2026-02-21,937
+Alumahan (Indian Mackerel),,362.09,2026-02-21,938
+"Bangus, Large",,257.42,2026-02-21,939
+"Bangus, Medium",Medium (3-4 pcs/kg),236.68,2026-02-21,940
+"Galunggong, Local","Male, Medium (12-14 pcs/kg)",341.91,2026-02-21,941
+"Galunggong, Imported","Male, Medium (12-14 pcs/kg)",307.69,2026-02-21,942
+"Pampano, Local",,440.0,2026-02-21,943
+"Pampano, Imported",,401.95,2026-02-21,944
+"Salmon Belly, Imported",,415.83,2026-02-21,945
+"Salmon Head, Imported",,215.62,2026-02-21,946
+Sardines (Tamban),,157.27,2026-02-21,947
+"Squid (Pusit Bisaya), Local",Medium,478.44,2026-02-21,948
+"Squid, Imported",,216.88,2026-02-21,949
+"Tambakol (Yellow-Fin Tuna),
+Local","Medium, Fresh or Chilled",327.55,2026-02-21,950
+Tilapia,Medium (5-6 pcs/kg),153.44,2026-02-21,951
+"Beef Brisket, Local",Meat with Bones,428.13,2026-02-21,952
+"Beef Brisket, Imported",,380.0,2026-02-21,953
+"Beef Chuck, Local",,413.61,2026-02-21,954
+"Beef Forequarter, Local",,480.0,2026-02-21,955
+"Beef Fore Limb, Local",,461.43,2026-02-21,956
+"Beef Flank, Local",,443.18,2026-02-21,957
+"Beef Loin, Local",,562.0,2026-02-21,958
+"Beef Plate, Local",,415.38,2026-02-21,959
+"Beef Rib Eye, Local",,437.14,2026-02-21,960
+"Beef Rib Set, Local",,413.14,2026-02-21,961
+"Beef Rump, Local",Lean Meat/ Tapadera,482.16,2026-02-21,962
+"Beef Rump, Imported",,375.0,2026-02-21,963
+"Beef Short Ribs, Local",,418.13,2026-02-21,964
+"Beef Sirloin, Local",,482.46,2026-02-21,965
+"Beef Striploin, Local",,488.75,2026-02-21,966
+"Beef Tenderloin, Local",,676.61,2026-02-21,967
+"Beef Tongue, Local",,545.0,2026-02-21,968
+"Pork Belly (Liempo), Local",,379.81,2026-02-21,969
+"Pork Belly (Liempo), Imported",,311.96,2026-02-21,970
+"Pork Boston Shoulder, Local",,357.5,2026-02-21,971
+"Pork Chop, Local",,331.98,2026-02-21,972
+"Pork Chop, Imported",,251.67,2026-02-21,973
+"Pork Fore Shank, Local",,321.85,2026-02-21,974
+"Pork Fore Shank, Imported",,226.67,2026-02-21,975
+"Pork Head, Local",,258.75,2026-02-21,976
+"Pork Head, Imported",,200.0,2026-02-21,977
+"Pork Hind Leg (Pigue), Local",,330.45,2026-02-21,978
+"Pork Hind Leg (Pigue), Imported",,254.07,2026-02-21,979
+"Pork Hind Shank, Local",,316.5,2026-02-21,980
+"Pork Hind Shank, Imported",,216.67,2026-02-21,981
+"Pork Loin, Local",,377.22,2026-02-21,982
+"Pork Loin, Imported",,278.0,2026-02-21,983
+"Pork Offals, Local",,247.06,2026-02-21,984
+"Pork Offals, Imported",,152.63,2026-02-21,985
+"Pork Picnic Shoulder (Kasim),
+Local",,328.78,2026-02-21,986
+"Pork Picnic Shoulder (Kasim),
+Imported",,254.18,2026-02-21,987
+"Pork Rind/Skin, Local",,106.67,2026-02-21,988
+"Pork Spare Ribs, Local",,322.16,2026-02-21,989
+"Pork Spare Ribs, Imported",,244.17,2026-02-21,990
+"Carabeef Forequarter, Local",,326.67,2026-02-21,991
+"Carabeef Meat, Local",,370.0,2026-02-21,992
+"Carabeef Rump Steak, Local",,380.0,2026-02-21,993
+"Chicken Breast, Local",,220.61,2026-02-21,994
+"Chicken Breast, Local",,230.0,2026-02-21,995
+"Chicken Breast, Local",,208.98,2026-02-21,996
+"Chicken Drumstick, Local",,227.55,2026-02-21,997
+"Chicken Drumstick, Local",,230.0,2026-02-21,998
+"Chicken Drumstick, Local","Unbranded, Fresh",216.52,2026-02-21,999
+"Chicken Feet, Local",,143.23,2026-02-21,1000
+Chicken Leg Quarter,Magnolia,224.69,2026-02-21,1001
+Chicken Leg Quarter,Bounty Fresh,230.0,2026-02-21,1002
+Chicken Leg Quarter,"Unbranded, Fresh",210.96,2026-02-21,1003
+"Chicken Leg Quarter, Imported",,165.5,2026-02-21,1004
+"Chicken Liver, Local",,229.95,2026-02-21,1005
+"Chicken Neck, Local",,140.61,2026-02-21,1006
+"Chicken Rind/Skin, Local",,148.8,2026-02-21,1007
+"Chicken Thigh, Local",,214.29,2026-02-21,1008
+"Chicken Wing, Local",Magnolia,226.3,2026-02-21,1009
+"Chicken Wing, Local",Bounty Fresh,230.0,2026-02-21,1010
+"Chicken Wing, Local","Unbranded, Fresh",214.9,2026-02-21,1011
+"Whole Chicken, Local",Magnolia,210.0,2026-02-21,1012
+"Whole Chicken, Local",Bounty Fresh,210.0,2026-02-21,1013
+"Whole Chicken, Local",Fully Dressed,196.75,2026-02-21,1014
+"Chicken Egg (White, Medium)",56-60 grams/pc,8.18,2026-02-21,1015
+Ampalaya,4-5 pcs/kg,131.25,2026-02-21,1016
+"Chilli (Green), Local",Haba/Panigang,105.16,2026-02-21,1017
+Eggplant,3-4 Small Bundles,76.53,2026-02-21,1018
+Native Pechay,3-4 Small Bundles,72.93,2026-02-21,1019
+Pole Sitao,3-4 Small Bundles,132.24,2026-02-21,1020
+Squash,Suprema Variety,60.0,2026-02-21,1021
+Tomato,15-18 pcs/kg,65.11,2026-02-21,1022
+"Bell Pepper (Green), Local",Medium (151-250gm/pc),229.34,2026-02-21,1023
+"Bell Pepper (Red), Local",Medium (151-250gm/pc),234.35,2026-02-21,1024
+"Broccoli, Local","Medium (8-10 cm
+diameter/bunch hd)",159.09,2026-02-21,1025
+"Broccoli, Imported",,212.11,2026-02-21,1026
+"Cauliflower, Local","Medium (8-10 cm
+diameter/bunch hd)",110.47,2026-02-21,1027
+Cabbage (Rare Ball),510 gm - 1 kg/head,76.58,2026-02-21,1028
+Cabbage (Scorpio),750 gm - 1 kg/head,81.5,2026-02-21,1029
+Cabbage (Wonder Ball),510 gm - 1 kg/head,79.69,2026-02-21,1030
+"Carrots, Local",8-10 pcs/kg,97.34,2026-02-21,1031
+"Carrots, Imported",,100.53,2026-02-21,1032
+Celery,Medium (501-800 g),159.78,2026-02-21,1033
+Chayote,Medium (301-400 g),55.77,2026-02-21,1034
+"Habichuelas/Baguio Beans, Local",,99.7,2026-02-21,1035
+Pechay Baguio,,80.99,2026-02-21,1036
+Lettuce (Green Ice),,167.11,2026-02-21,1037
+Lettuce (Iceberg),"Medium (301-450 cm
+diameter/bunch hd)",228.42,2026-02-21,1038
+Lettuce (Romaine),,173.91,2026-02-21,1039
+"White Potato, Local",10-12 pcs/kg,114.23,2026-02-21,1040
+"Chilli (Red), Local",,180.69,2026-02-21,1041
+"Garlic, Native/Local",,366.67,2026-02-21,1042
+"Garlic, Imported",,149.74,2026-02-21,1043
+"Ginger, Local",,154.76,2026-02-21,1044
+"Ginger, Imported",,147.14,2026-02-21,1045
+"Red Onion, Local",,121.09,2026-02-21,1046
+"Red Onion, Imported",,111.98,2026-02-21,1047
+"Red Onion, Imported",,105.97,2026-02-21,1048
+"White Onion, Local",,108.68,2026-02-21,1049
+"White Onion, Imported",,114.31,2026-02-21,1050
+"White Onion, Imported",,110.33,2026-02-21,1051
+Avocado,,298.75,2026-02-21,1052
+Banana (Lakatan),,96.61,2026-02-21,1053
+Banana (Latundan),,74.25,2026-02-21,1054
+Banana (Saba),,53.89,2026-02-21,1055
+Calamansi,,130.15,2026-02-21,1056
+Mango (Carabao),,193.06,2026-02-21,1057
+Melon,,104.08,2026-02-21,1058
+Papaya,,72.44,2026-02-21,1059
+Pomelo,,175.28,2026-02-21,1060
+Watermelon,,79.74,2026-02-21,1061
+Salt (Rock),,21.68,2026-02-21,1062
+Salt (Iodized),,39.2,2026-02-21,1063
+Sugar (Refined),,81.87,2026-02-21,1064
+Sugar (Washed),,74.9,2026-02-21,1065
+Sugar (Brown),,73.37,2026-02-21,1066
+Cooking Oil (Palm),350 ml/bottle,35.86,2026-02-21,1067
+Cooking Oil (Palm),1 Liter/bottle,90.53,2026-02-21,1068
+Cooking Oil (Coconut),350 ml/bottle,59.19,2026-02-21,1069
+Cooking Oil (Coconut),1 Liter/bottle,159.75,2026-02-21,1070
+Cooking Oil (Minola),500 ml/bottle,90.0,2026-02-21,1071
+Cooking Oil (Minola),"1,000 ml/bottle",140.0,2026-02-21,1072
+Cooking Oil (Spring),"1,000 ml/bottle",149.63,2026-02-21,1073
+"Cooking Oil (Palm Olein, Jolly
+Brand)","1,000 ml/bottle",151.82,2026-02-21,1074
+Imported Commercial Rice - Basmati Rice,,207.86,2026-02-20,1075
+Imported Commercial Rice - Glutinous Rice,,61.05,2026-02-20,1076
+Imported Commercial Rice - Jasponica/Japonica Rice,,62.97,2026-02-20,1077
+Imported Commercial Rice - Other Special Rice,,60.63,2026-02-20,1078
+Imported Commercial Rice - Premium,,56.61,2026-02-20,1079
+Imported Commercial Rice - Well Milled,,47.1,2026-02-20,1080
+Imported Commercial Rice - Regular Milled,,41.24,2026-02-20,1081
+Local Commercial Rice - Glutinous Rice,,75.13,2026-02-20,1082
+Local Commercial Rice - Other Special Rice,,58.81,2026-02-20,1083
+Local Commercial Rice - Premium,,52.11,2026-02-20,1084
+Local Commercial Rice - Well Milled,,45.96,2026-02-20,1085
+Local Commercial Rice - Regular Milled,,41.15,2026-02-20,1086
+Corn (White),,81.54,2026-02-20,1087
+Corn (Yellow),,79.91,2026-02-20,1088
+"Corn Grits (White, Food Grade)",,120.0,2026-02-20,1089
+"Corn Grits (Yellow, Food Grade)",,120.0,2026-02-20,1090
+"Corn Cracked (Yellow, Feed Grade)",,50.0,2026-02-20,1091
+Corn Grits (Feed Grade),,46.67,2026-02-20,1092
+Mungbean,,129.38,2026-02-20,1093
+Alumahan (Indian Mackerel),,356.67,2026-02-20,1094
+"Bangus, Large",,258.48,2026-02-20,1095
+"Bangus, Medium",Medium (3-4 pcs/kg),237.99,2026-02-20,1096
+"Galunggong, Local","Male, Medium (12-14 pcs/kg)",341.7,2026-02-20,1097
+"Galunggong, Imported","Male, Medium (12-14 pcs/kg)",309.23,2026-02-20,1098
+"Pampano, Local",,441.67,2026-02-20,1099
+"Pampano, Imported",,402.63,2026-02-20,1100
+"Salmon Belly, Imported",,416.17,2026-02-20,1101
+"Salmon Head, Imported",,216.32,2026-02-20,1102
+Sardines (Tamban),,143.33,2026-02-20,1103
+"Squid (Pusit Bisaya), Local",Medium,477.27,2026-02-20,1104
+"Squid, Imported",,216.88,2026-02-20,1105
+"Tambakol (Yellow-Fin Tuna),
+Local","Medium, Fresh or Chilled",321.89,2026-02-20,1106
+Tilapia,Medium (5-6 pcs/kg),153.8,2026-02-20,1107
+"Beef Brisket, Local",Meat with Bones,429.64,2026-02-20,1108
+"Beef Brisket, Imported",,380.0,2026-02-20,1109
+"Beef Chuck, Local",,413.61,2026-02-20,1110
+"Beef Forequarter, Local",,480.0,2026-02-20,1111
+"Beef Fore Limb, Local",,461.43,2026-02-20,1112
+"Beef Flank, Local",,443.18,2026-02-20,1113
+"Beef Loin, Local",,562.0,2026-02-20,1114
+"Beef Plate, Local",,415.38,2026-02-20,1115
+"Beef Rib Eye, Local",,437.14,2026-02-20,1116
+"Beef Rib Set, Local",,413.14,2026-02-20,1117
+"Beef Rump, Local",Lean Meat/ Tapadera,483.04,2026-02-20,1118
+"Beef Rump, Imported",,375.0,2026-02-20,1119
+"Beef Short Ribs, Local",,418.13,2026-02-20,1120
+"Beef Sirloin, Local",,482.46,2026-02-20,1121
+"Beef Striploin, Local",,488.75,2026-02-20,1122
+"Beef Tenderloin, Local",,676.61,2026-02-20,1123
+"Beef Tongue, Local",,545.0,2026-02-20,1124
+"Pork Belly (Liempo), Local",,380.39,2026-02-20,1125
+"Pork Belly (Liempo), Imported",,313.13,2026-02-20,1126
+"Pork Boston Shoulder, Local",,357.5,2026-02-20,1127
+"Pork Chop, Local",,332.5,2026-02-20,1128
+"Pork Chop, Imported",,251.67,2026-02-20,1129
+"Pork Fore Shank, Local",,321.6,2026-02-20,1130
+"Pork Fore Shank, Imported",,226.67,2026-02-20,1131
+"Pork Head, Local",,259.1,2026-02-20,1132
+"Pork Head, Imported",,200.0,2026-02-20,1133
+"Pork Hind Leg (Pigue), Local",,331.01,2026-02-20,1134
+"Pork Hind Leg (Pigue), Imported",,254.07,2026-02-20,1135
+"Pork Hind Shank, Local",,317.23,2026-02-20,1136
+"Pork Hind Shank, Imported",,216.67,2026-02-20,1137
+"Pork Loin, Local",,378.0,2026-02-20,1138
+"Pork Loin, Imported",,278.0,2026-02-20,1139
+"Pork Offals, Local",,250.56,2026-02-20,1140
+"Pork Offals, Imported",,152.63,2026-02-20,1141
+"Pork Picnic Shoulder (Kasim),
+Local",,329.54,2026-02-20,1142
+"Pork Picnic Shoulder (Kasim),
+Imported",,255.2,2026-02-20,1143
+"Pork Rind/Skin, Local",,106.67,2026-02-20,1144
+"Pork Spare Ribs, Local",,322.17,2026-02-20,1145
+"Pork Spare Ribs, Imported",,244.17,2026-02-20,1146
+"Carabeef Forequarter, Local",,326.67,2026-02-20,1147
+"Carabeef Meat, Local",,370.0,2026-02-20,1148
+"Carabeef Rump Steak, Local",,380.0,2026-02-20,1149
+"Chicken Breast, Local",,220.61,2026-02-20,1150
+"Chicken Breast, Local",,230.0,2026-02-20,1151
+"Chicken Breast, Local",,209.8,2026-02-20,1152
+"Chicken Drumstick, Local",,227.55,2026-02-20,1153
+"Chicken Drumstick, Local",,230.0,2026-02-20,1154
+"Chicken Drumstick, Local","Unbranded, Fresh",216.52,2026-02-20,1155
+"Chicken Feet, Local",,144.51,2026-02-20,1156
+Chicken Leg Quarter,Magnolia,224.69,2026-02-20,1157
+Chicken Leg Quarter,Bounty Fresh,230.0,2026-02-20,1158
+Chicken Leg Quarter,"Unbranded, Fresh",210.96,2026-02-20,1159
+"Chicken Leg Quarter, Imported",,165.5,2026-02-20,1160
+"Chicken Liver, Local",,231.26,2026-02-20,1161
+"Chicken Neck, Local",,141.6,2026-02-20,1162
+"Chicken Rind/Skin, Local",,148.8,2026-02-20,1163
+"Chicken Thigh, Local",,215.56,2026-02-20,1164
+"Chicken Wing, Local",Magnolia,226.3,2026-02-20,1165
+"Chicken Wing, Local",Bounty Fresh,230.0,2026-02-20,1166
+"Chicken Wing, Local","Unbranded, Fresh",215.64,2026-02-20,1167
+"Whole Chicken, Local",Magnolia,210.0,2026-02-20,1168
+"Whole Chicken, Local",Bounty Fresh,210.0,2026-02-20,1169
+"Whole Chicken, Local",Fully Dressed,198.0,2026-02-20,1170
+"Chicken Egg (White, Medium)",56-60 grams/pc,8.18,2026-02-20,1171
+Ampalaya,4-5 pcs/kg,132.77,2026-02-20,1172
+"Chilli (Green), Local",Haba/Panigang,107.22,2026-02-20,1173
+Eggplant,3-4 Small Bundles,77.08,2026-02-20,1174
+Native Pechay,3-4 Small Bundles,73.04,2026-02-20,1175
+Pole Sitao,3-4 Small Bundles,132.32,2026-02-20,1176
+Squash,Suprema Variety,60.28,2026-02-20,1177
+Tomato,15-18 pcs/kg,66.27,2026-02-20,1178
+"Bell Pepper (Green), Local",Medium (151-250gm/pc),228.11,2026-02-20,1179
+"Bell Pepper (Red), Local",Medium (151-250gm/pc),235.48,2026-02-20,1180
+"Broccoli, Local","Medium (8-10 cm
+diameter/bunch hd)",169.0,2026-02-20,1181
+"Broccoli, Imported",,213.67,2026-02-20,1182
+"Cauliflower, Local","Medium (8-10 cm
+diameter/bunch hd)",110.73,2026-02-20,1183
+Cabbage (Rare Ball),510 gm - 1 kg/head,77.25,2026-02-20,1184
+Cabbage (Scorpio),750 gm - 1 kg/head,87.2,2026-02-20,1185
+Cabbage (Wonder Ball),510 gm - 1 kg/head,79.02,2026-02-20,1186
+"Carrots, Local",8-10 pcs/kg,98.27,2026-02-20,1187
+"Carrots, Imported",,102.35,2026-02-20,1188
+Celery,Medium (501-800 g),161.83,2026-02-20,1189
+Chayote,Medium (301-400 g),56.02,2026-02-20,1190
+"Habichuelas/Baguio Beans, Local",,99.71,2026-02-20,1191
+Pechay Baguio,,82.24,2026-02-20,1192
+Lettuce (Green Ice),,174.02,2026-02-20,1193
+Lettuce (Iceberg),"Medium (301-450 cm
+diameter/bunch hd)",231.58,2026-02-20,1194
+Lettuce (Romaine),,182.34,2026-02-20,1195
+"White Potato, Local",10-12 pcs/kg,114.86,2026-02-20,1196
+"Chilli (Red), Local",,184.03,2026-02-20,1197
+"Garlic, Native/Local",,366.67,2026-02-20,1198
+"Garlic, Imported",,150.18,2026-02-20,1199
+"Ginger, Local",,154.6,2026-02-20,1200
+"Ginger, Imported",,164.17,2026-02-20,1201
+"Red Onion, Local",,123.12,2026-02-20,1202
+"Red Onion, Imported",,114.9,2026-02-20,1203
+"Red Onion, Imported",,105.97,2026-02-20,1204
+"White Onion, Local",,108.95,2026-02-20,1205
+"White Onion, Imported",,115.97,2026-02-20,1206
+"White Onion, Imported",,110.5,2026-02-20,1207
+Avocado,,303.62,2026-02-20,1208
+Banana (Lakatan),,97.56,2026-02-20,1209
+Banana (Latundan),,74.91,2026-02-20,1210
+Banana (Saba),,53.75,2026-02-20,1211
+Calamansi,,130.43,2026-02-20,1212
+Mango (Carabao),,193.33,2026-02-20,1213
+Melon,,104.14,2026-02-20,1214
+Papaya,,72.02,2026-02-20,1215
+Pomelo,,174.91,2026-02-20,1216
+Watermelon,,80.42,2026-02-20,1217
+Salt (Rock),,21.63,2026-02-20,1218
+Salt (Iodized),,39.2,2026-02-20,1219
+Sugar (Refined),,81.83,2026-02-20,1220
+Sugar (Washed),,74.84,2026-02-20,1221
+Sugar (Brown),,73.32,2026-02-20,1222
+Cooking Oil (Palm),350 ml/bottle,35.86,2026-02-20,1223
+Cooking Oil (Palm),1 Liter/bottle,91.01,2026-02-20,1224
+Cooking Oil (Coconut),350 ml/bottle,58.88,2026-02-20,1225
+Cooking Oil (Coconut),1 Liter/bottle,160.1,2026-02-20,1226
+Cooking Oil (Minola),500 ml/bottle,90.0,2026-02-20,1227
+Cooking Oil (Minola),"1,000 ml/bottle",140.0,2026-02-20,1228
+Cooking Oil (Spring),"1,000 ml/bottle",149.63,2026-02-20,1229
+"Cooking Oil (Palm Olein, Jolly
+Brand)","1,000 ml/bottle",151.82,2026-02-20,1230
+Imported Commercial Rice - Basmati Rice,,207.86,2026-02-19,1231
+Imported Commercial Rice - Glutinous Rice,,61.05,2026-02-19,1232
+Imported Commercial Rice - Jasponica/Japonica Rice,,62.71,2026-02-19,1233
+Imported Commercial Rice - Other Special Rice,,60.63,2026-02-19,1234
+Imported Commercial Rice - Premium,,56.45,2026-02-19,1235
+Imported Commercial Rice - Well Milled,,47.18,2026-02-19,1236
+Imported Commercial Rice - Regular Milled,,41.18,2026-02-19,1237
+Local Commercial Rice - Glutinous Rice,,74.21,2026-02-19,1238
+Local Commercial Rice - Other Special Rice,,58.88,2026-02-19,1239
+Local Commercial Rice - Premium,,52.08,2026-02-19,1240
+Local Commercial Rice - Well Milled,,45.95,2026-02-19,1241
+Local Commercial Rice - Regular Milled,,41.13,2026-02-19,1242
+Corn (White),,81.76,2026-02-19,1243
+Corn (Yellow),,79.41,2026-02-19,1244
+"Corn Grits (White, Food Grade)",,120.0,2026-02-19,1245
+"Corn Grits (Yellow, Food Grade)",,120.0,2026-02-19,1246
+"Corn Cracked (Yellow, Feed Grade)",,50.0,2026-02-19,1247
+Corn Grits (Feed Grade),,46.67,2026-02-19,1248
+Mungbean,,129.9,2026-02-19,1249
+Alumahan (Indian Mackerel),,357.31,2026-02-19,1250
+"Bangus, Large",,257.06,2026-02-19,1251
+"Bangus, Medium",Medium (3-4 pcs/kg),233.65,2026-02-19,1252
+"Galunggong, Local","Male, Medium (12-14 pcs/kg)",342.5,2026-02-19,1253
+"Galunggong, Imported","Male, Medium (12-14 pcs/kg)",307.69,2026-02-19,1254
+"Pampano, Local",,502.73,2026-02-19,1255
+"Pampano, Imported",,406.52,2026-02-19,1256
+"Salmon Belly, Imported",,421.97,2026-02-19,1257
+"Salmon Head, Imported",,222.35,2026-02-19,1258
+Sardines (Tamban),,144.0,2026-02-19,1259
+"Squid (Pusit Bisaya), Local",Medium,478.57,2026-02-19,1260
+"Squid, Imported",,219.38,2026-02-19,1261
+"Tambakol (Yellow-Fin Tuna),
+Local","Medium, Fresh or Chilled",325.27,2026-02-19,1262
+Tilapia,Medium (5-6 pcs/kg),153.43,2026-02-19,1263
+"Beef Brisket, Local",Meat with Bones,429.24,2026-02-19,1264
+"Beef Brisket, Imported",,380.0,2026-02-19,1265
+"Beef Chuck, Local",,413.61,2026-02-19,1266
+"Beef Forequarter, Local",,480.0,2026-02-19,1267
+"Beef Fore Limb, Local",,461.43,2026-02-19,1268
+"Beef Flank, Local",,443.18,2026-02-19,1269
+"Beef Loin, Local",,562.0,2026-02-19,1270
+"Beef Plate, Local",,415.38,2026-02-19,1271
+"Beef Rib Eye, Local",,437.14,2026-02-19,1272
+"Beef Rib Set, Local",,413.14,2026-02-19,1273
+"Beef Rump, Local",Lean Meat/ Tapadera,484.37,2026-02-19,1274
+"Beef Rump, Imported",,375.0,2026-02-19,1275
+"Beef Short Ribs, Local",,418.16,2026-02-19,1276
+"Beef Sirloin, Local",,484.35,2026-02-19,1277
+"Beef Striploin, Local",,488.75,2026-02-19,1278
+"Beef Tenderloin, Local",,676.61,2026-02-19,1279
+"Beef Tongue, Local",,545.0,2026-02-19,1280
+"Pork Belly (Liempo), Local",,383.17,2026-02-19,1281
+"Pork Belly (Liempo), Imported",,313.19,2026-02-19,1282
+"Pork Boston Shoulder, Local",,357.5,2026-02-19,1283
+"Pork Chop, Local",,333.26,2026-02-19,1284
+"Pork Chop, Imported",,251.67,2026-02-19,1285
+"Pork Fore Shank, Local",,321.47,2026-02-19,1286
+"Pork Fore Shank, Imported",,226.67,2026-02-19,1287
+"Pork Head, Local",,259.1,2026-02-19,1288
+"Pork Head, Imported",,200.0,2026-02-19,1289
+"Pork Hind Leg (Pigue), Local",,331.84,2026-02-19,1290
+"Pork Hind Leg (Pigue), Imported",,254.07,2026-02-19,1291
+"Pork Hind Shank, Local",,317.08,2026-02-19,1292
+"Pork Hind Shank, Imported",,217.5,2026-02-19,1293
+"Pork Loin, Local",,378.74,2026-02-19,1294
+"Pork Loin, Imported",,278.0,2026-02-19,1295
+"Pork Offals, Local",,250.69,2026-02-19,1296
+"Pork Offals, Imported",,152.63,2026-02-19,1297
+"Pork Picnic Shoulder (Kasim),
+Local",,330.55,2026-02-19,1298
+"Pork Picnic Shoulder (Kasim),
+Imported",,255.1,2026-02-19,1299
+"Pork Rind/Skin, Local",,106.67,2026-02-19,1300
+"Pork Spare Ribs, Local",,323.52,2026-02-19,1301
+"Pork Spare Ribs, Imported",,244.17,2026-02-19,1302
+"Carabeef Forequarter, Local",,326.67,2026-02-19,1303
+"Carabeef Meat, Local",,370.0,2026-02-19,1304
+"Carabeef Rump Steak, Local",,380.0,2026-02-19,1305
+"Chicken Breast, Local",,220.61,2026-02-19,1306
+"Chicken Breast, Local",,230.0,2026-02-19,1307
+"Chicken Breast, Local",,211.26,2026-02-19,1308
+"Chicken Drumstick, Local",,227.55,2026-02-19,1309
+"Chicken Drumstick, Local",,230.0,2026-02-19,1310
+"Chicken Drumstick, Local","Unbranded, Fresh",217.64,2026-02-19,1311
+"Chicken Feet, Local",,144.51,2026-02-19,1312
+Chicken Leg Quarter,Magnolia,224.69,2026-02-19,1313
+Chicken Leg Quarter,Bounty Fresh,230.0,2026-02-19,1314
+Chicken Leg Quarter,"Unbranded, Fresh",212.24,2026-02-19,1315
+"Chicken Leg Quarter, Imported",,165.5,2026-02-19,1316
+"Chicken Liver, Local",,231.26,2026-02-19,1317
+"Chicken Neck, Local",,141.6,2026-02-19,1318
+"Chicken Rind/Skin, Local",,148.8,2026-02-19,1319
+"Chicken Thigh, Local",,215.56,2026-02-19,1320
+"Chicken Wing, Local",Magnolia,226.3,2026-02-19,1321
+"Chicken Wing, Local",Bounty Fresh,230.0,2026-02-19,1322
+"Chicken Wing, Local","Unbranded, Fresh",216.79,2026-02-19,1323
+"Whole Chicken, Local",Magnolia,210.71,2026-02-19,1324
+"Whole Chicken, Local",Bounty Fresh,210.0,2026-02-19,1325
+"Whole Chicken, Local",Fully Dressed,199.32,2026-02-19,1326
+"Chicken Egg (White, Medium)",56-60 grams/pc,8.2,2026-02-19,1327
+Ampalaya,4-5 pcs/kg,133.7,2026-02-19,1328
+"Chilli (Green), Local",Haba/Panigang,109.57,2026-02-19,1329
+Eggplant,3-4 Small Bundles,78.64,2026-02-19,1330
+Native Pechay,3-4 Small Bundles,73.03,2026-02-19,1331
+Pole Sitao,3-4 Small Bundles,132.87,2026-02-19,1332
+Squash,Suprema Variety,60.34,2026-02-19,1333
+Tomato,15-18 pcs/kg,66.97,2026-02-19,1334
+"Bell Pepper (Green), Local",Medium (151-250gm/pc),230.49,2026-02-19,1335
+"Bell Pepper (Red), Local",Medium (151-250gm/pc),234.93,2026-02-19,1336
+"Broccoli, Local","Medium (8-10 cm
+diameter/bunch hd)",167.0,2026-02-19,1337
+"Broccoli, Imported",,211.92,2026-02-19,1338
+"Cauliflower, Local","Medium (8-10 cm
+diameter/bunch hd)",111.58,2026-02-19,1339
+Cabbage (Rare Ball),510 gm - 1 kg/head,79.18,2026-02-19,1340
+Cabbage (Scorpio),750 gm - 1 kg/head,88.89,2026-02-19,1341
+Cabbage (Wonder Ball),510 gm - 1 kg/head,79.78,2026-02-19,1342
+"Carrots, Local",8-10 pcs/kg,97.3,2026-02-19,1343
+"Carrots, Imported",,102.22,2026-02-19,1344
+Celery,Medium (501-800 g),161.04,2026-02-19,1345
+Chayote,Medium (301-400 g),56.77,2026-02-19,1346
+"Habichuelas/Baguio Beans, Local",,99.13,2026-02-19,1347
+Pechay Baguio,,82.45,2026-02-19,1348
+Lettuce (Green Ice),,174.42,2026-02-19,1349
+Lettuce (Iceberg),"Medium (301-450 cm
+diameter/bunch hd)",238.97,2026-02-19,1350
+Lettuce (Romaine),,187.2,2026-02-19,1351
+"White Potato, Local",10-12 pcs/kg,115.92,2026-02-19,1352
+"Chilli (Red), Local",,191.87,2026-02-19,1353
+"Garlic, Native/Local",,366.67,2026-02-19,1354
+"Garlic, Imported",,150.03,2026-02-19,1355
+"Ginger, Local",,154.35,2026-02-19,1356
+"Ginger, Imported",,164.17,2026-02-19,1357
+"Red Onion, Local",,123.21,2026-02-19,1358
+"Red Onion, Imported",,115.29,2026-02-19,1359
+"Red Onion, Imported",,105.97,2026-02-19,1360
+"White Onion, Local",,108.79,2026-02-19,1361
+"White Onion, Imported",,116.45,2026-02-19,1362
+"White Onion, Imported",,110.61,2026-02-19,1363
+Avocado,,319.62,2026-02-19,1364
+Banana (Lakatan),,99.03,2026-02-19,1365
+Banana (Latundan),,75.71,2026-02-19,1366
+Banana (Saba),,55.15,2026-02-19,1367
+Calamansi,,130.07,2026-02-19,1368
+Mango (Carabao),,199.28,2026-02-19,1369
+Melon,,105.96,2026-02-19,1370
+Papaya,,72.02,2026-02-19,1371
+Pomelo,,183.33,2026-02-19,1372
+Watermelon,,80.51,2026-02-19,1373
+Salt (Rock),,21.6,2026-02-19,1374
+Salt (Iodized),,38.77,2026-02-19,1375
+Sugar (Refined),,82.0,2026-02-19,1376
+Sugar (Washed),,74.94,2026-02-19,1377
+Sugar (Brown),,73.43,2026-02-19,1378
+Cooking Oil (Palm),350 ml/bottle,35.86,2026-02-19,1379
+Cooking Oil (Palm),1 Liter/bottle,90.66,2026-02-19,1380
+Cooking Oil (Coconut),350 ml/bottle,58.88,2026-02-19,1381
+Cooking Oil (Coconut),1 Liter/bottle,159.93,2026-02-19,1382
+Cooking Oil (Minola),500 ml/bottle,90.0,2026-02-19,1383
+Cooking Oil (Minola),"1,000 ml/bottle",140.0,2026-02-19,1384
+Cooking Oil (Spring),"1,000 ml/bottle",149.63,2026-02-19,1385
+"Cooking Oil (Palm Olein, Jolly
+Brand)","1,000 ml/bottle",151.82,2026-02-19,1386
+Imported Commercial Rice - Basmati Rice,,207.86,2026-02-18,1387
+Imported Commercial Rice - Glutinous Rice,,61.05,2026-02-18,1388
+Imported Commercial Rice - Jasponica/Japonica Rice,,62.71,2026-02-18,1389
+Imported Commercial Rice - Other Special Rice,,60.63,2026-02-18,1390
+Imported Commercial Rice - Premium,,56.42,2026-02-18,1391
+Imported Commercial Rice - Well Milled,,47.0,2026-02-18,1392
+Imported Commercial Rice - Regular Milled,,41.18,2026-02-18,1393
+Local Commercial Rice - Glutinous Rice,,74.21,2026-02-18,1394
+Local Commercial Rice - Other Special Rice,,58.88,2026-02-18,1395
+Local Commercial Rice - Premium,,52.1,2026-02-18,1396
+Local Commercial Rice - Well Milled,,45.95,2026-02-18,1397
+Local Commercial Rice - Regular Milled,,41.13,2026-02-18,1398
+Corn (White),,81.18,2026-02-18,1399
+Corn (Yellow),,79.41,2026-02-18,1400
+"Corn Grits (White, Food Grade)",,120.0,2026-02-18,1401
+"Corn Grits (Yellow, Food Grade)",,120.0,2026-02-18,1402
+"Corn Cracked (Yellow, Feed Grade)",,50.0,2026-02-18,1403
+Corn Grits (Feed Grade),,46.67,2026-02-18,1404
+Mungbean,,129.9,2026-02-18,1405
+Alumahan (Indian Mackerel),,358.63,2026-02-18,1406
+"Bangus, Large",,258.35,2026-02-18,1407
+"Bangus, Medium",Medium (3-4 pcs/kg),234.17,2026-02-18,1408
+"Galunggong, Local","Male, Medium (12-14 pcs/kg)",351.09,2026-02-18,1409
+"Galunggong, Imported","Male, Medium (12-14 pcs/kg)",307.69,2026-02-18,1410
+"Pampano, Local",,492.5,2026-02-18,1411
+"Pampano, Imported",,406.85,2026-02-18,1412
+"Salmon Belly, Imported",,422.27,2026-02-18,1413
+"Salmon Head, Imported",,222.18,2026-02-18,1414
+Sardines (Tamban),,144.0,2026-02-18,1415
+"Squid (Pusit Bisaya), Local",Medium,480.43,2026-02-18,1416
+"Squid, Imported",,218.0,2026-02-18,1417
+"Tambakol (Yellow-Fin Tuna),
+Local","Medium, Fresh or Chilled",328.15,2026-02-18,1418
+Tilapia,Medium (5-6 pcs/kg),153.65,2026-02-18,1419
+"Beef Brisket, Local",Meat with Bones,429.36,2026-02-18,1420
+"Beef Brisket, Imported",,380.0,2026-02-18,1421
+"Beef Chuck, Local",,413.61,2026-02-18,1422
+"Beef Forequarter, Local",,480.0,2026-02-18,1423
+"Beef Fore Limb, Local",,461.43,2026-02-18,1424
+"Beef Flank, Local",,445.45,2026-02-18,1425
+"Beef Loin, Local",,562.0,2026-02-18,1426
+"Beef Plate, Local",,412.31,2026-02-18,1427
+"Beef Rib Eye, Local",,437.14,2026-02-18,1428
+"Beef Rib Set, Local",,413.14,2026-02-18,1429
+"Beef Rump, Local",Lean Meat/ Tapadera,484.37,2026-02-18,1430
+"Beef Rump, Imported",,375.0,2026-02-18,1431
+"Beef Short Ribs, Local",,418.16,2026-02-18,1432
+"Beef Sirloin, Local",,484.35,2026-02-18,1433
+"Beef Striploin, Local",,488.75,2026-02-18,1434
+"Beef Tenderloin, Local",,676.25,2026-02-18,1435
+"Beef Tongue, Local",,545.0,2026-02-18,1436
+"Pork Belly (Liempo), Local",,383.66,2026-02-18,1437
+"Pork Belly (Liempo), Imported",,313.19,2026-02-18,1438
+"Pork Boston Shoulder, Local",,357.5,2026-02-18,1439
+"Pork Chop, Local",,333.26,2026-02-18,1440
+"Pork Chop, Imported",,251.67,2026-02-18,1441
+"Pork Fore Shank, Local",,321.47,2026-02-18,1442
+"Pork Fore Shank, Imported",,226.67,2026-02-18,1443
+"Pork Head, Local",,259.1,2026-02-18,1444
+"Pork Head, Imported",,200.0,2026-02-18,1445
+"Pork Hind Leg (Pigue), Local",,331.91,2026-02-18,1446
+"Pork Hind Leg (Pigue), Imported",,254.07,2026-02-18,1447
+"Pork Hind Shank, Local",,317.08,2026-02-18,1448
+"Pork Hind Shank, Imported",,217.5,2026-02-18,1449
+"Pork Loin, Local",,378.74,2026-02-18,1450
+"Pork Loin, Imported",,278.0,2026-02-18,1451
+"Pork Offals, Local",,250.69,2026-02-18,1452
+"Pork Offals, Imported",,152.63,2026-02-18,1453
+"Pork Picnic Shoulder (Kasim),
+Local",,330.62,2026-02-18,1454
+"Pork Picnic Shoulder (Kasim),
+Imported",,255.1,2026-02-18,1455
+"Pork Rind/Skin, Local",,106.67,2026-02-18,1456
+"Pork Spare Ribs, Local",,324.28,2026-02-18,1457
+"Pork Spare Ribs, Imported",,244.17,2026-02-18,1458
+"Carabeef Forequarter, Local",,326.67,2026-02-18,1459
+"Carabeef Meat, Local",,370.0,2026-02-18,1460
+"Carabeef Rump Steak, Local",,380.0,2026-02-18,1461
+"Chicken Breast, Local",,220.41,2026-02-18,1462
+"Chicken Breast, Local",,230.0,2026-02-18,1463
+"Chicken Breast, Local",,211.26,2026-02-18,1464
+"Chicken Drumstick, Local",,227.55,2026-02-18,1465
+"Chicken Drumstick, Local",,230.0,2026-02-18,1466
+"Chicken Drumstick, Local","Unbranded, Fresh",217.64,2026-02-18,1467
+"Chicken Feet, Local",,144.41,2026-02-18,1468
+Chicken Leg Quarter,Magnolia,224.69,2026-02-18,1469
+Chicken Leg Quarter,Bounty Fresh,230.0,2026-02-18,1470
+Chicken Leg Quarter,"Unbranded, Fresh",212.24,2026-02-18,1471
+"Chicken Leg Quarter, Imported",,165.5,2026-02-18,1472
+"Chicken Liver, Local",,231.26,2026-02-18,1473
+"Chicken Neck, Local",,141.6,2026-02-18,1474
+"Chicken Rind/Skin, Local",,148.8,2026-02-18,1475
+"Chicken Thigh, Local",,215.56,2026-02-18,1476
+"Chicken Wing, Local",Magnolia,226.3,2026-02-18,1477
+"Chicken Wing, Local",Bounty Fresh,230.0,2026-02-18,1478
+"Chicken Wing, Local","Unbranded, Fresh",216.79,2026-02-18,1479
+"Whole Chicken, Local",Magnolia,210.71,2026-02-18,1480
+"Whole Chicken, Local",Bounty Fresh,210.0,2026-02-18,1481
+"Whole Chicken, Local",Fully Dressed,199.36,2026-02-18,1482
+"Chicken Egg (White, Medium)",56-60 grams/pc,8.2,2026-02-18,1483
+Ampalaya,4-5 pcs/kg,138.15,2026-02-18,1484
+"Chilli (Green), Local",Haba/Panigang,109.49,2026-02-18,1485
+Eggplant,3-4 Small Bundles,79.93,2026-02-18,1486
+Native Pechay,3-4 Small Bundles,73.24,2026-02-18,1487
+Pole Sitao,3-4 Small Bundles,133.31,2026-02-18,1488
+Squash,Suprema Variety,60.75,2026-02-18,1489
+Tomato,15-18 pcs/kg,67.48,2026-02-18,1490
+"Bell Pepper (Green), Local",Medium (151-250gm/pc),233.73,2026-02-18,1491
+"Bell Pepper (Red), Local",Medium (151-250gm/pc),235.0,2026-02-18,1492
+"Broccoli, Local","Medium (8-10 cm
+diameter/bunch hd)",163.64,2026-02-18,1493
+"Broccoli, Imported",,211.62,2026-02-18,1494
+"Cauliflower, Local","Medium (8-10 cm
+diameter/bunch hd)",110.87,2026-02-18,1495
+Cabbage (Rare Ball),510 gm - 1 kg/head,80.34,2026-02-18,1496
+Cabbage (Scorpio),750 gm - 1 kg/head,90.0,2026-02-18,1497
+Cabbage (Wonder Ball),510 gm - 1 kg/head,80.92,2026-02-18,1498
+"Carrots, Local",8-10 pcs/kg,97.3,2026-02-18,1499
+"Carrots, Imported",,102.5,2026-02-18,1500
+Celery,Medium (501-800 g),161.16,2026-02-18,1501
+Chayote,Medium (301-400 g),56.84,2026-02-18,1502
+"Habichuelas/Baguio Beans, Local",,98.58,2026-02-18,1503
+Pechay Baguio,,82.55,2026-02-18,1504
+Lettuce (Green Ice),,175.0,2026-02-18,1505
+Lettuce (Iceberg),"Medium (301-450 cm
+diameter/bunch hd)",246.84,2026-02-18,1506
+Lettuce (Romaine),,188.16,2026-02-18,1507
+"White Potato, Local",10-12 pcs/kg,116.67,2026-02-18,1508
+"Chilli (Red), Local",,194.34,2026-02-18,1509
+"Garlic, Native/Local",,366.67,2026-02-18,1510
+"Garlic, Imported",,150.38,2026-02-18,1511
+"Ginger, Local",,156.15,2026-02-18,1512
+"Ginger, Imported",,161.54,2026-02-18,1513
+"Red Onion, Local",,125.0,2026-02-18,1514
+"Red Onion, Imported",,118.1,2026-02-18,1515
+"Red Onion, Imported",,107.26,2026-02-18,1516
+"White Onion, Local",,109.14,2026-02-18,1517
+"White Onion, Imported",,118.03,2026-02-18,1518
+"White Onion, Imported",,111.04,2026-02-18,1519
+Avocado,,318.85,2026-02-18,1520
+Banana (Lakatan),,99.03,2026-02-18,1521
+Banana (Latundan),,75.71,2026-02-18,1522
+Banana (Saba),,55.04,2026-02-18,1523
+Calamansi,,130.36,2026-02-18,1524
+Mango (Carabao),,200.48,2026-02-18,1525
+Melon,,106.37,2026-02-18,1526
+Papaya,,71.91,2026-02-18,1527
+Pomelo,,183.67,2026-02-18,1528
+Watermelon,,80.51,2026-02-18,1529
+Salt (Rock),,21.61,2026-02-18,1530
+Salt (Iodized),,38.75,2026-02-18,1531
+Sugar (Refined),,82.02,2026-02-18,1532
+Sugar (Washed),,74.95,2026-02-18,1533
+Sugar (Brown),,73.39,2026-02-18,1534
+Cooking Oil (Palm),350 ml/bottle,35.89,2026-02-18,1535
+Cooking Oil (Palm),1 Liter/bottle,90.62,2026-02-18,1536
+Cooking Oil (Coconut),350 ml/bottle,58.88,2026-02-18,1537
+Cooking Oil (Coconut),1 Liter/bottle,159.93,2026-02-18,1538
+Cooking Oil (Minola),500 ml/bottle,90.0,2026-02-18,1539
+Cooking Oil (Minola),"1,000 ml/bottle",140.0,2026-02-18,1540
+Cooking Oil (Spring),"1,000 ml/bottle",149.63,2026-02-18,1541
+"Cooking Oil (Palm Olein, Jolly
+Brand)","1,000 ml/bottle",151.82,2026-02-18,1542
