@@ -157,15 +157,11 @@ async def receive_message(request: Request):
                             # if insert was successful, grab the new ID
                             if res.data:
                                 listing_id = res.data[0]['id']
+                                print(f"debug: insert success! id is {listing_id}")
 
-                                confirm_msg = (
-                                    f"✅ Napost na sa palengke imong baligya!\n"
-                                    f"Listing ID: {listing_id}\n\n"
-                                    f"Makadawat ka og mensahe dinhi kung naay mupalit niini."
-                                )
+                                confirm_msg = f"✅ Napost na sa palengke!\nID: {listing_id}\n\nMakadawat ra ka og mensahe dinhi kung naay mupalit."
 
-                                # send confirmation with a withdrawal button
-                                withdraw_btn = {
+                                buttons = {
                                     "attachment": {
                                         "type": "template",
                                         "payload": {
@@ -179,7 +175,9 @@ async def receive_message(request: Request):
                                         }
                                     }
                                 }
-                                await send_fb_message(sender_id, withdraw_btn)
+                                await send_fb_message(sender_id, buttons)
+                            else:
+                                print(f"debug: supabase insert failed. response: {res}")
 
                         # farmer clicks "bawi-on" (withdraw)
                         elif p_load.get("action") == "CANCEL":
