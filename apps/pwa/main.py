@@ -60,6 +60,7 @@ async def verify(request: Request):
 @app.post("/webhook")
 async def receive_message(request: Request):
     data = await request.json()
+    print(f"FARMER_ID_FOUND: {data['entry'][0]['messaging'][0]['sender']['id']}")
 
     if data.get("object") == "page":
         for entry in data.get("entry"):
