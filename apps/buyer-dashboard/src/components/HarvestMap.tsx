@@ -1,6 +1,9 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
+import dynamic from 'next/dynamic'
+import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
 
 const CEBU_CENTER: [number, number] = [10.3157, 123.8854]
 
@@ -19,7 +22,7 @@ export function HarvestMap({ points = [] }: { points?: HarvestMapPoint[] }) {
   const layerRef = useRef<any>(null)
 
   useEffect(() => {
-    if (!mapContainerRef.current || mapRef.current) return
+    if (!mapContainerRef.current || mapRef.current || typeof window === 'undefined') return
 
     async function initMap() {
       const L = (await import('leaflet')).default
@@ -32,10 +35,10 @@ export function HarvestMap({ points = [] }: { points?: HarvestMapPoint[] }) {
           zoomControl: true,
         })
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-          attribution: '&copy; OpenStreetMap contributors',
-        }).addTo(map)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(mapRef.current)
 
         const layer = L.layerGroup().addTo(map)
         layerRef.current = layer

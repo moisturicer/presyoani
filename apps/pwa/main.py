@@ -60,6 +60,7 @@ async def verify(request: Request):
 @app.post("/webhook")
 async def receive_message(request: Request):
     data = await request.json()
+    print(f"FARMER_ID_FOUND: {data['entry'][0]['messaging'][0]['sender']['id']}")
 
     if data.get("object") == "page":
         for entry in data.get("entry"):
@@ -140,11 +141,10 @@ async def receive_message(request: Request):
                     payload_raw = messaging_event["postback"].get("payload")
                     try:
                         p_load = json.loads(payload_raw)
+                        action = p_load.get("action")
 
                         # farmer clicks "ibaligya"
-                        if p_load.get("action") == "LIST":
-
-                            # save to market table and get the response back
+                        if action == "LIST":
                             res = supabase.table("market_listings").insert({
                                 "farmer_psid": sender_id,
                                 "commodity": p_load['c'],
@@ -154,41 +154,34 @@ async def receive_message(request: Request):
                                 "status": True
                             }).execute()
 
-                            # if insert was successful, grab the new ID
                             if res.data:
-                                listing_id = res.data[0]['id']
-                                print(f"debug: insert success! id is {listing_id}")
+                                l_id = res.data[0]['id']
+                                msg = f"✅ Napost na sa palengke!\nID: {l_id}\n\nMakadawat ka og mensahe dinhi kung naay mupalit."
 
-                                confirm_msg = f"✅ Napost na sa palengke!\nID: {listing_id}\n\nMakadawat ra ka og mensahe dinhi kung naay mupalit."
-
-                                buttons = {
+                                await send_fb_message(sender_id, {
                                     "attachment": {
                                         "type": "template",
                                         "payload": {
                                             "template_type": "button",
-                                            "text": confirm_msg,
+                                            "text": msg,
                                             "buttons": [{
                                                 "type": "postback",
                                                 "title": "BAWI-ON (Withdraw)",
-                                                "payload": json.dumps({"action": "CANCEL", "id": listing_id})
+                                                "payload": json.dumps({"action": "CANCEL", "id": l_id})
                                             }]
                                         }
                                     }
-                                }
-                                await send_fb_message(sender_id, buttons)
-                            else:
-                                print(f"debug: supabase insert failed. response: {res}")
+                                })
 
-                        # farmer clicks "bawi-on" (withdraw)
-                        elif p_load.get("action") == "CANCEL":
-                            listing_id = p_load['id']
+                        elif action == "CANCEL":
+                            l_id = p_load.get("id")
 
-                            # change status in supabase so the buyer site hides it
+                            # set status to false in db
                             supabase.table("market_listings").update({"status": False}) \
-                                .eq("id", listing_id).execute()
+                                .eq("id", l_id).execute()
 
-                            await send_fb_message(sender_id, {
-                                "text": f"🚫 Gikanselar na ang imong listing (ID: {listing_id}). Wala na kini sa palengke."})
+                            await send_fb_message(sender_id,
+                                                  {"text": f"🚫 Gikanselar na ang imong listing (ID: {l_id})."})
 
                     except Exception as e:
                         print(f"postback error: {e}")
