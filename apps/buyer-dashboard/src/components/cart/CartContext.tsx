@@ -4,10 +4,12 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 export type CartItem = {
   id: number
-  crop: string
-  location: string
-  volume: string
+  commodity: string
+  grade: string | null
+  weightKg: number
+  price: number | null
   farmer: string
+  rating: number
 }
 
 type CartContextValue = {
@@ -21,54 +23,30 @@ const CartContext = createContext<CartContextValue | undefined>(undefined)
 
 const STORAGE_KEY = 'buyer-dashboard-cart'
 
-// Hardcoded items for UI purposes
-const DEFAULT_ITEMS: CartItem[] = [
-  {
-    id: 101,
-    crop: 'Tomato',
-    location: 'Pangasinan',
-    volume: '300kg',
-    farmer: 'Juan D.',
-  },
-  {
-    id: 102,
-    crop: 'Rice',
-    location: 'Nueva Ecija',
-    volume: '1,000kg',
-    farmer: 'Maria S.',
-  },
-  {
-    id: 103,
-    crop: 'Corn',
-    location: 'Tarlac',
-    volume: '600kg',
-    farmer: 'Pedro R.',
-  },
-  {
-    id: 104,
-    crop: 'Eggplant',
-    location: 'Bulacan',
-    volume: '250kg',
-    farmer: 'Ana L.',
-  },
-  {
-    id: 105,
-    crop: 'Onion',
-    location: 'Nueva Ecija',
-    volume: '800kg',
-    farmer: 'Carlos M.',
-  },
-]
-
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(DEFAULT_ITEMS)
+  const [items, setItems] = useState<CartItem[]>([])
 
   useEffect(() => {
     try {
       const stored = typeof window !== 'undefined' ? sessionStorage.getItem(STORAGE_KEY) : null
       if (stored) {
-        const parsed = JSON.parse(stored) as CartItem[]
-        setItems(parsed)
+        const parsed = JSON.parse(stored) as unknown
+        if (Array.isArray(parsed)) {
+          const cleaned = parsed
+            .filter((i: any) => typeof i?.id === 'number' && typeof i?.commodity === 'string')
+            .map(
+              (i: any): CartItem => ({
+                id: Number(i.id),
+                commodity: String(i.commodity),
+                grade: i.grade ? String(i.grade) : null,
+                weightKg: Number(i.weightKg ?? 0),
+                price: i.price === null || i.price === undefined ? null : Number(i.price),
+                farmer: String(i.farmer ?? 'Farmer'),
+                rating: Number(i.rating ?? 0),
+              }),
+            )
+          setItems(cleaned)
+        }
       }
     } catch {
       // ignore storage errors
