@@ -35,10 +35,10 @@ export function HarvestMap({ points = [] }: { points?: HarvestMapPoint[] }) {
           zoomControl: true,
         })
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors',
-    }).addTo(mapRef.current)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors',
+        }).addTo(map)
 
         const layer = L.layerGroup().addTo(map)
         layerRef.current = layer
