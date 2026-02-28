@@ -1,118 +1,98 @@
 'use client'
 
-import { useState } from 'react'
-import {
-  MapPin,
-  Search,
-  Phone,
-  Leaf,
-  Users,
-  ShoppingCart,
-} from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { MapPin, Search, Leaf, Users, ShoppingCart, Star } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useCart } from '@/components/cart/CartContext'
 import dynamic from 'next/dynamic'
+import { fetchListingsWithFarmers, type CombinedListing } from '@/service/marketListingsService'
+import type { HarvestMapPoint } from './HarvestMap'
 
 const HarvestMap = dynamic(
   () => import('./HarvestMap').then((mod) => mod.HarvestMap),
   { ssr: false },
 )
 
-// Currently hardcoded for UI purposes
-const harvests = [
-  {
-    id: 1,
-    crop: 'Tomato',
-    grade: 'A',
-    location: 'Pangasinan',
-    volume: '500kg',
-    farmer: 'Juan D.',
-    verified: true,
-    distance: '45km',
-  },
-  {
-    id: 2,
-    crop: 'Rice',
-    grade: 'A',
-    location: 'Nueva Ecija',
-    volume: '2,000kg',
-    farmer: 'Maria S.',
-    verified: true,
-    distance: '120km',
-  },
-  {
-    id: 3,
-    crop: 'Corn',
-    grade: 'B',
-    location: 'Tarlac',
-    volume: '800kg',
-    farmer: 'Pedro R.',
-    verified: false,
-    distance: '90km',
-  },
-  {
-    id: 4,
-    crop: 'Eggplant',
-    grade: 'A',
-    location: 'Bulacan',
-    volume: '300kg',
-    farmer: 'Ana L.',
-    verified: true,
-    distance: '30km',
-  },
-  {
-    id: 5,
-    crop: 'Onion',
-    grade: 'A',
-    location: 'Nueva Ecija',
-    volume: '1,500kg',
-    farmer: 'Carlos M.',
-    verified: true,
-    distance: '115km',
-  },
-]
-
 export function BuyerDashboard() {
   const [selectedFilter, setSelectedFilter] = useState('All')
-  const filters = ['All', 'Tomato', 'Rice', 'Corn', 'Eggplant', 'Onion']
+  const [listings, setListings] = useState<CombinedListing[]>([])
+  const [isLoading, setIsLoading] = useState(false)
   const { addItem } = useCart()
 
-  const filtered =
-    selectedFilter === 'All'
-      ? harvests
-      : harvests.filter((h) => h.crop === selectedFilter)
+  useEffect(() => {
+    let cancelled = false
+    setIsLoading(true)
 
-  /**
-   * Modified handleConnect:
-   * Instead of just the ID, we send a string like "Tomato (500kg)" 
-   * so ManyChat can show the details immediately.
-   */
-  const handleConnect = (harvest: typeof harvests[0]) => {
-    // Format: Crop_Name_Volume (we replace spaces with underscores for URL safety)
-    const productInfo = encodeURIComponent(`${harvest.crop} (${harvest.volume})`);
-    
-    // Final URL with specific ref code and the hardcoded payload
-    const manyChatUrl = `https://m.me/938478252689737?ref=w50968964--${productInfo}`;
-    
-    window.open(manyChatUrl, '_blank');
-  }
+    fetchListingsWithFarmers()
+      .then((rows) => {
+        if (!cancelled) {
+          setListings(rows)
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load listings', err)
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setIsLoading(false)
+        }
+      })
 
-  const handleAddToCart = (harvest: typeof harvests[0]) => {
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const filters = useMemo(() => {
+    const names = Array.from(new Set(listings.map((l) => l.commodity))).sort()
+    return ['All', ...names]
+  }, [listings])
+
+  const filtered = useMemo(
+    () =>
+      selectedFilter === 'All'
+        ? listings
+        : listings.filter((h) => h.commodity === selectedFilter),
+    [listings, selectedFilter],
+  )
+
+  const farmerCount = useMemo(() => {
+    const ids = new Set(listings.map((l) => l.farmerId).filter(Boolean))
+    return ids.size || listings.length
+  }, [listings])
+
+  const handleAddToCart = (harvest: CombinedListing) => {
     addItem({
       id: harvest.id,
-      crop: harvest.crop,
-      location: harvest.location,
-      volume: harvest.volume,
-      farmer: harvest.farmer,
+      commodity: harvest.commodity,
+      grade: harvest.grade,
+      weightKg: harvest.weightKg,
+      price: harvest.price,
+      farmer: harvest.farmerLabel,
+      rating: harvest.rating,
     })
   }
 
+  const mapPoints: HarvestMapPoint[] = useMemo(
+    () =>
+      listings
+        .filter((l) => l.lat !== null && l.lng !== null)
+        .map((l) => ({
+          id: l.id,
+          lat: l.lat as number,
+          lng: l.lng as number,
+          weightKg: l.weightKg,
+          label: `${l.commodity} • ${l.weightKg}kg • ${l.farmerLabel}`,
+        })),
+    [listings],
+  )
+
   return (
     <div className="flex flex-col gap-6 p-6">
-      {/* ESG Impact Banner */}
+      {/* Impact banner */}
       <Card className="border-0 bg-primary">
         <CardContent className="flex items-center gap-4 p-6">
           <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-secondary">
@@ -120,11 +100,10 @@ export function BuyerDashboard() {
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-primary-foreground/80">
-              Your Impact
+              Your impact
             </p>
-            {/* Hardcoded */}
             <p className="text-xl font-bold text-primary-foreground">
-              24 Farmers Supported
+              {farmerCount} farmers currently listed
             </p>
           </div>
         </CardContent>
@@ -141,7 +120,7 @@ export function BuyerDashboard() {
           </Badge>
         </CardHeader>
         <CardContent className="p-0">
-          <HarvestMap />
+          <HarvestMap points={mapPoints} />
         </CardContent>
       </Card>
 
@@ -179,10 +158,17 @@ export function BuyerDashboard() {
             Active Harvests
           </h3>
           <span className="text-sm text-muted-foreground">
-            {filtered.length} results
+            {isLoading ? 'Loading…' : `${filtered.length} results`}
           </span>
         </div>
         <div className="flex flex-col gap-3">
+          {!isLoading && filtered.length === 0 && (
+            <Card className="border border-border/60">
+              <CardContent className="p-6 text-sm text-muted-foreground">
+                No active market listings found.
+              </CardContent>
+            </Card>
+          )}
           {filtered.map((harvest) => (
             <Card
               key={harvest.id}
@@ -208,53 +194,44 @@ export function BuyerDashboard() {
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-base font-bold text-foreground">
-                        {harvest.crop}
+                        {harvest.commodity}
                       </span>
-                      <Badge
-                        variant={
-                          harvest.grade === 'A' ? 'default' : 'secondary'
-                        }
-                        className="text-xs px-2 py-0"
-                      >
-                        Grade {harvest.grade}
-                      </Badge>
-                      {harvest.verified && (
-                        <Badge
-                          variant="outline"
-                          className="border-green-300 text-green-700 text-xs px-2 py-0"
-                        >
-                          Verified
+                      {harvest.grade && (
+                        <Badge variant="outline" className="text-xs px-2 py-0">
+                          Grade {harvest.grade}
+                        </Badge>
+                      )}
+                      {harvest.price !== null && (
+                        <Badge variant="outline" className="text-xs px-2 py-0">
+                          ₱{harvest.price.toFixed(0)}/kg
                         </Badge>
                       )}
                     </div>
                     <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-0.5 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <MapPin className="h-3.5 w-3.5" />
-                        {harvest.location}
+                        {harvest.lat !== null && harvest.lng !== null
+                          ? `${harvest.lat.toFixed(2)}, ${harvest.lng.toFixed(2)}`
+                          : 'Cebu'}
                       </span>
-                      <span>{harvest.volume}</span>
-                      <span>{harvest.distance}</span>
+                      <span>{harvest.weightKg}kg</span>
+                      <span className="flex items-center gap-1">
+                        <Star className="h-3.5 w-3.5" />
+                        {harvest.rating.toFixed(2)}
+                      </span>
+                      <span>{harvest.farmerLabel}</span>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-                    <Button
-                      size="sm"
-                      className="h-10 gap-2 bg-primary text-primary-foreground shrink-0"
-                      onClick={() => handleConnect(harvest)}
-                    >
-                      <Phone className="h-4 w-4" />
-                      Connect
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-10 gap-2 shrink-0"
-                      onClick={() => handleAddToCart(harvest)}
-                    >
-                      <ShoppingCart className="h-4 w-4" />
-                      Add to cart
-                    </Button>
-                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-10 gap-2 shrink-0"
+                    onClick={() => handleAddToCart(harvest)}
+                    disabled={isLoading}
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    Add to cart
+                  </Button>
                 </div>
               </CardContent>
             </Card>
