@@ -18,7 +18,10 @@ import dynamic from 'next/dynamic'
 
 const HarvestMap = dynamic(
   () => import('./HarvestMap').then((mod) => mod.HarvestMap),
-  { ssr: false },
+  {
+    ssr: false,
+    loading: () => <div className="h-[300px] w-full bg-muted animate-pulse flex items-center justify-center text-muted-foreground">Loading Map...</div>
+  }
 )
 
 // Currently hardcoded for UI purposes
@@ -93,10 +96,10 @@ export function BuyerDashboard() {
   const handleConnect = (harvest: typeof harvests[0]) => {
     // Format: Crop_Name_Volume (we replace spaces with underscores for URL safety)
     const productInfo = encodeURIComponent(`${harvest.crop} (${harvest.volume})`);
-    
+
     // Final URL with specific ref code and the hardcoded payload
     const manyChatUrl = `https://m.me/938478252689737?ref=w50968964--${productInfo}`;
-    
+
     window.open(manyChatUrl, '_blank');
   }
 
@@ -134,7 +137,7 @@ export function BuyerDashboard() {
       <Card className="overflow-hidden border border-border">
         <CardHeader className="flex flex-row items-center justify-between p-6 pb-2">
           <CardTitle className="text-base font-bold">
-            Live Harvest Heatmap 
+            Live Harvest Heatmap
           </CardTitle>
           <Badge variant="outline" className="text-xs">
             Cebu
@@ -160,11 +163,10 @@ export function BuyerDashboard() {
               key={f}
               type="button"
               onClick={() => setSelectedFilter(f)}
-              className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold transition-colors ${
-                selectedFilter === f
+              className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold transition-colors ${selectedFilter === f
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-muted text-muted-foreground hover:bg-muted/80'
-              }`}
+                }`}
             >
               {f}
             </button>
@@ -191,18 +193,16 @@ export function BuyerDashboard() {
               <CardContent className="p-4">
                 <div className="flex items-start gap-4">
                   <div
-                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${
-                      harvest.grade === 'A'
+                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${harvest.grade === 'A'
                         ? 'bg-primary/10'
                         : 'bg-secondary/15'
-                    }`}
+                      }`}
                   >
                     <Leaf
-                      className={`h-6 w-6 ${
-                        harvest.grade === 'A'
+                      className={`h-6 w-6 ${harvest.grade === 'A'
                           ? 'text-primary'
                           : 'text-secondary-foreground'
-                      }`}
+                        }`}
                     />
                   </div>
                   <div className="flex-1 min-w-0">

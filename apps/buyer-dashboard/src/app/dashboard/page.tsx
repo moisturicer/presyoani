@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { BuyerDashboard } from '@/components/BuyerDashboard'
 import { supabase } from '@/lib/supabaseClient'
@@ -12,6 +12,37 @@ let hasSyncedGlobal = false;
 
 export default function DashboardPage() {
   const router = useRouter()
+  const [_profile, setProfile] = useState<any>(null)
+
+  useEffect(() => {
+
+    const loadUserData = async () => {
+
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle()
+
+        if (error) {
+          console.error("Fetch error:", error.message)
+          return
+        }
+
+        if (data) {
+          setProfile(data)
+          console.log('Welcome', data?.first_name)
+        } else {
+          console.log('data failed')
+        }
+      }
+
+      console.log('test')
+    };
+    loadUserData()
+  }, [])
 
   useEffect(() => {
     let isMounted = true
@@ -35,10 +66,10 @@ export default function DashboardPage() {
 
     if (hasSyncedGlobal) return;
 
-   const runSync = () => {
+    const runSync = () => {
       SyncService.syncCommodities()
         .then(() => {
-          hasSyncedGlobal = true; 
+          hasSyncedGlobal = true;
         })
         .catch(err => console.error("Manual sync failed:", err));
     };
@@ -52,7 +83,10 @@ export default function DashboardPage() {
     };
   }, []);
 
+
+
   return (
+
     <main className="min-h-screen bg-gradient-to-b from-background via-background to-background/95">
       <div className="mx-auto flex max-w-5xl flex-col gap-4 px-6 pb-8 pt-6">
         <header className="flex flex-col gap-3 rounded-2xl bg-card/80 px-5 py-4 shadow-sm ring-1 ring-border/70 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
