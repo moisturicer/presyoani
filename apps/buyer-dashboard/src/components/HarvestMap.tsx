@@ -14,35 +14,44 @@ export function HarvestMap() {
     async function initMap() {
       const L = (await import('leaflet')).default
 
-      const map = L.map(mapContainerRef.current!, {
-        center: CEBU_CENTER,
-        zoom: 9,
-        zoomControl: true,
-      })
+      try {
+        const map = L.map(mapContainerRef.current!, {
+          center: CEBU_CENTER,
+          zoom: 9,
+          zoomControl: true,
+        })
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution:
-          '&copy; OpenStreetMap contributors',
-      }).addTo(map)
-
-      const examplePoints: [number, number][] = [
-        [10.3157, 123.8854],
-        [10.2926, 123.9416],
-        [10.2447, 123.8494],
-      ]
-
-      examplePoints.forEach((latlng) => {
-        L.circle(latlng, {
-          radius: 3000,
-          color: '#22c55e',
-          weight: 1,
-          fillColor: '#22c55e',
-          fillOpacity: 0.4,
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors',
         }).addTo(map)
-      })
 
-      mapRef.current = map
+        const examplePoints: [number, number][] = [
+          [10.3157, 123.8854],
+          [10.2926, 123.9416],
+          [10.2447, 123.8494],
+        ]
+
+        examplePoints.forEach((latlng) => {
+          L.circle(latlng, {
+            radius: 3000,
+            color: '#22c55e',
+            weight: 1,
+            fillColor: '#22c55e',
+            fillOpacity: 0.4,
+          }).addTo(map)
+        })
+
+        mapRef.current = map
+      } catch (error: any) {
+        if (
+          typeof error?.message === 'string' &&
+          error.message.includes('Map container is already initialized')
+        ) {
+          return
+        }
+        throw error
+      }
     }
 
     initMap()
