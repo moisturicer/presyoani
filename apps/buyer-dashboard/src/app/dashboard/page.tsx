@@ -12,7 +12,7 @@ let hasSyncedGlobal = false;
 
 export default function DashboardPage() {
   const router = useRouter()
-  const [profile, setProfile] = useState<any>(null)
+  const [_profile, setProfile] = useState<any>(null)
 
   useEffect(() => {
 
