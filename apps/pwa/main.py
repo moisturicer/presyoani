@@ -141,55 +141,34 @@ async def receive_message(request: Request):
                     try:
                         p_load = json.loads(payload_raw)
 
-                        # farmer clicks "ibaligya"
                         if p_load.get("action") == "LIST":
-
-                            # save to market table and get the response back
                             res = supabase.table("market_listings").insert({
                                 "farmer_psid": sender_id,
                                 "commodity": p_load['c'],
                                 "grade": p_load['g'],
                                 "weight": p_load['q'],
                                 "price": p_load['p'],
-                                "status": True
+                                "is_available": True
                             }).execute()
 
-                            # if insert was successful, grab the new ID
                             if res.data:
-                                listing_id = res.data[0]['id']
-                                print(f"debug: insert success! id is {listing_id}")
+                                l_id = res.data[0]['id']
+                                msg = f"✅ Napost na sa palengke!\nID: {l_id}\n\nMakadawat ka og mensahe dinhi kung naay mupalit."
 
-                                confirm_msg = f"✅ Napost na sa palengke!\nID: {listing_id}\n\nMakadawat ra ka og mensahe dinhi kung naay mupalit."
-
-                                buttons = {
+                                await send_fb_message(sender_id, {
                                     "attachment": {
                                         "type": "template",
                                         "payload": {
                                             "template_type": "button",
-                                            "text": confirm_msg,
+                                            "text": msg,
                                             "buttons": [{
                                                 "type": "postback",
                                                 "title": "BAWI-ON (Withdraw)",
-                                                "payload": json.dumps({"action": "CANCEL", "id": listing_id})
+                                                "payload": json.dumps({"action": "CANCEL", "id": l_id})
                                             }]
                                         }
                                     }
-                                }
-                                await send_fb_message(sender_id, buttons)
-                            else:
-                                print(f"debug: supabase insert failed. response: {res}")
-
-                        # farmer clicks "bawi-on" (withdraw)
-                        elif p_load.get("action") == "CANCEL":
-                            listing_id = p_load['id']
-
-                            # change status in supabase so the buyer site hides it
-                            supabase.table("market_listings").update({"status": False}) \
-                                .eq("id", listing_id).execute()
-
-                            await send_fb_message(sender_id, {
-                                "text": f"🚫 Gikanselar na ang imong listing (ID: {listing_id}). Wala na kini sa palengke."})
-
+                                })
                     except Exception as e:
                         print(f"postback error: {e}")
 
