@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PresyoAni Live Scan</title>
     <link rel="manifest" href="/static/manifest.json">
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite/dist/tf-tflite.min.js"></script>
+    <script src="/static/tf.min.js"></script>
+    <script src="/static/tf-tflite.min.js"></script>
     <style>
         body { font-family: sans-serif; margin: 0; background: #000; color: white; overflow: hidden; }
         #camera-container { position: relative; width: 100vw; height: 100vh; }
@@ -51,12 +51,20 @@
 
     async function init() {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: "environment" },
+                audio: false
+            });
             video.srcObject = stream;
+
+            tflite.setWasmPath('/static/');
+
             model = await tflite.loadTFLiteModel('/static/model.tflite');
+
             document.getElementById('loading').style.display = 'none';
         } catch (err) {
-            alert("Camera Error. Please use HTTPS.");
+            console.error(err);
+            alert("AI error: make sure all static files are downloaded.");
         }
     }
 

@@ -7,11 +7,13 @@ import {
   Phone,
   Leaf,
   Users,
+  ShoppingCart,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useCart } from '@/components/cart/CartContext'
 import dynamic from 'next/dynamic'
 
 const HarvestMap = dynamic(
@@ -76,6 +78,7 @@ const harvests = [
 export function BuyerDashboard() {
   const [selectedFilter, setSelectedFilter] = useState('All')
   const filters = ['All', 'Tomato', 'Rice', 'Corn', 'Eggplant', 'Onion']
+  const { addItem } = useCart()
 
   const filtered =
     selectedFilter === 'All'
@@ -95,6 +98,16 @@ export function BuyerDashboard() {
     const manyChatUrl = `https://m.me/938478252689737?ref=w50968964--${productInfo}`;
     
     window.open(manyChatUrl, '_blank');
+  }
+
+  const handleAddToCart = (harvest: typeof harvests[0]) => {
+    addItem({
+      id: harvest.id,
+      crop: harvest.crop,
+      location: harvest.location,
+      volume: harvest.volume,
+      farmer: harvest.farmer,
+    })
   }
 
   return (
@@ -223,14 +236,25 @@ export function BuyerDashboard() {
                       <span>{harvest.distance}</span>
                     </div>
                   </div>
-                  <Button
-                    size="sm"
-                    className="h-10 gap-2 bg-primary text-primary-foreground shrink-0"
-                    onClick={() => handleConnect(harvest)}
-                  >
-                    <Phone className="h-4 w-4" />
-                    Connect
-                  </Button>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                    <Button
+                      size="sm"
+                      className="h-10 gap-2 bg-primary text-primary-foreground shrink-0"
+                      onClick={() => handleConnect(harvest)}
+                    >
+                      <Phone className="h-4 w-4" />
+                      Connect
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-10 gap-2 shrink-0"
+                      onClick={() => handleAddToCart(harvest)}
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                      Add to cart
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
