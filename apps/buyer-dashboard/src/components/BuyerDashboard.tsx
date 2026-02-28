@@ -13,8 +13,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { HarvestMap } from './HarvestMap'
 import { useCart } from '@/components/cart/CartContext'
+import dynamic from 'next/dynamic'
+
+const HarvestMap = dynamic(
+  () => import('./HarvestMap').then((mod) => mod.HarvestMap),
+  { ssr: false },
+)
 
 // Currently hardcoded for UI purposes
 const harvests = [
