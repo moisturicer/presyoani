@@ -111,7 +111,7 @@ async def receive_message(request: Request):
                                     f"Grade: {grade}\n"
                                     f"Timbang: {qty}kg\n\n"
                                     f"Presyo: ₱{p:.2f}/kg\n"
-                                    f"Total: ₱{total:,.2f}\n\n"
+                                    f"Total: ₱{total:,.2f}"
                                 )
 
                                 buttons = {
@@ -140,20 +140,60 @@ async def receive_message(request: Request):
                     payload_raw = messaging_event["postback"].get("payload")
                     try:
                         p_load = json.loads(payload_raw)
+
+                        # farmer clicks "ibaligya"
                         if p_load.get("action") == "LIST":
-                            # save to market table
-                            supabase.table("market_listings").insert({
+
+                            # save to market table and get the response back
+                            res = supabase.table("market_listings").insert({
                                 "farmer_psid": sender_id,
                                 "commodity": p_load['c'],
                                 "grade": p_load['g'],
                                 "weight": p_load['q'],
                                 "price": p_load['p'],
-                                "status": "available"
+                                "status": True
                             }).execute()
 
-                            await send_fb_message(sender_id, {"text": "listed on dashboard ✅"})
-                    except:
-                        pass
+                            # if insert was successful, grab the new ID
+                            if res.data:
+                                listing_id = res.data[0]['id']
+
+                                confirm_msg = (
+                                    f"✅ Napost na sa palengke imong baligya!\n"
+                                    f"Listing ID: {listing_id}\n\n"
+                                    f"Makadawat ka og mensahe dinhi kung naay mupalit niini."
+                                )
+
+                                # send confirmation with a withdrawal button
+                                withdraw_btn = {
+                                    "attachment": {
+                                        "type": "template",
+                                        "payload": {
+                                            "template_type": "button",
+                                            "text": confirm_msg,
+                                            "buttons": [{
+                                                "type": "postback",
+                                                "title": "BAWI-ON (Withdraw)",
+                                                "payload": json.dumps({"action": "CANCEL", "id": listing_id})
+                                            }]
+                                        }
+                                    }
+                                }
+                                await send_fb_message(sender_id, withdraw_btn)
+
+                        # farmer clicks "bawi-on" (withdraw)
+                        elif p_load.get("action") == "CANCEL":
+                            listing_id = p_load['id']
+
+                            # change status in supabase so the buyer site hides it
+                            supabase.table("market_listings").update({"status": False}) \
+                                .eq("id", listing_id).execute()
+
+                            await send_fb_message(sender_id, {
+                                "text": f"🚫 Gikanselar na ang imong listing (ID: {listing_id}). Wala na kini sa palengke."})
+
+                    except Exception as e:
+                        print(f"postback error: {e}")
 
     return PlainTextResponse("EVENT_RECEIVED", status_code=200)
 
