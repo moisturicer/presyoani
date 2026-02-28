@@ -140,15 +140,17 @@ async def receive_message(request: Request):
                     payload_raw = messaging_event["postback"].get("payload")
                     try:
                         p_load = json.loads(payload_raw)
+                        action = p_load.get("action")
 
-                        if p_load.get("action") == "LIST":
+                        # farmer clicks "ibaligya"
+                        if action == "LIST":
                             res = supabase.table("market_listings").insert({
                                 "farmer_psid": sender_id,
                                 "commodity": p_load['c'],
                                 "grade": p_load['g'],
                                 "weight": p_load['q'],
                                 "price": p_load['p'],
-                                "is_available": True
+                                "status": True
                             }).execute()
 
                             if res.data:
@@ -169,6 +171,17 @@ async def receive_message(request: Request):
                                         }
                                     }
                                 })
+
+                        elif action == "CANCEL":
+                            l_id = p_load.get("id")
+
+                            # set status to false in db
+                            supabase.table("market_listings").update({"status": False}) \
+                                .eq("id", l_id).execute()
+
+                            await send_fb_message(sender_id,
+                                                  {"text": f"🚫 Gikanselar na ang imong listing (ID: {l_id})."})
+
                     except Exception as e:
                         print(f"postback error: {e}")
 
