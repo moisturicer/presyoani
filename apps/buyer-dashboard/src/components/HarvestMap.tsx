@@ -1,10 +1,13 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
+import dynamic from 'next/dynamic'
+import 'leaflet/dist/leaflet.css'
 
 const CEBU_CENTER: [number, number] = [10.3157, 123.8854]
 
-export function HarvestMap() {
+
+function HarvestMapContent() {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<any>(null)
 
@@ -15,10 +18,13 @@ export function HarvestMap() {
       const L = (await import('leaflet')).default
 
       try {
-        const map = L.map(mapContainerRef.current!, {
+        if (!mapContainerRef.current) return
+
+        const map = L.map(mapContainerRef.current, {
           center: CEBU_CENTER,
-          zoom: 9,
+          zoom: 11,
           zoomControl: true,
+          scrollWheelZoom: false,
         })
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -34,8 +40,8 @@ export function HarvestMap() {
 
         examplePoints.forEach((latlng) => {
           L.circle(latlng, {
-            radius: 3000,
-            color: '#22c55e',
+            radius: 2000,
+            color: '#22c55e', // Green
             weight: 1,
             fillColor: '#22c55e',
             fillOpacity: 0.4,
@@ -43,14 +49,8 @@ export function HarvestMap() {
         })
 
         mapRef.current = map
-      } catch (error: any) {
-        if (
-          typeof error?.message === 'string' &&
-          error.message.includes('Map container is already initialized')
-        ) {
-          return
-        }
-        throw error
+      } catch (error) {
+        console.error("Leaflet Error:", error)
       }
     }
 
@@ -64,5 +64,23 @@ export function HarvestMap() {
     }
   }, [])
 
-  return <div ref={mapContainerRef} className="h-64 w-full" />
+  return (
+    <div
+      ref={mapContainerRef}
+      className="h-full w-full rounded-xl border border-gray-200 shadow-sm"
+      style={{ minHeight: '300px' }}
+    />
+  )
 }
+
+export const HarvestMap = dynamic(
+  () => Promise.resolve(HarvestMapContent),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-64 w-full bg-gray-50 animate-pulse flex items-center justify-center rounded-xl border border-gray-100">
+        <span className="text-gray-400 text-sm">Initializing Map...</span>
+      </div>
+    )
+  }
+)
