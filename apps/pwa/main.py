@@ -60,184 +60,126 @@ async def verify(request: Request):
 @app.post("/webhook")
 async def receive_message(request: Request):
     data = await request.json()
-    print(f"FARMER_ID_FOUND: {data['entry'][0]['messaging'][0]['sender']['id']}")
+    
+    # Basic validation of FB structure
+    if not data.get("object") == "page":
+        return PlainTextResponse("NOT_A_PAGE_EVENT", status_code=200)
 
-    if data.get("object") == "page":
-        for entry in data.get("entry"):
-            for messaging_event in entry.get("messaging"):
-                sender_id = messaging_event["sender"]["id"]
+    for entry in data.get("entry"):
+        for messaging_event in entry.get("messaging"):
+            sender_id = messaging_event["sender"]["id"]
 
-                # catch the scan from pwa
-                ref_data = None
-                if "referral" in messaging_event:
-                    ref_data = messaging_event["referral"].get("ref")
-                elif "postback" in messaging_event and "referral" in messaging_event["postback"]:
-                    ref_data = messaging_event["postback"]["referral"].get("ref")
+            # 1. CATCH THE SCAN (Referral/PWA)
+            ref_data = None
+            if "referral" in messaging_event:
+                ref_data = messaging_event["referral"].get("ref")
+            elif "postback" in messaging_event and "referral" in messaging_event["postback"]:
+                ref_data = messaging_event["postback"]["referral"].get("ref")
 
-                if ref_data:
-                    try:
-                        # decode scan data
-                        decoded = base64.urlsafe_b64decode(ref_data + "===").decode('utf-8')
-                        print(f"decoded ref data: {decoded}")  # prints to render logs
+            if ref_data:
+                try:
+                    # decode scan data (crop|qty|grade)
+                    decoded = base64.urlsafe_b64decode(ref_data + "===").decode('utf-8')
+                    parts = decoded.split("|")
 
-                        parts = decoded.split("|")
+                    if len(parts) >= 3:
+                        crop, qty, grade = parts[0], parts[1], parts[2]
 
-                        if len(parts) >= 3:
-                            crop = parts[0]
-                            qty = parts[1]
-                            grade = parts[2]
+                        # Fetch price from Supabase
+                        res = supabase.table("dpi_prices").select("price") \
+                            .ilike("commodity", f"%{crop}%") \
+                            .order("date_updated", desc=True).limit(1).execute()
 
-                            # get price from db
-                            res = supabase.table("dpi_prices").select("price") \
-                                .ilike("commodity", f"%{crop}%") \
-                                .order("date_updated", desc=True).limit(1).execute()
+                        if res.data:
+                            p = float(res.data[0]['price'])
+                            total = p * float(qty)
 
-                            if res.data:
-                                p = float(res.data[0]['price'])
-                                total = p * float(qty)
+                            bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
+                            crop_bisaya = bisaya_crops.get(crop.lower(), crop).capitalize()
 
-                                bisaya_crops = {
-                                    "tomato": "kamatis",
-                                    "chili": "sili",
-                                    "sweet_potato": "kamote"
-                                }
+                            msg_text = (
+                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa!\n\n"
+                                f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}. "
+                                f"Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke.\n\n"
+                                f"DETALYE SA SCAN\n"
+                                f"Tanom: {crop_bisaya}\n"
+                                f"Grade: {grade}\n"
+                                f"Timbang: {qty}kg\n\n"
+                                f"Presyo: ₱{p:.2f}/kg\n"
+                                f"Total: ₱{total:,.2f}"
+                            )
 
-                                crop_bisaya = bisaya_crops.get(crop.lower(), crop).capitalize()
-
-                                msg = (
-                                    f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa!\n\n"
-                                    f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}. Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke.\n\n"
-                                    f"DETALYE SA SCAN\n"
-                                    f"Tanom: {crop_bisaya}\n"
-                                    f"Grade: {grade}\n"
-                                    f"Timbang: {qty}kg\n\n"
-                                    f"Presyo: ₱{p:.2f}/kg\n"
-                                    f"Total: ₱{total:,.2f}"
-                                )
-
-                                buttons = {
-                                    "attachment": {
-                                        "type": "template",
-                                        "payload": {
-                                            "template_type": "button",
-                                            "text": msg,
-                                            "buttons": [{
-                                                "type": "postback",
-                                                "title": "IBALIGYA",
-                                                "payload": json.dumps(
-                                                    {"action": "LIST", "c": crop, "g": grade, "q": qty, "p": p})
-                                            }]
-                                        }
+                            # Send the "IBALIGYA" Button
+                            buttons = {
+                                "attachment": {
+                                    "type": "template",
+                                    "payload": {
+                                        "template_type": "button",
+                                        "text": msg_text,
+                                        "buttons": [{
+                                            "type": "postback",
+                                            "title": "IBALIGYA",
+                                            "payload": json.dumps({"action": "LIST", "c": crop, "g": grade, "q": qty, "p": p})
+                                        }]
                                     }
                                 }
-                                await send_fb_message(sender_id, buttons)
-                            else:
-                                await send_fb_message(sender_id, {"text": f"no price found for {crop}"})
-                    except Exception as e:
-                        print(f"error: {e}")
+                            }
+                            await send_fb_message(sender_id, buttons)
+                except Exception as e:
+                    print(f"Scan processing error: {e}")
 
-                # catch sell button click
-                elif "postback" in messaging_event:
-                    payload_raw = messaging_event["postback"].get("payload")
-                    try:
-                        p_load = json.loads(payload_raw)
-                        action = p_load.get("action")
+            # 2. CATCH BUTTON CLICKS (Postback)
+            elif "postback" in messaging_event:
+                payload_raw = messaging_event["postback"].get("payload")
+                try:
+                    p_load = json.loads(payload_raw)
+                    action = p_load.get("action")
 
-                        # farmer clicks "ibaligya"
-                        if action == "LIST":
-                            # extract info from payload (price and qty are included)
-                            crop = p_load.get('c')
-                            qty = p_load.get('q')
-                            grade = p_load.get('g')
-                            p = p_load.get('p', 0)
+                    # ACTION: FARMER CLICKS "IBALIGYA"
+                    if action == "LIST":
+                        # Insert into Supabase market_listings
+                        res = supabase.table("market_listings").insert({
+                            "farmer_psid": sender_id,
+                            "commodity": p_load['c'],
+                            "grade": p_load['g'],
+                            "weight": p_load['q'],
+                            "price": p_load['p'],
+                            "status": True
+                        }).execute()
 
-                            res = supabase.table("market_listings").insert({
-                                "farmer_psid": sender_id,
-                                "commodity": crop,
-                                "grade": grade,
-                                "weight": qty,
-                                "price": p,
-                                "status": True
-                            }).execute()
-
-                            if res.data:
-                                l_id = res.data[0]['id']
-                                total = float(qty) * float(p)
-                                msg = (
-                                    f"✅ Napost na sa palengke!\n"
-                                    f"ID: {l_id}\n"
-                                    f"Presyo: ₱{float(p):.2f}/kg\n"
-                                    f"Timbang: {qty}kg\n"
-                                    f"Total: ₱{total:,.2f}\n\n"
-                                    f"Makadawat ka og mensahe dinhi kung naay mupalit."
-                                )
-
-                                await send_fb_message(sender_id, {
-                                    "attachment": {
-                                        "type": "template",
-                                        "payload": {
-                                            "template_type": "button",
-                                            "text": msg,
-                                            "buttons": [{
-                                                "type": "postback",
-                                                "title": "BAWI-ON (Withdraw)",
-                                                "payload": json.dumps({"action": "CANCEL", "id": l_id})
-                                            }]
-                                        }
+                        if res.data:
+                            listing_id = res.data[0]['id']
+                            success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
+                            
+                            # Send success message with "BAWION" button
+                            await send_fb_message(sender_id, {
+                                "attachment": {
+                                    "type": "template",
+                                    "payload": {
+                                        "template_type": "button",
+                                        "text": success_msg,
+                                        "buttons": [{
+                                            "type": "postback",
+                                            "title": "BAWION",
+                                            "payload": json.dumps({"action": "CANCEL", "id": listing_id})
+                                        }]
                                     }
-                                })
+                                }
+                            })
 
-                        elif action == "CANCEL":
-                            l_id = p_load.get("id")
+                    # ACTION: FARMER CLICKS "BAWION"
+                    elif action == "CANCEL":
+                        listing_id = p_load.get("id")
 
-                            # set status to false in db
-                            supabase.table("market_listings").update({"status": False}) \
-                                .eq("id", l_id).execute()
+                        # Delete the listing from the database
+                        supabase.table("market_listings").delete().eq("id", listing_id).execute()
 
-                            await send_fb_message(sender_id,
-                                                  {"text": f"🚫 Gikanselar na ang imong listing (ID: {l_id})."})
+                        await send_fb_message(sender_id, {"text": "🚫 Gikuha na ang imong listing sa palengke."})
 
-                    except Exception as e:
-                        print(f"postback error: {e}")
+                except Exception as e:
+                    print(f"Postback error: {e}")
 
     return PlainTextResponse("EVENT_RECEIVED", status_code=200)
-
-
-# standalone endpoint for the PWA itself
-# the mobile/web app can POST here after grading in order to
-# add a listing directly without going through Messenger.
-# the payload should include `c` (crop), `q` (qty), and `g` (grade).
-# the server looks up the latest price and inserts a market_listing record.
-@app.post("/list")
-async def create_listing(info: dict):
-    crop = info.get("c")
-    qty = info.get("q")
-    grade = info.get("g")
-    if not crop or not qty or not grade:
-        return {"success": False, "error": "missing fields"}
-
-    # look up latest price just as in the webhook handler
-    res = supabase.table("dpi_prices").select("price") \
-        .ilike("commodity", f"%{crop}%") \
-        .order("date_updated", desc=True).limit(1).execute()
-
-    price = 0
-    if res.data:
-        price = float(res.data[0]["price"])
-
-    # insert the listing with status = true
-    db_res = supabase.table("market_listings").insert({
-        "farmer_psid": None,  # unknown when coming from the PWA
-        "commodity": crop,
-        "grade": grade,
-        "weight": qty,
-        "price": price,
-        "status": True
-    }).execute()
-
-    if db_res.data:
-        return {"success": True, "id": db_res.data[0].get("id"), "price": price}
-    return {"success": False, "error": db_res.error}
 
 
 if __name__ == "__main__":
