@@ -68,7 +68,7 @@
         }
     }
 
-    document.getElementById('scan-btn').addEventListener('click', async () => {
+   document.getElementById('scan-btn').addEventListener('click', async () => {
         const qty = document.getElementById('quantity').value;
         const crop = document.getElementById('crop-type').value;
         if (!qty || qty <= 0) return alert("Please enter weight first!");
@@ -110,36 +110,16 @@
         else if (maxFresh > 0.25) grade = "C";
         else grade = "D";
 
-        // generate the ref data
-        // Format: crop|qty|grade
+        // 1. Generate the ref data (crop|qty|grade)
         const rawData = `${crop}|${qty}|${grade}`;
+        
+        // 2. Base64 encode it safely for URLs
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-        // give user a choice to list directly or via Messenger
-        if (confirm("Baligya diretso? Click 'OK' to post to marketplace, or 'Cancel' to open Messenger.")) {
-            // call our /list endpoint which will lookup current price and insert
-            try {
-                const resp = await fetch('/list', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ c: crop, q: qty, g: grade })
-                });
-                const result = await resp.json();
-                if (result.success) {
-                    alert('✅ Napost na sa palengke!\nID: ' + result.id + '\nPrice: ' + result.price);
-                } else {
-                    alert('Failed to list: ' + (result.error || 'unknown')); 
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Error contacting server');
-            }
-        } else {
-            // open messenger with the 'ref' parameter
-            // This triggers a 'messaging_referral' event in your Python code
-            window.location.href = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
-        }
+        // 3. REDIRECT IMMEDIATELY TO MESSENGER (No confirmation box)
+        window.location.href = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
     });
+
 
     init();
 </script>
