@@ -1,9 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef } from 'react'
-import dynamic from 'next/dynamic'
 import 'leaflet/dist/leaflet.css'
-import L from 'leaflet'
 
 const CEBU_CENTER: [number, number] = [10.3157, 123.8854]
 
