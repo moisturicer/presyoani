@@ -145,18 +145,32 @@ async def receive_message(request: Request):
 
                         # farmer clicks "ibaligya"
                         if action == "LIST":
+                            # extract info from payload (price and qty are included)
+                            crop = p_load.get('c')
+                            qty = p_load.get('q')
+                            grade = p_load.get('g')
+                            p = p_load.get('p', 0)
+
                             res = supabase.table("market_listings").insert({
                                 "farmer_psid": sender_id,
-                                "commodity": p_load['c'],
-                                "grade": p_load['g'],
-                                "weight": p_load['q'],
-                                "price": p_load['p'],
+                                "commodity": crop,
+                                "grade": grade,
+                                "weight": qty,
+                                "price": p,
                                 "status": True
                             }).execute()
 
                             if res.data:
                                 l_id = res.data[0]['id']
-                                msg = f"✅ Napost na sa palengke!\nID: {l_id}\n\nMakadawat ka og mensahe dinhi kung naay mupalit."
+                                total = float(qty) * float(p)
+                                msg = (
+                                    f"✅ Napost na sa palengke!\n"
+                                    f"ID: {l_id}\n"
+                                    f"Presyo: ₱{float(p):.2f}/kg\n"
+                                    f"Timbang: {qty}kg\n"
+                                    f"Total: ₱{total:,.2f}\n\n"
+                                    f"Makadawat ka og mensahe dinhi kung naay mupalit."
+                                )
 
                                 await send_fb_message(sender_id, {
                                     "attachment": {
