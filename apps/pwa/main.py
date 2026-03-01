@@ -139,7 +139,7 @@ async def receive_message(request: Request):
                     if action == "LIST":
                         # Insert into Supabase market_listings
                         res = supabase.table("market_listings").insert({
-                            "farmer_psid": sender_id,
+                            "farmers_psid": sender_id,
                             "commodity": p_load['c'],
                             "grade": p_load['g'],
                             "weight": p_load['q'],
