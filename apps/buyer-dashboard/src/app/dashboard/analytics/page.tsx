@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Spinner } from '@/components/ui/spinner'
 import { BarChart3, TrendingUp, TrendingDown, Cloud } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
 
@@ -163,12 +164,21 @@ export default function AnalyticsPage() {
                 </CardTitle>
               </div>
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                {selectedCrop
-                  ? `${selectedCrop.label} – City market price`
-                  : 'Loading crop prices...'}
+                {loading
+                  ? 'Loading DPI data…'
+                  : selectedCrop
+                    ? `${selectedCrop.label} – City market price`
+                    : 'Loading crop prices...'}
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
+              {loading && !analytics ? (
+                <div className="flex flex-col items-center justify-center gap-4 py-8" aria-hidden="true">
+                  <Spinner size="lg" />
+                  <p className="text-sm text-muted-foreground">Loading market prices & DPI data…</p>
+                </div>
+              ) : (
+                <>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-bold text-foreground">
                   {selectedCrop?.latestPrice != null ? (
@@ -227,6 +237,8 @@ export default function AnalyticsPage() {
                 ))}
               </div>
               <p className="text-xs text-muted-foreground">Last 10 days</p>
+                </>
+              )}
             </CardContent>
           </Card>
 
@@ -302,9 +314,10 @@ export default function AnalyticsPage() {
                   </p>
                 )}
               {loading && !analytics && (
-                <p className="text-sm text-muted-foreground">
-                  Loading crop prices...
-                </p>
+                <div className="col-span-full flex flex-col items-center justify-center gap-3 py-8 text-muted-foreground">
+                  <Spinner size="md" />
+                  <p className="text-sm">Loading DPI crop prices…</p>
+                </div>
               )}
             </div>
           </div>
