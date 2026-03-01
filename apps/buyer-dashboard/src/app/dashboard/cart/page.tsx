@@ -57,7 +57,7 @@ export default function CartPage() {
   )
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background via-background to-background/95">
+    <main className="min-h-screen bg-gradient-to-b from-background/70 via-background/60 to-background/70">
       <div className="mx-auto flex max-w-5xl flex-col gap-4 px-6 pb-8 pt-6">
         <div>
           <Link href="/dashboard">

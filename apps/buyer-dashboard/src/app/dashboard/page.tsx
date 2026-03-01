@@ -87,7 +87,7 @@ export default function DashboardPage() {
 
   return (
 
-    <main className="min-h-screen bg-gradient-to-b from-background via-background to-background/95">
+    <main className="min-h-screen bg-gradient-to-b from-background/70 via-background/60 to-background/70">
       <div className="mx-auto flex max-w-5xl flex-col gap-4 px-6 pb-8 pt-6">
         <header className="flex flex-col gap-3 rounded-2xl bg-card/80 px-5 py-4 shadow-sm ring-1 ring-border/70 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
           <div>

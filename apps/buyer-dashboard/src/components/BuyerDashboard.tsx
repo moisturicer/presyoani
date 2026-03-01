@@ -106,7 +106,7 @@ export function BuyerDashboard() {
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-primary-foreground/80">
-              Your impact
+              Live from the field
             </p>
             <p className="text-xl font-bold text-primary-foreground">
               {isLoading
