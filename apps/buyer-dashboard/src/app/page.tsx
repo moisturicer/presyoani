@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { BarChart3, Shield, Users } from 'lucide-react'
+import { FarmerOrbit } from '@/components/FarmerOrbit'
 
 
 export default function LandingPage() {
@@ -33,9 +34,12 @@ export default function LandingPage() {
         />
       </div>
 
-      {/* Subtle dotted grid */}
+      {/* Farmer images orbit (8 for SDG 8) */}
+      <FarmerOrbit />
+
+      {/* Subtle grid lines */}
       <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-[0.06] dotted-grid-bg"
+        className="pointer-events-none absolute inset-0 z-0 opacity-[0.12] grid-lines-bg"
         style={{ backgroundSize: '48px 48px' }}
         aria-hidden
       />

@@ -122,8 +122,7 @@ export default function AuthPage() {
       </div>
 
       <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-[0.06] dotted-grid-bg"
-        style={{ backgroundSize: '48px 48px' }}
+        className="pointer-events-none absolute inset-0 z-0 opacity-[0.12] grid-lines-bg"
         aria-hidden
       />
 
