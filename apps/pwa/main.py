@@ -189,6 +189,43 @@ async def receive_message(request: Request):
     return PlainTextResponse("EVENT_RECEIVED", status_code=200)
 
 
+# standalone endpoint for the PWA itself
+# the mobile/web app can POST here after grading in order to
+# add a listing directly without going through Messenger.
+# the payload should include `c` (crop), `q` (qty), and `g` (grade).
+# the server looks up the latest price and inserts a market_listing record.
+@app.post("/list")
+async def create_listing(info: dict):
+    crop = info.get("c")
+    qty = info.get("q")
+    grade = info.get("g")
+    if not crop or not qty or not grade:
+        return {"success": False, "error": "missing fields"}
+
+    # look up latest price just as in the webhook handler
+    res = supabase.table("dpi_prices").select("price") \
+        .ilike("commodity", f"%{crop}%") \
+        .order("date_updated", desc=True).limit(1).execute()
+
+    price = 0
+    if res.data:
+        price = float(res.data[0]["price"])
+
+    # insert the listing with status = true
+    db_res = supabase.table("market_listings").insert({
+        "farmer_psid": None,  # unknown when coming from the PWA
+        "commodity": crop,
+        "grade": grade,
+        "weight": qty,
+        "price": price,
+        "status": True
+    }).execute()
+
+    if db_res.data:
+        return {"success": True, "id": db_res.data[0].get("id"), "price": price}
+    return {"success": False, "error": db_res.error}
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run("main:app", host="0.0.0.0", port=port)
