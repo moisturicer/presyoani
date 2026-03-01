@@ -137,13 +137,20 @@ async def receive_message(request: Request):
 
                     # ACTION: FARMER CLICKS "IBALIGYA"
                     if action == "LIST":
-                        # Insert into Supabase market_listings
+                        # FIRST: Upsert into 'farmers' table to satisfy Foreign Key
+                        supabase.table("farmers").upsert({
+                            "farmer_psid": sender_id,
+                            "messenger_id": sender_id,
+                            "quality_rating": 5.0
+                        }).execute()
+
+                        # SECOND: Insert into 'market_listings'
                         res = supabase.table("market_listings").insert({
-                            "farmers_psid": sender_id,
+                            "farmers_psid": sender_id, # plural as per your DB
                             "commodity": p_load['c'],
                             "grade": p_load['g'],
-                            "weight": p_load['q'],
-                            "price": p_load['p'],
+                            "weight": float(p_load['q']),
+                            "price": float(p_load['p']),
                             "status": True
                         }).execute()
 
@@ -171,7 +178,7 @@ async def receive_message(request: Request):
                     elif action == "CANCEL":
                         listing_id = p_load.get("id")
 
-                        # Delete the listing from the database
+                        # Physically delete the listing from the database
                         supabase.table("market_listings").delete().eq("id", listing_id).execute()
 
                         await send_fb_message(sender_id, {"text": "🚫 Gikuha na ang imong listing sa palengke."})
