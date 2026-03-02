@@ -7,6 +7,7 @@ import {
   Phone,
   Leaf,
   Users,
+  Loader2, // Added for loading state
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -14,7 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { HarvestMap } from './HarvestMap'
 
-// Currently hardcoded for UI purposes
+// Added farmers_psid to hardcoded data so the "Place Order" connection works
 const harvests = [
   {
     id: 1,
@@ -25,6 +26,7 @@ const harvests = [
     farmer: 'Juan D.',
     verified: true,
     distance: '45km',
+    farmers_psid: '25046530591690342', // Replace with your test PSID
   },
   {
     id: 2,
@@ -35,6 +37,7 @@ const harvests = [
     farmer: 'Maria S.',
     verified: true,
     distance: '120km',
+    farmers_psid: '25046530591690342',
   },
   {
     id: 3,
@@ -45,6 +48,7 @@ const harvests = [
     farmer: 'Pedro R.',
     verified: false,
     distance: '90km',
+    farmers_psid: '25046530591690342',
   },
   {
     id: 4,
@@ -55,6 +59,7 @@ const harvests = [
     farmer: 'Ana L.',
     verified: true,
     distance: '30km',
+    farmers_psid: '25046530591690342',
   },
   {
     id: 5,
@@ -65,11 +70,14 @@ const harvests = [
     farmer: 'Carlos M.',
     verified: true,
     distance: '115km',
+    farmers_psid: '25046530591690342',
   },
 ]
 
 export function BuyerDashboard() {
   const [selectedFilter, setSelectedFilter] = useState('All')
+  const [loadingId, setLoadingId] = useState<number | null>(null) // State to show which button is loading
+  
   const filters = ['All', 'Tomato', 'Rice', 'Corn', 'Eggplant', 'Onion']
 
   const filtered =
@@ -78,18 +86,40 @@ export function BuyerDashboard() {
       : harvests.filter((h) => h.crop === selectedFilter)
 
   /**
-   * Modified handleConnect:
-   * Instead of just the ID, we send a string like "Tomato (500kg)" 
-   * so ManyChat can show the details immediately.
+   * Updated handleConnect:
+   * 1. Keeps the ManyChat redirect logic.
+   * 2. Adds the fetch call to Render to notify the farmer.
    */
-  const handleConnect = (harvest: typeof harvests[0]) => {
-    // Format: Crop_Name_Volume (we replace spaces with underscores for URL safety)
+  const handleConnect = async (harvest: typeof harvests[0]) => {
+    setLoadingId(harvest.id);
+
+    // --- Part 1: Notify Farmer via FastAPI (The "Place Order" Connection) ---
+    try {
+      const response = await fetch("https://presyoani.onrender.com/notify-farmer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          farmer_psid: harvest.farmers_psid,
+          commodity: harvest.crop,
+          weight: harvest.volume.replace('kg', ''), // sending just the number
+        }),
+      });
+
+      if (response.ok) {
+        alert(`Order Placed! Farmer notified about the ${harvest.crop}.`);
+      }
+    } catch (error) {
+      console.error("Failed to notify farmer:", error);
+    }
+
+    // --- Part 2: Original Redirect Logic ---
     const productInfo = encodeURIComponent(`${harvest.crop} (${harvest.volume})`);
-    
-    // Final URL with specific ref code and the hardcoded payload
     const manyChatUrl = `https://m.me/938478252689737?ref=w50968964--${productInfo}`;
-    
     window.open(manyChatUrl, '_blank');
+    
+    setLoadingId(null);
   }
 
   return (
@@ -104,7 +134,6 @@ export function BuyerDashboard() {
             <p className="text-sm font-medium text-primary-foreground/80">
               Your Impact
             </p>
-            {/* Hardcoded */}
             <p className="text-xl font-bold text-primary-foreground">
               24 Farmers Supported
             </p>
@@ -221,9 +250,14 @@ export function BuyerDashboard() {
                   <Button
                     size="sm"
                     className="h-10 gap-2 bg-primary text-primary-foreground shrink-0"
+                    disabled={loadingId === harvest.id}
                     onClick={() => handleConnect(harvest)}
                   >
-                    <Phone className="h-4 w-4" />
+                    {loadingId === harvest.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Phone className="h-4 w-4" />
+                    )}
                     Connect
                   </Button>
                 </div>
