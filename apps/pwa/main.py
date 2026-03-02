@@ -5,14 +5,24 @@ import httpx
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, JSONResponse # Added JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware # Added for website connection
 from supabase import create_client, Client
 
 load_dotenv()
 
 app = FastAPI()
+
+# --- NEW: ALLOW WEBSITE TO TALK TO BACKEND ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # config
 token = os.getenv("FB_PAGE_ACCESS_TOKEN")
@@ -36,6 +46,27 @@ async def send_fb_message(recipient_id, message_payload):
             "recipient": {"id": recipient_id},
             "message": message_payload
         })
+
+# --- NEW ROUTE: TRIGGERED BY WEBSITE WHEN BUYER PLACES ORDER ---
+@app.post("/notify-farmer")
+async def notify_farmer(request: Request):
+    try:
+        data = await request.json()
+        farmer_id = data.get("farmer_psid")
+        crop = data.get("commodity", "tanom")
+        qty = data.get("weight", "0")
+
+        bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
+        crop_bisaya = bisaya_crops.get(crop.lower(), crop)
+
+        # Exact message requested
+        msg = f"🔔Naay nipalit sa imohang {qty}kg nga {crop_bisaya}! Kuhaon sa tig-deliver ig 5PM."
+        
+        await send_fb_message(farmer_id, {"text": msg})
+        return JSONResponse({"status": "success"})
+    except Exception as e:
+        print(f"Notify error: {e}")
+        return JSONResponse({"status": "error"}, status_code=500)
 
 
 # root route
@@ -85,7 +116,7 @@ async def receive_message(request: Request):
                     if len(parts) >= 3:
                         crop, qty, grade = parts[0], parts[1], parts[2]
 
-                        # Fetch price from Supabase
+                        # Fetch price from DB
                         res = supabase.table("dpi_prices").select("price") \
                             .ilike("commodity", f"%{crop}%") \
                             .order("date_updated", desc=True).limit(1).execute()
@@ -137,13 +168,20 @@ async def receive_message(request: Request):
 
                     # ACTION: FARMER CLICKS "IBALIGYA"
                     if action == "LIST":
-                        # Insert into Supabase market_listings
+                        # FIRST: Upsert into 'farmers' table to satisfy Foreign Key
+                        supabase.table("farmers").upsert({
+                            "farmer_psid": sender_id,
+                            "messenger_id": sender_id,
+                            "quality_rating": 5.0
+                        }).execute()
+
+                        # SECOND: Insert into 'market_listings'
                         res = supabase.table("market_listings").insert({
-                            "farmers_psid": sender_id,
+                            "farmers_psid": sender_id, 
                             "commodity": p_load['c'],
                             "grade": p_load['g'],
-                            "weight": p_load['q'],
-                            "price": p_load['p'],
+                            "weight": float(p_load['q']),
+                            "price": float(p_load['p']),
                             "status": True
                         }).execute()
 
@@ -170,10 +208,7 @@ async def receive_message(request: Request):
                     # ACTION: FARMER CLICKS "BAWION"
                     elif action == "CANCEL":
                         listing_id = p_load.get("id")
-
-                        # Delete the listing from the database
                         supabase.table("market_listings").delete().eq("id", listing_id).execute()
-
                         await send_fb_message(sender_id, {"text": "🚫 Gikuha na ang imong listing sa palengke."})
 
                 except Exception as e:
