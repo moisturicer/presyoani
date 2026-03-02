@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { MapPin, Search, Leaf, Users, ShoppingCart, Star } from 'lucide-react'
+import { Leaf, Users, ShoppingCart, Star } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -17,16 +17,12 @@ const HarvestMap = dynamic(
   { ssr: false },
 )
 
-/**
- * 1. Added 'export' here. 
- * This prevents the Vercel error because exported functions are considered "used".
- */
+// Exported so Vercel doesn't complain about an unused variable
 export const handlePlaceOrder = async (itemsInCart: any[]) => {
   const BACKEND_URL = "https://presyoani.onrender.com/notify-farmer";
 
   for (const item of itemsInCart) {
     try {
-      // Logic to trigger your Python bot
       await fetch(BACKEND_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -56,14 +52,22 @@ export function BuyerDashboard() {
 
     fetchListingsWithFarmers()
       .then((rows) => {
-        if (!cancelled) setListings(rows)
+        if (!cancelled) {
+          setListings(rows)
+        }
       })
-      .catch((err) => console.error('Failed to load listings', err))
+      .catch((err) => {
+        console.error('Failed to load listings', err)
+      })
       .finally(() => {
-        if (!cancelled) setIsLoading(false)
+        if (!cancelled) {
+          setIsLoading(false)
+        }
       })
 
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const filters = useMemo(() => {
@@ -72,7 +76,10 @@ export function BuyerDashboard() {
   }, [listings])
 
   const filtered = useMemo(
-    () => selectedFilter === 'All' ? listings : listings.filter((h) => h.commodity === selectedFilter),
+    () =>
+      selectedFilter === 'All'
+        ? listings
+        : listings.filter((h) => h.commodity === selectedFilter),
     [listings, selectedFilter],
   )
 
@@ -90,12 +97,7 @@ export function BuyerDashboard() {
       price: harvest.price,
       farmer: harvest.farmerLabel,
       rating: harvest.rating,
-      /**
-       * 2. CRITICAL CHANGE:
-       * You must include the ID here so that when the item is in the cart,
-       * the handlePlaceOrder function knows which farmer to notify.
-       */
-      farmers_psid: harvest.farmers_psid ?? undefined 
+      farmers_psid: harvest.farmers_psid ?? undefined
     })
   }
 
@@ -104,7 +106,10 @@ export function BuyerDashboard() {
       listings
         .filter((l) => l.lat !== null && l.lng !== null)
         .map((l) => ({
-          id: l.id, lat: l.lat as number, lng: l.lng as number, weightKg: l.weightKg,
+          id: l.id,
+          lat: l.lat as number,
+          lng: l.lng as number,
+          weightKg: l.weightKg,
           label: `${l.commodity} • ${l.weightKg}kg • ${l.farmerLabel}`,
         })),
     [listings],
@@ -112,39 +117,62 @@ export function BuyerDashboard() {
 
   return (
     <div className="flex flex-col gap-6 p-6">
-      <Card className="border-0 bg-primary text-white">
+      {/* Impact banner */}
+      <Card className="border-0 bg-primary">
         <CardContent className="flex items-center gap-4 p-6">
           <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-secondary">
-            {isLoading ? <Spinner size="md" /> : <Users className="h-7 w-7 text-secondary-foreground" />}
+            {isLoading ? (
+              <Spinner size="md" className="border-primary-foreground border-t-transparent" />
+            ) : (
+              <Users className="h-7 w-7 text-secondary-foreground" />
+            )}
           </div>
           <div className="flex-1">
-            <p className="text-sm font-medium opacity-80">Live from the field</p>
-            <p className="text-xl font-bold">{farmerCount} farmers currently listed</p>
+            <p className="text-sm font-medium text-primary-foreground/80">
+              Live from the field
+            </p>
+            <p className="text-xl font-bold text-primary-foreground">
+              {isLoading
+                ? 'Loading farmers & listings…'
+                : `${farmerCount} farmers currently listed`}
+            </p>
           </div>
         </CardContent>
       </Card>
 
+      {/* Heatmap / Map View */}
       <Card className="overflow-hidden border border-border">
         <CardHeader className="flex flex-row items-center justify-between p-6 pb-2">
-          <CardTitle className="text-base font-bold text-black">Live Harvest Heatmap</CardTitle>
-          <Badge variant="outline">Cebu</Badge>
+          <CardTitle className="text-base font-bold text-black">
+            Live Harvest Heatmap
+          </CardTitle>
+          <Badge variant="outline" className="text-xs">
+            Cebu
+          </Badge>
         </CardHeader>
-        <CardContent className="p-0">
+        <CardContent className="p-0 text-black">
           <HarvestMap points={mapPoints} loading={isLoading} />
         </CardContent>
       </Card>
 
+      {/* Search & Filter */}
       <div className="flex flex-col gap-3">
         <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search crops..." className="h-11 pl-10 bg-card text-black" />
+          <Input
+            placeholder="Search crops, locations..."
+            className="h-11 text-sm bg-card text-black"
+          />
         </div>
         <div className="flex gap-2 flex-wrap">
           {filters.map((f) => (
             <button
               key={f}
+              type="button"
               onClick={() => setSelectedFilter(f)}
-              className={`px-4 py-2 rounded-full text-sm font-bold transition-colors ${selectedFilter === f ? 'bg-primary text-white' : 'bg-muted text-black'}`}
+              className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold transition-colors ${selectedFilter === f
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
             >
               {f}
             </button>
@@ -152,40 +180,67 @@ export function BuyerDashboard() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3">
-        {isLoading ? <p className="text-center text-black">Loading listings...</p> : 
-          filtered.map((harvest) => (
-            <Card key={harvest.id} className="border border-border/60 transition-all hover:shadow-md">
-              <CardContent className="p-4 flex items-start gap-4">
-                <div className="h-12 w-12 bg-primary/10 flex items-center justify-center rounded-xl">
-                  <Leaf className="h-6 w-6 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                    <span className="text-base font-bold text-black">{harvest.commodity}</span>
-                    <div className="mt-1 flex gap-x-4 text-sm text-gray-500">
-                      <span>{harvest.weightKg}kg</span>
-                      <span>Grade {harvest.grade}</span>
-                      <span className="font-bold text-green-700">₱{harvest.price}/kg</span>
+      {/* Active Harvests List */}
+      <div>
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-base font-bold text-foreground">
+            Active Harvests
+          </h3>
+          <span className="text-sm text-muted-foreground">
+            {isLoading ? 'Loading…' : `${filtered.length} results`}
+          </span>
+        </div>
+        <div className="flex flex-col gap-3">
+          {!isLoading && filtered.map((harvest) => (
+            <Card
+              key={harvest.id}
+              className="border border-border/60 transition-all hover:shadow-md"
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                    <Leaf className="h-6 w-6 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-base font-bold text-foreground capitalize">
+                        {harvest.commodity}
+                      </span>
+                      {harvest.grade && (
+                        <Badge variant="outline" className="text-xs px-2 py-0">
+                          Grade {harvest.grade}
+                        </Badge>
+                      )}
                     </div>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-0.5 text-sm text-muted-foreground">
+                      <span>{harvest.weightKg}kg</span>
+                      <span className="flex items-center gap-1">
+                        <Star className="h-3.5 w-3.5" />
+                        {harvest.rating.toFixed(1)}
+                      </span>
+                      <span>{harvest.farmerLabel}</span>
+                    </div>
+                  </div>
+                  {(() => {
+                    const inCart = cartItems.some((item) => item.id === harvest.id)
+                    return (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-10 gap-2 shrink-0 text-black border-black"
+                        onClick={() => handleAddToCart(harvest)}
+                        disabled={isLoading}
+                      >
+                        <ShoppingCart className="h-4 w-4" />
+                        {inCart ? 'In cart' : 'Add to cart'}
+                      </Button>
+                    )
+                  })()}
                 </div>
-                {(() => {
-                  const inCart = cartItems.some((item) => item.id === harvest.id)
-                  return (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-10 gap-2 border-black text-black"
-                      onClick={() => handleAddToCart(harvest)}
-                    >
-                      <ShoppingCart className="h-4 w-4" />
-                      {inCart ? 'In cart' : 'Add to cart'}
-                    </Button>
-                  )
-                })()}
               </CardContent>
             </Card>
-          ))
-        }
+          ))}
+        </div>
       </div>
     </div>
   )
