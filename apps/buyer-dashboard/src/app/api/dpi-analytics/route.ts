@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabaseClient'
-import fs from 'fs/promises'
-import path from 'path'
 
 type RawRecord = {
   commodity: string
