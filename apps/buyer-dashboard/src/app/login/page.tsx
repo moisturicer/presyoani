@@ -44,7 +44,7 @@ export default function AuthPage() {
         }
       } else {
 
-        // start here for issue #3
+        // start here for issue #3 : SOLVED -n8
         const { data: existingUser, error: checkError } = await supabase
           .from('profiles')
           .select('email')
