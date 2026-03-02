@@ -29,10 +29,12 @@ export default function AuthPage() {
     setError(null)
     setIsSubmitting(true)
 
+    const cleanEmail = email.trim().toLowerCase()
+
     try {
       if (mode === 'login') {
         const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
+          email: cleanEmail,
           password,
         })
 
@@ -41,8 +43,31 @@ export default function AuthPage() {
           return
         }
       } else {
+
+        // start here for issue #3
+        const { data: existingUser, error: checkError } = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('email', cleanEmail)
+          .maybeSingle();
+
+        if (checkError) {
+          console.error("Database check failed:", checkError.message);
+          setError("System is temporarily busy. Please try again later.");
+          setIsSubmitting(false);
+          return;
+        }
+
+        if (existingUser) {
+          setError("This email is already registered. Try logging in.")
+          console.log('email is already used.')
+          setIsSubmitting(false)
+          setMode('login');
+          return
+        }
+
         const { data, error: signUpError } = await supabase.auth.signUp({
-          email,
+          email: cleanEmail,
           password,
           options: {
             data: {
@@ -56,11 +81,13 @@ export default function AuthPage() {
 
         if (signUpError) {
           setError(signUpError.message)
+          setIsSubmitting(false)
           return
         }
 
         if (!data.session) {
           setIsRegistered(true)
+          setIsSubmitting(false)
           return
         }
       }
@@ -156,22 +183,20 @@ export default function AuthPage() {
                 <button
                   type="button"
                   onClick={() => setMode('login')}
-                  className={`rounded-full px-3 py-1 font-semibold transition-colors ${
-                    mode === 'login'
-                      ? 'bg-background text-foreground shadow-sm'
-                      : 'text-muted-foreground'
-                  }`}
+                  className={`rounded-full px-3 py-1 font-semibold transition-colors ${mode === 'login'
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground'
+                    }`}
                 >
                   Login
                 </button>
                 <button
                   type="button"
                   onClick={() => setMode('signup')}
-                  className={`rounded-full px-3 py-1 font-semibold transition-colors ${
-                    mode === 'signup'
-                      ? 'bg-background text-foreground shadow-sm'
-                      : 'text-muted-foreground'
-                  }`}
+                  className={`rounded-full px-3 py-1 font-semibold transition-colors ${mode === 'signup'
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground'
+                    }`}
                 >
                   Sign up
                 </button>
@@ -188,11 +213,11 @@ export default function AuthPage() {
                 <div className="space-y-2">
                   <h3 className="text-sm font-bold">Check your inbox</h3>
                   <p className="text-xs text-muted-foreground">
-                    We've sent a verification link to <span className="font-semibold text-foreground">{email}</span>. 
+                    We've sent a verification link to <span className="font-semibold text-foreground">{email}</span>.
                     Please confirm your email before logging in.
                   </p>
                 </div>
-                <Button 
+                <Button
                   onClick={() => { setIsRegistered(false); setMode('login'); }}
                   variant="outline"
                   className="w-full rounded-xl"
@@ -202,110 +227,110 @@ export default function AuthPage() {
               </div>
             ) : (
               <>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {mode === 'signup' && (
-                <div className="grid gap-3 sm:grid-cols-2">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {mode === 'signup' && (
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-medium text-muted-foreground">
+                          First name
+                        </label>
+                        <Input
+                          required
+                          placeholder="Juan"
+                          className="h-10 text-sm"
+                          value={firstName}
+                          onChange={(event) => setFirstName(event.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-medium text-muted-foreground">
+                          Last name
+                        </label>
+                        <Input
+                          required
+                          placeholder="Dela Cruz"
+                          className="h-10 text-sm"
+                          value={lastName}
+                          onChange={(event) => setLastName(event.target.value)}
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   <div className="space-y-1.5">
                     <label className="block text-xs font-medium text-muted-foreground">
-                      First name
+                      Work email
                     </label>
                     <Input
+                      type="email"
                       required
-                      placeholder="Juan"
+                      placeholder="you@company.ph"
                       className="h-10 text-sm"
-                      value={firstName}
-                      onChange={(event) => setFirstName(event.target.value)}
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
                     />
                   </div>
+
+                  {mode === 'signup' && (
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-medium text-muted-foreground">
+                        Organization
+                      </label>
+                      <Input
+                        required
+                        placeholder="Supermarket, distributor, restaurant..."
+                        className="h-10 text-sm"
+                        value={organization}
+                        onChange={(event) => setOrganization(event.target.value)}
+                      />
+                    </div>
+                  )}
+
                   <div className="space-y-1.5">
                     <label className="block text-xs font-medium text-muted-foreground">
-                      Last name
+                      Password
                     </label>
                     <Input
+                      type="password"
                       required
-                      placeholder="Dela Cruz"
+                      placeholder="Enter a secure password"
                       className="h-10 text-sm"
-                      value={lastName}
-                      onChange={(event) => setLastName(event.target.value)}
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
                     />
                   </div>
-                </div>
-              )}
 
-              <div className="space-y-1.5">
-                <label className="block text-xs font-medium text-muted-foreground">
-                  Work email
-                </label>
-                <Input
-                  type="email"
-                  required
-                  placeholder="you@company.ph"
-                  className="h-10 text-sm"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                />
-              </div>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition hover:bg-primary/90"
+                  >
+                    {isSubmitting
+                      ? mode === 'login'
+                        ? 'Signing in...'
+                        : 'Creating account...'
+                      : mode === 'login'
+                        ? 'Continue to dashboard'
+                        : 'Create account'}
+                  </Button>
+                </form>
 
-              {mode === 'signup' && (
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-medium text-muted-foreground">
-                    Organization
-                  </label>
-                  <Input
-                    required
-                    placeholder="Supermarket, distributor, restaurant..."
-                    className="h-10 text-sm"
-                    value={organization}
-                    onChange={(event) => setOrganization(event.target.value)}
-                  />
-                </div>
-              )}
+                {error && (
+                  <p className="text-xs font-medium text-destructive">
+                    {error}
+                  </p>
+                )}
 
-              <div className="space-y-1.5">
-                <label className="block text-xs font-medium text-muted-foreground">
-                  Password
-                </label>
-                <Input
-                  type="password"
-                  required
-                  placeholder="Enter a secure password"
-                  className="h-10 text-sm"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                />
-              </div>
-
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition hover:bg-primary/90"
-              >
-                {isSubmitting
-                  ? mode === 'login'
-                    ? 'Signing in...'
-                    : 'Creating account...'
-                  : mode === 'login'
-                    ? 'Continue to dashboard'
-                    : 'Create account'}
-              </Button>
-            </form>
-
-            {error && (
-              <p className="text-xs font-medium text-destructive">
-                {error}
-              </p>
+                {mode === 'signup' && !error && (
+                  <p className="text-xs text-muted-foreground">
+                    After signing up, you may receive a verification email depending on your Supabase
+                    auth settings.
+                  </p>
+                )}
+              </>
             )}
-
-            {mode === 'signup' && !error && (
-                <p className="text-xs text-muted-foreground">
-                  After signing up, you may receive a verification email depending on your Supabase
-                  auth settings.
-                </p>
-              )}
-            </>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
       </div>
     </main>
   )

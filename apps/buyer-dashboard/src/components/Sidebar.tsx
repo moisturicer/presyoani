@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BarChart3, LayoutDashboard, User } from 'lucide-react'
+import { BarChart3, LayoutDashboard, ShoppingCart, User } from 'lucide-react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
+import { useCart } from '@/components/cart/CartContext'
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -13,9 +14,10 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname()
-  const isProfile = pathname === '/dashboard/profile'
+  const isSimpleHeader = pathname === '/dashboard/profile' || pathname === '/dashboard/cart'
+  const { items } = useCart()
 
-  if (isProfile) {
+  if (isSimpleHeader) {
     return (
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-sm">
         <div className="flex h-16 items-center justify-center px-3 sm:px-6">
@@ -99,7 +101,17 @@ export function Sidebar() {
           </div>
         </nav>
 
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
+          <Link
+            href="/dashboard/cart"
+            className="inline-flex h-10 items-center gap-2 rounded-full bg-card px-4 text-sm font-medium text-foreground shadow-sm ring-2 ring-border/60 transition-all hover:bg-card/80 hover:ring-border"
+            aria-label="Cart (clears at end of session)"
+          >
+            <ShoppingCart className="h-4 w-4" />
+            <span className="hidden sm:inline">
+              Cart{items.length > 0 ? ` (${items.length})` : ''}
+            </span>
+          </Link>
           <Link
             href="/dashboard/profile"
             className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-6 text-sm font-medium text-primary-foreground shadow-sm ring-1 ring-primary/40 transition-all hover:bg-primary/90 hover:ring-primary/50"
