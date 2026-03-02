@@ -10,6 +10,8 @@ export type CartItem = {
   price: number | null
   farmer: string
   rating: number
+  // --- ADDED THIS LINE ---
+  farmers_psid?: string | null 
 }
 
 type CartContextValue = {
@@ -26,6 +28,7 @@ const STORAGE_KEY = 'buyer-dashboard-cart'
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([])
 
+  // Load from session storage
   useEffect(() => {
     try {
       const stored = typeof window !== 'undefined' ? sessionStorage.getItem(STORAGE_KEY) : null
@@ -43,6 +46,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 price: i.price === null || i.price === undefined ? null : Number(i.price),
                 farmer: String(i.farmer ?? 'Farmer'),
                 rating: Number(i.rating ?? 0),
+                // --- ADDED THIS LINE TO RETRIEVE FROM STORAGE ---
+                farmers_psid: i.farmers_psid ? String(i.farmers_psid) : undefined,
               }),
             )
           setItems(cleaned)
@@ -53,6 +58,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  // Save to session storage
   useEffect(() => {
     try {
       if (typeof window === 'undefined') return
@@ -97,4 +103,3 @@ export function useCart() {
   }
   return context
 }
-
