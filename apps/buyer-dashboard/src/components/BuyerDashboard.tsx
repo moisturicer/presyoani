@@ -27,12 +27,12 @@ export const handlePlaceOrder = async (itemsInCart: any[]) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          listing_id: item.id, // <--- (from Supabase row id)
           farmer_psid: item.farmers_psid, 
           commodity: item.commodity,
           weight: item.weightKg || item.weight
         })
       });
-      console.log(`Notification sent for ${item.commodity}`);
     } catch (err) {
       console.error("Failed to notify farmer:", err);
     }
