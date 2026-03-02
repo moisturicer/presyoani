@@ -68,6 +68,7 @@ export default function CartPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            listing_id: item.id,  
             farmer_psid: item.farmers_psid, 
             commodity: item.commodity,
             weight: item.weightKg
