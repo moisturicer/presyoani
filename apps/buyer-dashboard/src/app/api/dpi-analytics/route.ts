@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { supabase } from '@/lib/supabaseClient'
 import fs from 'fs/promises'
 import path from 'path'
 
@@ -35,102 +36,7 @@ type AnalyticsResponse = {
   latestDate: string | null
 }
 
-const ROOT_DIR = path.join(process.cwd(), '..', '..')
-
-const LATEST_DPI_PATH = path.join(
-  ROOT_DIR,
-  'services',
-  'dpi_scraper',
-  'output',
-  'latest_dpi.csv',
-)
-
-// We now derive crops dynamically from the CSV contents instead of a fixed list.
-
-async function readFileIfExists(filePath: string): Promise<string | null> {
-  try {
-    const content = await fs.readFile(filePath, 'utf8')
-    return content
-  } catch {
-    return null
-  }
-}
-
-function splitCsvLine(line: string): string[] {
-  const result: string[] = []
-  let current = ''
-  let inQuotes = false
-
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i]
-
-    if (char === '"') {
-      inQuotes = !inQuotes
-      continue
-    }
-
-    if (char === ',' && !inQuotes) {
-      result.push(current)
-      current = ''
-      continue
-    }
-
-    current += char
-  }
-
-  result.push(current)
-  return result.map((v) => v.trim())
-}
-
-function parseLatestDpiCsv(content: string): RawRecord[] {
-  const lines = content.split(/\r?\n/).filter((line) => line.trim().length > 0)
-  if (lines.length <= 1) return []
-
-  const headerFields = splitCsvLine(lines[0])
-
-  const commodityIdx = headerFields.indexOf('commodity')
-  const specificationIdx = headerFields.indexOf('specification')
-  const priceIdx = headerFields.indexOf('price')
-  const dateIdx = headerFields.indexOf('date_updated')
-
-  if (commodityIdx === -1 || priceIdx === -1 || dateIdx === -1) {
-    return []
-  }
-
-  const dataLines = lines.slice(1)
-  const records: RawRecord[] = []
-
-  for (const line of dataLines) {
-    if (!line.trim()) continue
-
-    const fields = splitCsvLine(line)
-
-    const commodity = fields[commodityIdx] ?? ''
-    const priceStr = fields[priceIdx]
-    const dateStr = fields[dateIdx]
-    const specification =
-      specificationIdx !== -1 && fields[specificationIdx]
-        ? fields[specificationIdx]
-        : null
-
-    if (!commodity || priceStr == null || dateStr == null) continue
-
-    const price = Number(priceStr)
-    if (!Number.isFinite(price)) continue
-
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) continue
-
-    records.push({
-      commodity,
-      specification,
-      price,
-      date_updated: dateStr,
-    })
-  }
-
-  return records
-}
-
+// Converts a commodity name into a URL-friendly slug
 function slugifyCommodityName(name: string): string {
   return name
     .toLowerCase()
@@ -138,6 +44,7 @@ function slugifyCommodityName(name: string): string {
     .replace(/^-+|-+$/g, '') || 'crop'
 }
 
+// Derives a unique list of crop configs from raw records
 function createCropConfigs(records: RawRecord[]): CropConfig[] {
   const byCommodity = new Map<string, CropConfig>()
 
@@ -155,6 +62,10 @@ function createCropConfigs(records: RawRecord[]): CropConfig[] {
   return Array.from(byCommodity.values())
 }
 
+/**
+ * Builds analytics for each crop including latest price, price change,
+ * and a 10-day price series ending on the most recent date in the dataset.
+ */
 function buildCropAnalytics(
   crops: CropConfig[],
   records: RawRecord[],
@@ -201,7 +112,7 @@ function buildCropAnalytics(
       up = changeFromPrev > 0 ? true : changeFromPrev < 0 ? false : null
     }
 
-    // 10-day window ending on the latest date in the latest_dpi.csv
+    // Build a 10-day price series; days with no data default to 0
     const points: CropSeriesPoint[] = []
     const priceByDate = new Map<string, number>()
 
@@ -237,22 +148,63 @@ function buildCropAnalytics(
   }
 }
 
-export async function GET() {
-  const latestContent = await readFileIfExists(LATEST_DPI_PATH)
+/**
+ * Fetches all rows from dpi_prices using pagination to bypass Supabase's
+ * 1000-row default limit. Returns normalized and validated records.
+ */
+async function fetchAllDpiPrices(): Promise<RawRecord[]> {
+  const allData: RawRecord[] = []
+  const pageSize = 1000
+  let from = 0
+  let hasMore = true
 
-  if (!latestContent) {
+  while (hasMore) {
+    const { data, error } = await supabase
+      .from('dpi_prices')
+      .select('commodity, specification, price, date_updated')
+      .order('date_updated', { ascending: false })
+      .range(from, from + pageSize - 1)
+
+    if (error || !data) break
+
+    const normalized = data
+      .filter(
+        (row) =>
+          row.commodity &&
+          Number.isFinite(Number(row.price)) &&
+          /^\d{4}-\d{2}-\d{2}$/.test(row.date_updated),
+      )
+      .map((row) => ({
+        commodity: row.commodity,
+        specification: row.specification ?? null,
+        price: Number(row.price),
+        date_updated: row.date_updated,
+      }))
+
+    allData.push(...normalized)
+    hasMore = data.length === pageSize
+    from += pageSize
+  }
+
+  return allData
+}
+
+/** GET /api/dpi-analytics — Returns price analytics for all crops. */
+export async function GET() {
+  const records = await fetchAllDpiPrices()
+
+  console.log('Total rows fetched:', records.length)
+  console.log('Dates in data:', [...new Set(records.map(r => r.date_updated))])
+
+  if (records.length === 0) {
     return NextResponse.json<AnalyticsResponse>(
       { crops: [], defaultCropId: 'tomato', latestDate: null },
       { status: 200 },
     )
   }
 
-  const latestRecords = parseLatestDpiCsv(latestContent)
-
-  const cropsConfig = createCropConfigs(latestRecords)
-
-  const payload = buildCropAnalytics(cropsConfig, latestRecords)
+  const cropsConfig = createCropConfigs(records)
+  const payload = buildCropAnalytics(cropsConfig, records)
 
   return NextResponse.json<AnalyticsResponse>(payload)
 }
-
