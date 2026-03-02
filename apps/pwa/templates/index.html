@@ -68,7 +68,7 @@
         }
     }
 
-    document.getElementById('scan-btn').addEventListener('click', async () => {
+   document.getElementById('scan-btn').addEventListener('click', async () => {
         const qty = document.getElementById('quantity').value;
         const crop = document.getElementById('crop-type').value;
         if (!qty || qty <= 0) return alert("Please enter weight first!");
@@ -110,15 +110,16 @@
         else if (maxFresh > 0.25) grade = "C";
         else grade = "D";
 
-        // generate the ref data
-        // Format: crop|qty|grade
+        // 1. Generate the ref data (crop|qty|grade)
         const rawData = `${crop}|${qty}|${grade}`;
+        
+        // 2. Base64 encode it safely for URLs
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-        // open messenger with the 'ref' parameter
-        // This triggers a 'messaging_referral' event in your Python code
+        // 3. REDIRECT IMMEDIATELY TO MESSENGER (No confirmation box)
         window.location.href = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
     });
+
 
     init();
 </script>

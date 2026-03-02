@@ -33,7 +33,7 @@ export default function LandingPage() {
         />
       </div>
 
-      {/* Subtle grid pattern */}
+      {/* Subtle grid lines */}
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-[0.03]"
         style={{

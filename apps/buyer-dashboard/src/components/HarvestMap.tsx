@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from 'react'
 import 'leaflet/dist/leaflet.css'
+import { Spinner } from '@/components/ui/spinner'
 
 const CEBU_CENTER: [number, number] = [10.3157, 123.8854]
 
@@ -13,7 +14,13 @@ export type HarvestMapPoint = {
   label?: string
 }
 
-export function HarvestMap({ points = [] }: { points?: HarvestMapPoint[] }) {
+export function HarvestMap({
+  points = [],
+  loading = false,
+}: {
+  points?: HarvestMapPoint[]
+  loading?: boolean
+}) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<any>(null)
   const leafletRef = useRef<any>(null)
@@ -93,5 +100,22 @@ export function HarvestMap({ points = [] }: { points?: HarvestMapPoint[] }) {
     })
   }, [points])
 
-  return <div ref={mapContainerRef} className="h-64 w-full" />
+  return (
+    <div className="relative h-64 w-full">
+      <div ref={mapContainerRef} className="h-full w-full" />
+      {loading && (
+        <div
+          className="absolute inset-0 flex items-center justify-center bg-muted/80 backdrop-blur-[2px]"
+          aria-hidden="true"
+        >
+          <div className="flex flex-col items-center gap-2">
+            <Spinner size="lg" className="border-primary-foreground/60 border-t-transparent" />
+            <span className="text-xs font-medium text-muted-foreground">
+              Loading harvests…
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Spinner } from '@/components/ui/spinner'
 import { useCart } from '@/components/cart/CartContext'
 import dynamic from 'next/dynamic'
 import { fetchListingsWithFarmers, type CombinedListing } from '@/service/marketListingsService'
@@ -97,14 +98,20 @@ export function BuyerDashboard() {
       <Card className="border-0 bg-primary">
         <CardContent className="flex items-center gap-4 p-6">
           <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-secondary">
-            <Users className="h-7 w-7 text-secondary-foreground" />
+            {isLoading ? (
+              <Spinner size="md" className="border-primary-foreground border-t-transparent" />
+            ) : (
+              <Users className="h-7 w-7 text-secondary-foreground" />
+            )}
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-primary-foreground/80">
-              Your impact
+              Live from the field
             </p>
             <p className="text-xl font-bold text-primary-foreground">
-              {farmerCount} farmers currently listed
+              {isLoading
+                ? 'Loading farmers & listings…'
+                : `${farmerCount} farmers currently listed`}
             </p>
           </div>
         </CardContent>
@@ -121,7 +128,7 @@ export function BuyerDashboard() {
           </Badge>
         </CardHeader>
         <CardContent className="p-0">
-          <HarvestMap points={mapPoints} />
+          <HarvestMap points={mapPoints} loading={isLoading} />
         </CardContent>
       </Card>
 
@@ -162,6 +169,36 @@ export function BuyerDashboard() {
           </span>
         </div>
         <div className="flex flex-col gap-3">
+          {isLoading && (
+            <div className="flex flex-col gap-3">
+              {[1, 2, 3].map((i) => (
+                <Card
+                  key={i}
+                  className="border border-border/60 animate-pulse"
+                  aria-hidden="true"
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-4">
+                      <div className="h-12 w-12 shrink-0 rounded-xl bg-muted" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-5 w-24 rounded bg-muted" />
+                        <div className="flex gap-2">
+                          <div className="h-5 w-16 rounded bg-muted" />
+                          <div className="h-5 w-20 rounded bg-muted" />
+                        </div>
+                        <div className="flex gap-4">
+                          <div className="h-4 w-32 rounded bg-muted" />
+                          <div className="h-4 w-12 rounded bg-muted" />
+                          <div className="h-4 w-24 rounded bg-muted" />
+                        </div>
+                      </div>
+                      <div className="h-10 w-24 shrink-0 rounded-md bg-muted" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
           {!isLoading && filtered.length === 0 && (
             <Card className="border border-border/60">
               <CardContent className="p-6 text-sm text-muted-foreground">
@@ -169,7 +206,7 @@ export function BuyerDashboard() {
               </CardContent>
             </Card>
           )}
-          {filtered.map((harvest) => (
+          {!isLoading && filtered.map((harvest) => (
             <Card
               key={harvest.id}
               className="border border-border/60 transition-all hover:shadow-md"
