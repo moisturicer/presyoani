@@ -60,7 +60,7 @@ async def notify_farmer(request: Request):
         bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
         crop_bisaya = bisaya_crops.get(crop.lower(), crop)
 
-        msg = f"Naay nipalit sa imohang {qty} nga {crop_bisaya}. Kuhaon sa tig-deliver ig 5PM. Dili na nimo kini mabawe (Withdraw disabled)."
+        msg = f"🔔Naay nipalit sa imohang {qty} nga {crop_bisaya}. Kuhaon sa tig-deliver ig 5PM. Dili na nimo kini mabawe (Withdraw disabled)."
         
         await send_fb_message(farmer_id, {"text": msg})
         return JSONResponse({"status": "success"})
