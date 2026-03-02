@@ -5,24 +5,14 @@ import httpx
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
-from fastapi.responses import PlainTextResponse, JSONResponse
+from fastapi.responses import PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.middleware.cors import CORSMiddleware  # Added for website connection
 from supabase import create_client, Client
 
 load_dotenv()
 
 app = FastAPI()
-
-# --- NEW: ALLOW WEBSITE TO TALK TO BACKEND (CORS) ---
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Allows all domains. You can replace "*" with your actual Vercel URL
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # config
 token = os.getenv("FB_PAGE_ACCESS_TOKEN")
@@ -48,33 +38,6 @@ async def send_fb_message(recipient_id, message_payload):
         })
 
 
-# --- NEW ROUTE: TRIGGERED BY WEBSITE WHEN BUYER CLICKS BUY ---
-@app.post("/notify-farmer")
-async def notify_farmer(request: Request):
-    try:
-        data = await request.json()
-        farmer_id = data.get("farmer_psid")
-        crop = data.get("commodity", "tanom")
-        qty = data.get("weight", "0")
-
-        # Translation dictionary
-        bisaya_crops = {
-            "tomato": "kamatis", 
-            "chili": "sili", 
-            "sweet_potato": "kamote"
-        }
-        crop_bisaya = bisaya_crops.get(crop.lower(), crop)
-
-        msg = f"Naay nipalit sa imohang {qty}kg nga {crop_bisaya}. Kuhaon sa tig-deliver ig 5PM."
-        
-        await send_fb_message(farmer_id, {"text": msg})
-        
-        return JSONResponse({"status": "success", "message": "Notification sent to farmer"})
-    except Exception as e:
-        print(f"Notification error: {e}")
-        return JSONResponse({"status": "error", "message": str(e)}, status_code=500)
-
-
 # root route
 @app.get("/")
 async def read_root(request: Request):
@@ -93,13 +56,14 @@ async def verify(request: Request):
     return PlainTextResponse(content="failed", status_code=403)
 
 
-# main webhook logic (Scan and Buttons)
+# main webhook logic
 @app.post("/webhook")
 async def receive_message(request: Request):
     data = await request.json()
     
+    # Basic validation of FB structure
     if not data.get("object") == "page":
-        return PlainTextResponse("EVENT_RECEIVED", status_code=200)
+        return PlainTextResponse("NOT_A_PAGE_EVENT", status_code=200)
 
     for entry in data.get("entry"):
         for messaging_event in entry.get("messaging"):
@@ -114,12 +78,14 @@ async def receive_message(request: Request):
 
             if ref_data:
                 try:
+                    # decode scan data (crop|qty|grade)
                     decoded = base64.urlsafe_b64decode(ref_data + "===").decode('utf-8')
                     parts = decoded.split("|")
 
                     if len(parts) >= 3:
                         crop, qty, grade = parts[0], parts[1], parts[2]
 
+                        # Fetch price from Supabase
                         res = supabase.table("dpi_prices").select("price") \
                             .ilike("commodity", f"%{crop}%") \
                             .order("date_updated", desc=True).limit(1).execute()
@@ -133,10 +99,17 @@ async def receive_message(request: Request):
 
                             msg_text = (
                                 f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa!\n\n"
-                                f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}.\n\n"
-                                f"Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke."
+                                f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}. "
+                                f"Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke.\n\n"
+                                f"DETALYE SA SCAN\n"
+                                f"Tanom: {crop_bisaya}\n"
+                                f"Grade: {grade}\n"
+                                f"Timbang: {qty}kg\n\n"
+                                f"Presyo: ₱{p:.2f}/kg\n"
+                                f"Total: ₱{total:,.2f}"
                             )
 
+                            # Send the "IBALIGYA" Button
                             buttons = {
                                 "attachment": {
                                     "type": "template",
@@ -153,7 +126,7 @@ async def receive_message(request: Request):
                             }
                             await send_fb_message(sender_id, buttons)
                 except Exception as e:
-                    print(f"Scan error: {e}")
+                    print(f"Scan processing error: {e}")
 
             # 2. CATCH BUTTON CLICKS (Postback)
             elif "postback" in messaging_event:
@@ -162,15 +135,18 @@ async def receive_message(request: Request):
                     p_load = json.loads(payload_raw)
                     action = p_load.get("action")
 
+                    # ACTION: FARMER CLICKS "IBALIGYA"
                     if action == "LIST":
+                        # FIRST: Upsert into 'farmers' table to satisfy Foreign Key
                         supabase.table("farmers").upsert({
                             "farmer_psid": sender_id,
                             "messenger_id": sender_id,
                             "quality_rating": 5.0
                         }).execute()
 
+                        # SECOND: Insert into 'market_listings'
                         res = supabase.table("market_listings").insert({
-                            "farmers_psid": sender_id,
+                            "farmers_psid": sender_id, # plural as per your DB
                             "commodity": p_load['c'],
                             "grade": p_load['g'],
                             "weight": float(p_load['q']),
@@ -182,6 +158,7 @@ async def receive_message(request: Request):
                             listing_id = res.data[0]['id']
                             success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
                             
+                            # Send success message with "BAWION" button
                             await send_fb_message(sender_id, {
                                 "attachment": {
                                     "type": "template",
@@ -197,9 +174,13 @@ async def receive_message(request: Request):
                                 }
                             })
 
+                    # ACTION: FARMER CLICKS "BAWION"
                     elif action == "CANCEL":
                         listing_id = p_load.get("id")
+
+                        # Physically delete the listing from the database
                         supabase.table("market_listings").delete().eq("id", listing_id).execute()
+
                         await send_fb_message(sender_id, {"text": "🚫 Gikuha na ang imong listing sa palengke."})
 
                 except Exception as e:
