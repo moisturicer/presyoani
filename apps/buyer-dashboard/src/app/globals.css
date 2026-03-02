@@ -139,6 +139,21 @@
     animation: farmer-orbit-overlay-mute ease-in-out infinite;
   }
 
+  /* Disable FarmerOrbit visuals/animations on small phone screens for better performance */
+  @media (max-width: 640px) {
+    .farmer-orbit-container {
+      display: none !important;
+    }
+
+    .farmer-orbit-ring,
+    .farmer-orbit-box-counter,
+    .farmer-orbit-box,
+    .farmer-orbit-img,
+    .farmer-orbit-overlay {
+      animation: none !important;
+    }
+  }
+
   @keyframes farmer-orbit-img-mute {
     0%,
     50%,
