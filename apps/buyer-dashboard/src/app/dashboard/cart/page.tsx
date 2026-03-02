@@ -15,6 +15,7 @@ import {
   CreditCard,
   Store,
   Truck,
+  Loader2, // Added for loading state
 } from 'lucide-react'
 import { useCart } from '@/components/cart/CartContext'
 import { supabase } from '@/lib/supabaseClient'
@@ -30,6 +31,7 @@ export default function CartPage() {
   const [step, setStep] = useState<Step>('checkout')
   const [fulfillment, setFulfillment] = useState<Fulfillment>('pickup')
   const [orderPlaced, setOrderPlaced] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false) // Added for notification state
 
   useEffect(() => {
     let isMounted = true
@@ -55,6 +57,45 @@ export default function CartPage() {
     () => items.reduce((sum, item) => sum + (item.price ?? 0) * item.weightKg, 0),
     [items],
   )
+
+  // --- NEW: FUNCTION TO NOTIFY FARMERS ---
+  const notifyFarmers = async () => {
+    const BACKEND_URL = "https://presyoani.onrender.com/notify-farmer";
+    
+    for (const item of items) {
+      try {
+        await fetch(BACKEND_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            farmer_psid: item.farmers_psid, 
+            commodity: item.commodity,
+            weight: item.weightKg
+          })
+        });
+        console.log(`Notification sent to farmer for ${item.commodity}`);
+      } catch (err) {
+        console.error("Failed to notify farmer:", err);
+      }
+    }
+  }
+
+  // --- NEW: UPDATED PLACE ORDER LOGIC ---
+  const handlePlaceOrder = async () => {
+    setIsProcessing(true);
+    
+    // 1. Trigger the bot notification
+    await notifyFarmers();
+
+    // 2. Original UI logic
+    setOrderPlaced(true)
+    setStep('status')
+    if (hasItems) {
+      clearCart()
+    }
+    
+    setIsProcessing(false);
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background/70 via-background/60 to-background/70">
@@ -301,15 +342,10 @@ export default function CartPage() {
                     <Button
                       type="button"
                       size="sm"
-                      onClick={() => {
-                        setOrderPlaced(true)
-                        setStep('status')
-                        if (hasItems) {
-                          clearCart()
-                        }
-                      }}
-                      disabled={!hasItems}
+                      onClick={handlePlaceOrder}
+                      disabled={!hasItems || isProcessing}
                     >
+                      {isProcessing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                       Place order
                     </Button>
                   </div>
@@ -356,4 +392,3 @@ export default function CartPage() {
     </main>
   )
 }
-
