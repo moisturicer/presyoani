@@ -111,8 +111,18 @@ async def receive_message(request: Request):
                             bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
                             crop_bisaya = bisaya_crops.get(crop.lower(), crop).capitalize()
                             
-                            msg_text = f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg!\nNaa kay {qty}kg, madawat nimo kay ₱{total:,.2f}."
-                            
+                            # EXACT LAYOUT REQUESTED
+                            msg_text = (
+                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa!\n\n"
+                                f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}. "
+                                f"Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke.\n\n"
+                                f"DETALYE SA SCAN\n"
+                                f"Tanom: {crop_bisaya}\n"
+                                f"Grade: {grade}\n"
+                                f"Timbang: {qty}kg\n\n"
+                                f"Presyo: ₱{p:.2f}/kg\n"
+                                f"Total: ₱{total:,.2f}"
+                            )
                             buttons = {
                                 "attachment": {
                                     "type": "template",
