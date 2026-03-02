@@ -17,6 +17,29 @@ const HarvestMap = dynamic(
   { ssr: false },
 )
 
+const handlePlaceOrder = async (itemsInCart: any[]) => {
+  // Replace this with your actual Render URL
+  const BACKEND_URL = "https://presyoani.onrender.com/notify-farmer";
+
+  for (const item of itemsInCart) {
+    try {
+      await fetch(BACKEND_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          farmer_psid: item.farmers_psid, // Ensure your service includes this field
+          commodity: item.commodity,
+          weight: item.weightKg || item.weight
+        })
+      });
+      console.log(`Notification sent for ${item.commodity}`);
+    } catch (err) {
+      console.error("Failed to notify farmer:", err);
+    }
+  }
+  alert("Order Placed! Farmers have been notified.");
+};
+
 export function BuyerDashboard() {
   const [selectedFilter, setSelectedFilter] = useState('All')
   const [listings, setListings] = useState<CombinedListing[]>([])
