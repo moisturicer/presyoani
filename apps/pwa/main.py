@@ -3,6 +3,7 @@ import json
 import base64
 import httpx
 import uvicorn
+from datetime import datetime
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse, JSONResponse
@@ -185,6 +186,24 @@ async def receive_message(request: Request):
                         if check.data and check.data[0]['status'] == False:
                             await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Naa nay nipalit ani o nakuha na sa system."})
                         else:
+                            # Ask for confirmation instead of immediately deleting
+                            listing = check.data[0]
+                            crop_name = listing['commodity'].capitalize()
+                            weight = listing['weight']
+                            await send_fb_message(sender_id, {
+                                "attachment": {
+                                    "type": "template",
+                                    "payload": {
+                                        "template_type": "button",
+                                        "text": f"⚠️ Sigurado ka bang gusto mong bawion ang imong {weight}kg nga {crop_name}?",
+                                        "buttons": [
+                                            {"type": "postback", "title": "✅ OO, BAWION", "payload": json.dumps({"action": "CONFIRM_CANCEL", "id": listing_id})},
+                                            {"type": "postback", "title": "❌ DILI, BALIK", "payload": json.dumps({"action": "VIEW"})}
+                                        ]
+                                    }
+                                }
+                            })
+
                             supabase.table("market_listings").delete().eq("id", listing_id).execute()
                             await send_fb_message(sender_id, {
                                 "attachment": {
