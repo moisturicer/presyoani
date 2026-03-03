@@ -157,7 +157,7 @@ async def receive_message(request: Request):
 
                         p = float(res.data[0]['price']) if res.data else 0.0
                         total = p * float(qty)
-
+                        
                         tagalog_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
                         crop_tagalog = tagalog_crops.get(crop.lower(), crop).capitalize()
 
@@ -203,45 +203,13 @@ async def receive_message(request: Request):
                     action = p_load.get("action")
 
                     if action == "LIST":
-                        commodity_normalized = p_load['c'].lower().strip()
-                        existing = supabase.table("market_listings").select("id").eq("farmers_psid", sender_id).eq("commodity", p_load['c']).eq("status", True).execute()
+                        supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
+                        res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
 
-                        tagalog_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
-                        crop_display = tagalog_crops.get(p_load['c'].lower(), p_load['c']).capitalize()
-
-                        if existing.data:
-                            await send_fb_message(sender_id, {
-                                "attachment": {
-                                    "type": "template",
-                                    "payload": {
-                                        "template_type": "button",
-                                        "text": f"⚠️ Mayroon ka nang aktibong listing para sa iyong {crop_display}. I-scan ang ibang ani para gumawa ng bagong listing.",
-                                        "buttons": [
-                                            {"type": "postback", "title": "📋 TINGNAN ANG BENTA",
-                                             "payload": json.dumps({"action": "VIEW"})},
-                                            {"type": "web_url", "url": "https://presyoani.onrender.com",
-                                             "title": "➕ DAGDAG NA ANI"}
-                                        ]
-                                    }
-                                }
-                            })
-                        else:
-                            supabase.table("farmers").upsert(
-                                {"farmer_psid": sender_id, "messenger_id": sender_id,
-                                 "quality_rating": 5.0}).execute()
-                            res = supabase.table("market_listings").insert({
-                                "farmers_psid": sender_id,
-                                "commodity": p_load['c'],
-                                "grade": p_load['g'],
-                                "weight": float(p_load['q']),
-                                "price": float(p_load['p']),
-                                "status": True
-                            }).execute()
-
-                            if res.data:
+                        if res.data:
                                 listing_id = res.data[0]['id']
-                                success_msg = "✅ Na-post na sa palengke! Makakatanggap ka ng mensahe dito kapag may bumili."
-
+                                success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
+                                
                                 await send_fb_message(sender_id, {
                                     "attachment": {
                                         "type": "template",
@@ -249,12 +217,9 @@ async def receive_message(request: Request):
                                             "template_type": "button",
                                             "text": success_msg,
                                             "buttons": [
-                                                {"type": "postback", "title": "🚫 BAWIIN",
-                                                 "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
-                                                {"type": "postback", "title": "📋 TINGNAN ANG BENTA",
-                                                 "payload": json.dumps({"action": "VIEW"})},
-                                                {"type": "web_url", "url": "https://presyoani.onrender.com",
-                                                 "title": "➕ DAGDAG NA ANI"}
+                                                {"type": "postback", "title": "🚫 BAWIIN", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
+                                                {"type": "postback", "title": "🔍 TINGNAN ANG BENTA", "payload": json.dumps({"action": "VIEW"})},
+                                                {"type": "web_url", "url": "https://presyoani.onrender.com", "title": "➕ DAGDAG OG ANI"}
                                             ]
                                         }
                                     }
