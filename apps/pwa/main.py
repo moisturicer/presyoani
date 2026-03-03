@@ -6,7 +6,7 @@ import uvicorn
 from datetime import datetime
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
-from fastapi.responses import PlainTextResponse, JSONResponse
+from fastapi.responses import PlainTextResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,7 +24,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# config
 token = os.getenv("FB_PAGE_ACCESS_TOKEN")
 verify_token = os.getenv("FB_VERIFY_TOKEN")
 page_id = os.getenv("FB_PAGE_ID")
@@ -39,10 +38,11 @@ templates = Jinja2Templates(directory="templates")
 async def send_fb_message(recipient_id, message_payload):
     fb_url = f"https://graph.facebook.com/v19.0/me/messages?access_token={token}"
     async with httpx.AsyncClient() as client:
-        await client.post(fb_url, json={
-            "recipient": {"id": recipient_id},
-            "message": message_payload
-        })
+        await client.post(fb_url, json={"recipient": {"id": recipient_id}, "message": message_payload})
+
+@app.get("/sw.js")
+async def serve_sw():
+    return FileResponse("static/sw.js", media_type="application/javascript")
 
 # --- TRIGGERED BY WEBSITE WHEN ORDER IS PLACED ---
 @app.post("/notify-farmer")
@@ -52,10 +52,8 @@ async def notify_farmer(request: Request):
         farmer_id = data.get("farmer_psid")
         crop = data.get("commodity", "tanom")
         qty = data.get("weight", "0")
-        listing_id = data.get("listing_id") # Dashboard must pass this now
+        listing_id = data.get("listing_id") 
 
-        # 1. Update database: Set status to False (Sold/Unavailable)
-        # This effectively disables the 'BAWION' logic
         supabase.table("market_listings").update({"status": False}).eq("id", listing_id).execute()
 
         bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
@@ -282,7 +280,7 @@ async def receive_message(request: Request):
                             # Listing doesn't exist at all (already deleted or wrong ID)
                             await send_fb_message(sender_id, {"text": "⚠️ Dili na makita ang listing. Basin nakuha na o nabaligya na."})
                         elif check.data[0]['status'] == False:
-                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawi. Naa nay nipalit ani o nakuha na sa system."})
+                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawi. Naa nay nipalit ani."})
                         else:
                             listing = check.data[0]
                             crop_name = listing['commodity'].capitalize()
