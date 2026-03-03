@@ -14,16 +14,59 @@
         .controls { position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; box-sizing: border-box; background: linear-gradient(transparent, rgba(0,0,0,0.8)); }
         .card { background: white; color: black; padding: 20px; border-radius: 20px; }
         input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
-        .btn { background: #2ecc71; color: white; padding: 15px; border: none; border-radius: 50px; width: 100%; font-weight: bold; font-size: 18px; }
+        .btn { background: #2ecc71; color: white; padding: 15px; border: none; border-radius: 50px; width: 100%; font-weight: bold; font-size: 18px; cursor: pointer; }
         #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:100; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* RESULT OVERLAY */
+        #result-overlay { 
+            display: none; /* Hidden by default */
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); 
+            z-index: 9999; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            padding: 20px; 
+            box-sizing: border-box; 
+        }
+        .result-card { background: white; color: black; padding: 30px; border-radius: 25px; text-align: center; width: 100%; max-width: 400px; }
+        .grade-text { font-size: 48px; font-weight: bold; color: #2ecc71; margin: 10px 0; }
+        .messenger-btn { 
+            display: block; 
+            background: #0084ff; 
+            color: white; 
+            padding: 18px; 
+            border-radius: 50px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            font-size: 18px; 
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
 <div id="loading">
     <div style="border: 4px solid #f3f3f3; border-top: 4px solid #2ecc71; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite;"></div>
-    <p>Initializing Offline AI...</p>
+    <p>Initializing AI...</p>
+</div>
+
+<!-- SUCCESS CARD -->
+<div id="result-overlay">
+    <div class="result-card">
+        <p style="color: #666; margin: 0;">SCAN COMPLETE</p>
+        <div id="display-grade" class="grade-text">GRADE A</div>
+        <p id="display-details" style="color: #333;">Tomato • 5kg</p>
+        
+        <a id="messenger-link" href="#" class="messenger-btn">
+            SEND TO MESSENGER
+        </a>
+        
+        <button onclick="location.reload()" style="background:none; border:none; color:#888; margin-top:20px; text-decoration:underline;">Scan again</button>
+    </div>
 </div>
 
 <div id="camera-container">
@@ -35,7 +78,7 @@
                 <option value="chili">Chili</option>
                 <option value="sweet_potato">Sweet Potato</option>
             </select>
-            <input type="number" id="quantity" placeholder="Weight in kg (e.g. 5.5)" inputmode="decimal">
+            <input type="number" id="quantity" placeholder="Weight in kg" inputmode="decimal">
             <button class="btn" id="scan-btn">⚡ SCAN & SEND</button>
         </div>
     </div>
@@ -44,11 +87,9 @@
 <canvas id="canvas" style="display:none;"></canvas>
 
 <script>
-    // 1. REGISTER SERVICE WORKER (This makes it work without internet)
+    // Register Service Worker
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js');
-        });
+        navigator.serviceWorker.register('/sw.js');
     }
 
     let model;
@@ -68,14 +109,16 @@
             document.getElementById('loading').style.display = 'none';
         } catch (err) {
             console.error(err);
-            alert("Scanner Error: Ensure you have granted camera permissions.");
+            alert("Camera error. Please refresh.");
         }
     }
 
-document.getElementById('scan-btn').addEventListener('click', async () => {
+    document.getElementById('scan-btn').addEventListener('click', async () => {
         const qty = document.getElementById('quantity').value;
         const crop = document.getElementById('crop-type').value;
-        if (!qty || qty <= 0) return alert("Please enter weight first!");
+        if (!qty || qty <= 0) return alert("Enter weight!");
+
+        document.getElementById('scan-btn').innerText = "Analyzing...";
 
         const ctx = canvas.getContext('2d');
         canvas.width = 416; canvas.height = 416;
@@ -87,33 +130,52 @@ document.getElementById('scan-btn').addEventListener('click', async () => {
 
         let maxFresh = 0, maxRotten = 0;
         for (let i = 0; i < 3549; i++) {
-            maxFresh = Math.max(maxFresh, data[4*3549+i], data[7*3549+i]);
+            maxFresh = Math.max(maxFresh, data[4*3549+i], data[7*3549+i]); 
             maxRotten = Math.max(maxRotten, data[5*3549+i], data[6*3549+i], data[8*3549+i]);
         }
 
+        if (Math.max(maxFresh, maxRotten) < 0.35) {
+            document.getElementById('scan-btn').innerText = "⚡ SCAN & SEND";
+            return alert("AI could not find the crop.");
+        }
+
         let grade = "D";
-        if (maxFresh < 0.25 && maxRotten < 0.25) return alert("AI cannot see the crop clearly.");
-        if (maxRotten > maxFresh && maxRotten > 0.40) return alert("REJECTED: Produce is rotten.");
+        if (maxFresh > 0.80) grade = "A";
+        else if (maxFresh > 0.50) grade = "B"; 
+        else if (maxFresh > 0.30) grade = "C";
 
-        if (maxFresh > 0.75) grade = "A";
-        else if (maxFresh > 0.45) grade = "B";
-        else if (maxFresh > 0.25) grade = "C";
 
-        // Generate Ref Data
-        const rawData = `${crop}|${qty}|${grade}`;
+    const rawData = `${crop}|${qty}|${grade}`;
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-        // --- PH FREE DATA FIX: DIRECT APP REDIRECT ---
-        const messengerAppUrl = `fb-messenger://user-thread/${PAGE_ID}/?ref=${safeHash}`;
-        const messengerWebUrl = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
+        // --- THE DEEP LINK FIX ---
+        
+        // 1. Standard Web Link (Fallback)
+        const mMeUrl = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
+        
+        // 2. Android Intent (Best for PH Free Data)
+        // This forces the phone to open the Orca (Messenger) app directly
+        const androidIntent = `intent://user-thread/${PAGE_ID}?ref=${safeHash}#Intent;scheme=fb-messenger;package=com.facebook.orca;end`;
+        
+        // 3. iOS Deep Link
+        const iosDeepLink = `fb-messenger://user-thread/${PAGE_ID}?ref=${safeHash}`;
 
-        // 1. Try to open the Messenger App directly (Bypasses Browser SSL check)
-        window.location.href = messengerAppUrl;
+        const messengerBtn = document.getElementById('messenger-link');
 
-        // 2. Fallback: If the app doesn't open in 500ms, try the web URL
-        setTimeout(() => {
-            window.location.href = messengerWebUrl;
-        }, 500);
+        // Detect device and set the correct link
+        if (/android/i.test(navigator.userAgent)) {
+            messengerBtn.href = androidIntent;
+        } else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+            messengerBtn.href = iosDeepLink;
+        } else {
+            messengerBtn.href = mMeUrl;
+        }
+
+        // Show the Result Card
+        document.getElementById('display-grade').innerText = `GRADE ${grade}`;
+        document.getElementById('display-details').innerText = `${qty}kg of ${crop}`;
+        document.getElementById('result-overlay').style.display = 'flex';
+        document.getElementById('scan-btn').innerText = "⚡ SCAN & SEND";
     });
 
     init();

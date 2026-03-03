@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
+from fastapi.responses import RedirectResponse
 
 load_dotenv()
 
@@ -38,17 +39,17 @@ templates = Jinja2Templates(directory="templates")
 http_client = httpx.AsyncClient(timeout=10)
 
 async def send_fb_message(recipient_id, message_payload):
-    try:
-        fb_url = f"https://graph.facebook.com/v19.0/me/messages?access_token={token}"
-        await http_client.post(
-            fb_url,
-            json={
-                "recipient": {"id": recipient_id},
-                "message": message_payload
-            }
-        )
-    except Exception as e:
-        print(f"Error sending FB message: {e}")
+    fb_url = f"https://graph.facebook.com/v19.0/me/messages?access_token={token}"
+    async with httpx.AsyncClient() as client:
+        await client.post(fb_url, json={"recipient": {"id": recipient_id}, "message": message_payload})
+
+
+@app.get("/go")
+async def messenger_bridge(ref: str):
+    # This takes the data and jumps to Messenger
+    # Because it's a server-side redirect, the 'ref' is preserved
+    messenger_url = f"https://m.me/{page_id}?ref={ref}"
+    return RedirectResponse(url=messenger_url)
 
 @app.get("/sw.js")
 async def serve_sw():
@@ -64,10 +65,8 @@ async def notify_farmer(request: Request):
         listing_id = data.get("listing_id")
 
         if listing_id:
-            supabase.table("market_listings") \
-                .update({"status": False}) \
-                .eq("id", listing_id) \
-                .execute()
+            # Mark as False so withdrawal is disabled in the bot
+            supabase.table("market_listings").update({"status": False}).eq("id", listing_id).execute()
 
         bisaya_crops = {
             "tomato": "kamatis",
@@ -77,15 +76,13 @@ async def notify_farmer(request: Request):
 
         crop_bisaya = bisaya_crops.get(crop.lower(), crop)
 
-        msg = f"🔔 Naay nipalit sa imohang {qty}kg nga {crop_bisaya}. Kuhaon sa tig-deliver ig 5PM."
-
-        if farmer_id:
-            await send_fb_message(farmer_id, {"text": msg})
-
+        # Notification message
+        msg = f"🔔Naay nipalit sa imohang {qty}kg nga {crop_bisaya}. Kuhaon sa tig-deliver ig 5PM."
+        await send_fb_message(farmer_id, {"text": msg})
         return JSONResponse({"status": "success"})
 
     except Exception as e:
-        print(f"Notify farmer error: {e}")
+        print(f"Notify error: {e}")
         return JSONResponse({"status": "error"}, status_code=500)
 
 @app.get("/")
@@ -133,92 +130,105 @@ async def receive_message(request: Request):
             ):
                 ref_raw = messaging_event["postback"]["referral"].get("ref")
 
-            if not ref_raw:
-                continue
-
-            try:
-                parts = ref_raw.split("_")
-
-                if len(parts) < 3:
-                    await send_fb_message(sender_id, {
-                        "text": "❌ Invalid scan format."
-                    })
-                    continue
-
-                crop, qty, grade = parts[0], parts[1], parts[2]
-
-                # Fetch latest price
-                res = (
-                    supabase.table("dpi_prices")
-                    .select("price")
-                    .ilike("commodity", f"%{crop}%")
-                    .order("date_updated", desc=True)
-                    .limit(1)
-                    .execute()
-                )
-
-                if not res.data:
-                    await send_fb_message(sender_id, {
-                        "text": f"⚠️ Walay presyo makita para sa {crop} karon."
-                    })
-                    continue
-
-                p = float(res.data[0]["price"])
-
+            if ref_data:
                 try:
-                    qty_val = float(qty)
-                except ValueError:
-                    qty_val = 0
+                    # Decode scan data
+                    decoded = base64.urlsafe_b64decode(ref_data + "===").decode('utf-8')
+                    parts = decoded.split("|")
+                    if len(parts) >= 3:
+                        crop, qty, grade = parts[0], parts[1], parts[2]
+                        res = supabase.table("dpi_prices").select("price").ilike("commodity", f"%{crop}%").order("date_updated", desc=True).limit(1).execute()
+                        
+                        if res.data:
+                            p = float(res.data[0]['price'])
+                            total = p * float(qty)
+                            bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
+                            crop_bisaya = bisaya_crops.get(crop.lower(), crop).capitalize()
+                            
+                            msg_text = (
+                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa!\n\n"
+                                f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}. "
+                                f"Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke.\n\n"
+                                f"DETALYE SA SCAN\n"
+                                f"Tanom: {crop_bisaya}\n"
+                                f"Grade: {grade}\n"
+                                f"Timbang: {qty}kg\n\n"
+                                f"Presyo: ₱{p:.2f}/kg\n"
+                                f"Total: ₱{total:,.2f}"
+                            )
+                            
+                            buttons = {"attachment": {"type": "template", "payload": {"template_type": "button", "text": msg_text, "buttons": [{"type": "postback", "title": "IBALIGYA", "payload": json.dumps({"action": "LIST", "c": crop, "g": grade, "q": qty, "p": p})}]}}}
+                            await send_fb_message(sender_id, buttons)
+                except Exception as e: print(f"Scan error: {e}")
 
-                total = p * qty_val
+            elif "postback" in messaging_event:
+                payload_raw = messaging_event["postback"].get("payload")
+                try:
+                    p_load = json.loads(payload_raw)
+                    action = p_load.get("action")
 
-                bisaya_crops = {
-                    "tomato": "kamatis",
-                    "chili": "sili",
-                    "sweet_potato": "kamote"
-                }
+                    if action == "LIST":
+                        supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
+                        res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
+                        
+                        if res.data:
+                            listing_id = res.data[0]['id']
+                            success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
+                            
+                            # BOTH BAWION and VIEW are Postbacks (Free Data Friendly)
+                            await send_fb_message(sender_id, {
+                                "attachment": {
+                                    "type": "template",
+                                    "payload": {
+                                        "template_type": "button",
+                                        "text": success_msg,
+                                        "buttons": [
+                                            {"type": "postback", "title": "BAWION", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
+                                            {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})}
+                                        ]
+                                    }
+                                }
+                            })
 
-                crop_bisaya = bisaya_crops.get(crop.lower(), crop).capitalize()
+                    elif action == "VIEW":
+                        res = supabase.table("market_listings").select("*").eq("farmers_psid", sender_id).eq("status", True).execute()
+                        if res.data:
+                            items_text = "\n".join([f"• {i['commodity'].capitalize()} ({i['weight']}kg) - Grade {i['grade']}" for i in res.data])
+                            list_msg = f"IMONG MGA BALIGYA KARON:\n\n{items_text}"
+                        else:
+                            list_msg = "Wala kay active nga baligya karon."
+                        await send_fb_message(sender_id, {"text": list_msg})
 
-                msg_text = (
-                    f"Grade {grade} {crop_bisaya}\n"
-                    f"Presyo: ₱{p:.2f}/kg\n"
-                    f"Timbang: {qty_val}kg\n"
-                    f"Total: ₱{total:,.2f}\n\n"
-                    f"Ibaligya kini?"
-                )
+                    elif action == "CANCEL":
+                        listing_id = p_load.get("id")
+                        check = supabase.table("market_listings").select("status").eq("id", listing_id).execute()
+                        
+                        # CONDITION: If status is False, block withdrawal
+                        if check.data and check.data[0]['status'] == False:
+                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Naa nay nipalit ani o nakuha na sa tig-deliver."})
+                        else:
+                            supabase.table("market_listings").delete().eq("id", listing_id).execute()
+                            # Message with SCAN OG BALIK (Opens PWA)
+                            await send_fb_message(sender_id, {
+                                "attachment": {
+                                    "type": "template",
+                                    "payload": {
+                                        "template_type": "button",
+                                        "text": "🚫 Gikuha na ang imong listing sa palengke.",
+                                        "buttons": [{
+                                            "type": "web_url",
+                                            "url": "https://presyoani.onrender.com",
+                                            "title": "SCAN OG BALIK"
+                                        }]
+                                    }
+                                }
+                            })
 
-                buttons = {
-                    "attachment": {
-                        "type": "template",
-                        "payload": {
-                            "template_type": "button",
-                            "text": msg_text,
-                            "buttons": [{
-                                "type": "postback",
-                                "title": "IBALIGYA",
-                                "payload": json.dumps({
-                                    "action": "LIST",
-                                    "c": crop,
-                                    "g": grade,
-                                    "q": qty_val,
-                                    "p": p
-                                })
-                            }]
-                        }
-                    }
-                }
-
-                await send_fb_message(sender_id, buttons)
-
-            except Exception as e:
-                print(f"Error processing scan: {e}")
-                await send_fb_message(sender_id, {
-                    "text": "⚠️ Naay error sa pag-process sa scan."
-                })
+                except Exception as e: print(f"Postback error: {e}")
 
     return PlainTextResponse("EVENT_RECEIVED", status_code=200)
 
+    
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
