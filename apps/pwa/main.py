@@ -150,30 +150,10 @@ async def receive_message(request: Request):
                     action = p_load.get("action")
 
                     if action == "LIST":
-                        # Check for existing active listing for same crop
-                        existing = supabase.table("market_listings").select("id").eq("farmers_psid", sender_id).eq("commodity", p_load['c']).execute()
-                        
-                        if existing.data:
-                            crop_bisaya_map = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
-                            crop_display = crop_bisaya_map.get(p_load['c'].lower(), p_load['c']).capitalize()
-                            await send_fb_message(sender_id, {
-                                "attachment": {
-                                    "type": "template",
-                                    "payload": {
-                                        "template_type": "button",
-                                        "text": f"⚠️ Naa nay aktibo nga listing para sa imong {crop_display}. I-scan ang laing ani para makahimo og bag-ong listing.",
-                                        "buttons": [
-                                            {"type": "postback", "title": "📋 TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})},
-                                            {"type": "web_url", "url": "https://presyoani.onrender.com", "title": "➕ DAGDAG OG ANI"}
-                                        ]
-                                    }
-                                }
-                            })
-                        else:
-                            supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
-                            res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
+                        supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
+                        res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
 
-                            if res.data:
+                        if res.data:
                                 listing_id = res.data[0]['id']
                                 success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
                                 
@@ -192,13 +172,104 @@ async def receive_message(request: Request):
                                     }
                                 })
 
+                    # TO DO: Implement checking for existing active listing before allowing new one, and if exists show options to view or add new instead of creating duplicate listings.
+                    # if action == "LIST":
+                    #     # Check for existing active listing for same crop
+                    #     existing = supabase.table("market_listings").select("id").eq("farmers_psid", sender_id).eq("commodity", p_load['c']).eq("status", True).execute()
+                        
+                    #     if existing.data:
+                    #         crop_bisaya_map = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
+                    #         crop_display = crop_bisaya_map.get(p_load['c'].lower(), p_load['c']).capitalize()
+                    #         await send_fb_message(sender_id, {
+                    #             "attachment": {
+                    #                 "type": "template",
+                    #                 "payload": {
+                    #                     "template_type": "button",
+                    #                     "text": f"⚠️ Naa nay aktibo nga listing para sa imong {crop_display}. I-scan ang laing ani para makahimo og bag-ong listing.",
+                    #                     "buttons": [
+                    #                         {"type": "postback", "title": "📋 TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})},
+                    #                         {"type": "web_url", "url": "https://presyoani.onrender.com", "title": "➕ DAGDAG OG ANI"}
+                    #                     ]
+                    #                 }
+                    #             }
+                    #         })
+                    #     else:
+                    #         supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
+                    #         res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
+
+                    #         if res.data:
+                    #             listing_id = res.data[0]['id']
+                    #             success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
+                                
+                    #             await send_fb_message(sender_id, {
+                    #                 "attachment": {
+                    #                     "type": "template",
+                    #                     "payload": {
+                    #                         "template_type": "button",
+                    #                         "text": success_msg,
+                    #                         "buttons": [
+                    #                             {"type": "postback", "title": "BAWION (Withdraw)", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
+                    #                             {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})},
+                    #                             {"type": "web_url", "url": "https://presyoani.onrender.com", "title": "➕ DAGDAG OG ANI"}
+                    #                         ]
+                    #                     }
+                    #                 }
+                    #             })
+
                     elif action == "VIEW":
                         res = supabase.table("market_listings").select("*").eq("farmers_psid", sender_id).eq("status", True).execute()
                         if res.data:
-                            list_msg = "🌾 IMONG MGA BALIGYA:\n" + "\n".join([f"• {item['commodity'].capitalize()} ({item['weight']}kg) - ID: {item['id']}" for item in res.data])
+                            # Send one bubble per listing
+                            for item in res.data:
+                                crop_name = item['commodity'].capitalize()
+                                weight = item['weight']
+                                price = item['price']
+                                total = weight * price
+                                listing_id = item['id']
+
+                                item_msg = (
+                                    f"🌾 {crop_name} ({item['grade']})\n"
+                                    f"📋 Listing ID: {listing_id}\n"
+                                    f"⚖️ Timbang: {weight}kg\n"
+                                    f"💰 Presyo: ₱{price:.2f}/kg\n"
+                                    f"💵 Kinatibuk-an (Total): ₱{total:,.2f}"
+                                )
+                                await send_fb_message(sender_id, {
+                                    "attachment": {
+                                        "type": "template",
+                                        "payload": {
+                                            "template_type": "button",
+                                            "text": item_msg,
+                                            "buttons": [
+                                                {"type": "postback", "title": "🚫 BAWION", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
+                                                {"type": "web_url", "url": "https://presyoani.onrender.com", "title": "➕ DAGDAG OG ANI"}
+                                            ]
+                                        }
+                                    }
+                                })
                         else:
-                            list_msg = "Wala kay active nga baligya karon."
-                        await send_fb_message(sender_id, {"text": list_msg})
+                            await send_fb_message(sender_id, {
+                                "attachment": {
+                                    "type": "template",
+                                    "payload": {
+                                        "template_type": "button",
+                                        "text": "Wala kay active nga baligya karon.",
+                                        "buttons": [{
+                                            "type": "web_url",
+                                            "url": "https://presyoani.onrender.com",
+                                            "title": "➕ DAGDAG OG ANI"
+                                        }]
+                                    }
+                                }
+                            })
+
+                    # elif action == "VIEW":
+                    #     res = supabase.table("market_listings").select("*").eq("farmers_psid", sender_id).eq("status", True).execute()
+                    #     if res.data:
+                    #         list_msg = "🌾 IMONG MGA BALIGYA:\n" + "\n".join([f"• {item['commodity'].capitalize()} ({item['weight']}kg) - ID: {item['id']}" for item in res.data])
+                    #     else:
+                    #         list_msg = "Wala kay active nga baligya karon."
+                    #     await send_fb_message(sender_id, {"text": list_msg})
                     
                     elif action == "CANCEL":
                         listing_id = p_load.get("id")
