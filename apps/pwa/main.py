@@ -91,28 +91,40 @@ async def verify(request: Request):
 @app.post("/webhook")
 async def receive_message(request: Request):
     data = await request.json()
+    
+    # DEBUG: See exactly what Facebook is sending
+    print(f"DEBUG: Incoming Webhook Data: {json.dumps(data)}")
+
     if not data.get("object") == "page":
         return PlainTextResponse("EVENT_RECEIVED", status_code=200)
 
     for entry in data.get("entry"):
         for messaging_event in entry.get("messaging"):
             sender_id = messaging_event["sender"]["id"]
+            print(f"DEBUG: Processing event from Sender ID: {sender_id}")
 
             ref_data = None
             if "referral" in messaging_event:
                 ref_data = messaging_event["referral"].get("ref")
+                print(f"DEBUG: Found Direct Referral: {ref_data}")
             elif "postback" in messaging_event and "referral" in messaging_event["postback"]:
                 ref_data = messaging_event["postback"]["referral"].get("ref")
+                print(f"DEBUG: Found Postback Referral: {ref_data}")
 
             if ref_data:
                 try:
                     # Decode scan data
                     clean_ref = ref_data.replace(" ", "+") 
                     decoded = base64.urlsafe_b64decode(clean_ref + "===").decode('utf-8')
+                    print(f"DEBUG: Successfully Decoded Data: {decoded}")
+                    
                     parts = decoded.split("|")
                     if len(parts) >= 3:
                         crop, qty, grade = parts[0], parts[1], parts[2]
+                        print(f"DEBUG: Parsed Crop: {crop}, Qty: {qty}, Grade: {grade}")
+                        
                         res = supabase.table("dpi_prices").select("price").ilike("commodity", f"%{crop}%").order("date_updated", desc=True).limit(1).execute()
+                        print(f"DEBUG: Supabase Price Result: {res.data}")
                         
                         if res.data:
                             p = float(res.data[0]['price'])
@@ -134,13 +146,19 @@ async def receive_message(request: Request):
                             
                             buttons = {"attachment": {"type": "template", "payload": {"template_type": "button", "text": msg_text, "buttons": [{"type": "postback", "title": "IBALIGYA", "payload": json.dumps({"action": "LIST", "c": crop, "g": grade, "q": qty, "p": p})}]}}}
                             await send_fb_message(sender_id, buttons)
-                except Exception as e: print(f"Scan error: {e}")
+                            print(f"DEBUG: Reply message sent to {sender_id}")
+                        else:
+                            print(f"DEBUG: No price found for {crop}")
+                except Exception as e: 
+                    print(f"DEBUG: Scan processing error: {e}")
 
             elif "postback" in messaging_event:
                 payload_raw = messaging_event["postback"].get("payload")
+                print(f"DEBUG: Received Postback Payload: {payload_raw}")
                 try:
                     p_load = json.loads(payload_raw)
                     action = p_load.get("action")
+                    print(f"DEBUG: Postback Action detected: {action}")
 
                     if action == "LIST":
                         supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
@@ -148,9 +166,9 @@ async def receive_message(request: Request):
                         
                         if res.data:
                             listing_id = res.data[0]['id']
+                            print(f"DEBUG: Listing created with ID: {listing_id}")
                             success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
                             
-                            # BOTH BAWION and VIEW are Postbacks (Free Data Friendly)
                             await send_fb_message(sender_id, {
                                 "attachment": {
                                     "type": "template",
@@ -178,12 +196,12 @@ async def receive_message(request: Request):
                         listing_id = p_load.get("id")
                         check = supabase.table("market_listings").select("status").eq("id", listing_id).execute()
                         
-                        # CONDITION: If status is False, block withdrawal
                         if check.data and check.data[0]['status'] == False:
-                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Naa nay nipalit ani o nakuha na sa tig-deliver."})
+                            print(f"DEBUG: Cancellation blocked for listing {listing_id} (already sold)")
+                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Naa nay nipalit ani o nakuha na sa system."})
                         else:
                             supabase.table("market_listings").delete().eq("id", listing_id).execute()
-                            # Message with SCAN OG BALIK (Opens PWA)
+                            print(f"DEBUG: Listing {listing_id} deleted")
                             await send_fb_message(sender_id, {
                                 "attachment": {
                                     "type": "template",
@@ -199,7 +217,8 @@ async def receive_message(request: Request):
                                 }
                             })
 
-                except Exception as e: print(f"Postback error: {e}")
+                except Exception as e: 
+                    print(f"DEBUG: Postback processing error: {e}")
 
     return PlainTextResponse("EVENT_RECEIVED", status_code=200)
 
