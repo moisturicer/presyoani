@@ -113,8 +113,9 @@ async def receive_message(request: Request):
                             crop_bisaya = bisaya_crops.get(crop.lower(), crop).capitalize()
 
                             # EXACT LAYOUT REQUESTED
+                            today = datetime.now().strftime("%B %-d, %Y")
                             msg_text = (
-                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa!\n\n"
+                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa ({today})!\n\n"
                                 f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}. "
                                 f"Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke.\n\n"
                                 f"DETALYE SA SCAN\n"
@@ -246,7 +247,8 @@ async def receive_message(request: Request):
                         if check.data and check.data[0]['status'] == False:
                             await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Napalit na kini sa usa ka buyer."})
                         else:
-                            supabase.table("market_listings").delete().eq("id", listing_id).execute()
+                            # supabase.table("market_listings").delete().eq("id", listing_id).execute()
+                            supabase.table("market_listings").update({"status": False}).eq("id", listing_id).execute() # Not deleted from database for checking
                             await send_fb_message(sender_id, {
                                 "attachment": {
                                     "type": "template",
