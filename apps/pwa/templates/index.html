@@ -144,7 +144,7 @@
         else if (maxFresh > 0.50) grade = "B"; 
         else if (maxFresh > 0.30) grade = "C";
 
-const rawData = `${crop}|${qty}|${grade}`;
+
     const rawData = `${crop}|${qty}|${grade}`;
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
