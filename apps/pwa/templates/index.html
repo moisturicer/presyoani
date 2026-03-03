@@ -23,7 +23,7 @@
 
 <div id="loading">
     <div style="border: 4px solid #f3f3f3; border-top: 4px solid #2ecc71; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite;"></div>
-    <p>Initializing PresyoAni AI...</p>
+    <p>Initializing Offline AI...</p>
 </div>
 
 <div id="camera-container">
@@ -44,6 +44,13 @@
 <canvas id="canvas" style="display:none;"></canvas>
 
 <script>
+    // 1. REGISTER SERVICE WORKER (This makes it work without internet)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js');
+        });
+    }
+
     let model;
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
@@ -56,15 +63,12 @@
                 audio: false
             });
             video.srcObject = stream;
-
             tflite.setWasmPath('/static/');
-
             model = await tflite.loadTFLiteModel('/static/model.tflite');
-
             document.getElementById('loading').style.display = 'none';
         } catch (err) {
             console.error(err);
-            alert("AI error: make sure all static files are downloaded.");
+            alert("Scanner Error: Ensure you have granted camera permissions.");
         }
     }
 
@@ -73,53 +77,35 @@
         const crop = document.getElementById('crop-type').value;
         if (!qty || qty <= 0) return alert("Please enter weight first!");
 
-        // capture image
         const ctx = canvas.getContext('2d');
         canvas.width = 416; canvas.height = 416;
         ctx.drawImage(video, 0, 0, 416, 416);
 
-        // AI prediction
         const tensor = tf.tidy(() => tf.browser.fromPixels(canvas).div(255.0).expandDims(0));
         const prediction = await model.predict(tensor);
         const data = await prediction.data();
 
-        // grading & rejection standards
         let maxFresh = 0, maxRotten = 0;
         for (let i = 0; i < 3549; i++) {
-            maxFresh = Math.max(maxFresh, data[4*3549+i], data[7*3549+i]); // Fresh classes
-            maxRotten = Math.max(maxRotten, data[5*3549+i], data[6*3549+i], data[8*3549+i]); // Rotten classes
+            maxFresh = Math.max(maxFresh, data[4*3549+i], data[7*3549+i]);
+            maxRotten = Math.max(maxRotten, data[5*3549+i], data[6*3549+i], data[8*3549+i]);
         }
 
-        let grade = "REJECT";
+        let grade = "D";
+        if (maxFresh < 0.25 && maxRotten < 0.25) return alert("AI cannot see the crop clearly.");
+        if (maxRotten > maxFresh && maxRotten > 0.40) return alert("REJECTED: Produce is rotten.");
 
-        // check for empty / unidentifiable snaps first
-        if (maxFresh < 0.25 && maxRotten < 0.25) {
-            return alert("AI could not identify a crop. Please take a clearer photo closer to the produce.");
-        }
-
-        // check for rotten/rejected produce
-        if (maxRotten > maxFresh && maxRotten > 0.40) {
-            grade = "REJECT";
-            alert("REJECTED: Produce appears rotten or damaged. Cannot list on market.");
-            return;
-        }
-
-        // grading logic
         if (maxFresh > 0.75) grade = "A";
         else if (maxFresh > 0.45) grade = "B";
         else if (maxFresh > 0.25) grade = "C";
-        else grade = "D";
 
-        // 1. Generate the ref data (crop|qty|grade)
+        // Generate Ref Data
         const rawData = `${crop}|${qty}|${grade}`;
-        
-        // 2. Base64 encode it safely for URLs
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-        // 3. REDIRECT IMMEDIATELY TO MESSENGER (No confirmation box)
+        // Jump to Messenger (This works on PH Free Data)
         window.location.href = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
     });
-
 
     init();
 </script>
