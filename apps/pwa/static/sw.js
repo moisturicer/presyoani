@@ -1,42 +1,30 @@
-const CACHE_NAME = 'presyoani-v3';
+const CACHE_NAME = 'presyoani-v2';
 const ASSETS = [
   '/',
-  '/index.html',
   '/static/manifest.json',
+  '/static/model.tflite',
   '/static/tf.min.js',
   '/static/tf-tflite.min.js',
-  '/static/model.tflite',
-  '/static/tflite_web_api_cc.js',
-  '/static/tflite_web_api_cc.wasm',
   '/static/tflite_web_api_cc_simd.js',
   '/static/tflite_web_api_cc_simd.wasm'
 ];
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
+  e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(self.clients.claim());
-});
-
-// cache-first strategy
+// Optimized for Free Data: Serve AI from cache, ignore Messenger/External links
 self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((response) => {
-      // if found in cache, return it immediately
-      if (response) return response;
+  const url = new URL(e.request.url);
 
-      // if not in cache, try network
-      return fetch(e.request).catch(() => {
-        // fallback to index if everything fails
-        if (e.request.mode === 'navigate') {
-          return caches.match('/');
-        }
-      });
-    })
-  );
+  // If it's one of our local assets, use Cache-First
+  if (ASSETS.includes(url.pathname) || url.pathname === '/') {
+    e.respondWith(
+      caches.match(e.request).then((res) => res || fetch(e.request))
+    );
+  } else {
+    // If it's an external link (m.me, facebook), don't use cache at all
+    return;
+  }
 });
