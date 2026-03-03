@@ -151,7 +151,7 @@ async def receive_message(request: Request):
 
                     if action == "LIST":
                         # Check for existing active listing for same crop
-                        existing = supabase.table("market_listings").select("id").eq("farmers_psid", sender_id).eq("commodity", p_load['c']).eq("status", True).execute()
+                        existing = supabase.table("market_listings").select("id").eq("farmers_psid", sender_id).eq("commodity", p_load['c']).execute()
                         
                         if existing.data:
                             crop_bisaya_map = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
@@ -163,8 +163,8 @@ async def receive_message(request: Request):
                                         "template_type": "button",
                                         "text": f"⚠️ Naa nay aktibo nga listing para sa imong {crop_display}. I-scan ang laing ani para makahimo og bag-ong listing.",
                                         "buttons": [
-                                            {"type": "postback", "title": "📋 Tan-awon Baligya", "payload": json.dumps({"action": "VIEW"})},
-                                            {"type": "web_url", "url": "https://presyoani.onrender.com", "title": "➕ Dagdag og Ani"}
+                                            {"type": "postback", "title": "📋 TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})},
+                                            {"type": "web_url", "url": "https://presyoani.onrender.com", "title": "➕ DAGDAG OG ANI"}
                                         ]
                                     }
                                 }
@@ -186,7 +186,7 @@ async def receive_message(request: Request):
                                             "buttons": [
                                                 {"type": "postback", "title": "BAWION (Withdraw)", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
                                                 {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})},
-                                                {"type": "web_url", "url": "https://presyoani.onrender.com", "title": "➕ Dagdag og Ani"}
+                                                {"type": "web_url", "url": "https://presyoani.onrender.com", "title": "➕ DAGDAG OG ANI"}
                                             ]
                                         }
                                     }
