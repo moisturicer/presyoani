@@ -39,8 +39,12 @@ templates = Jinja2Templates(directory="templates")
 async def send_fb_message(recipient_id, message_payload):
     fb_url = f"https://graph.facebook.com/v19.0/me/messages?access_token={token}"
     async with httpx.AsyncClient() as client:
-        await client.post(fb_url, json={"recipient": {"id": recipient_id}, "message": message_payload})
-
+        res = await client.post(fb_url, json={
+            "recipient": {"id": recipient_id},
+            "message": message_payload
+        })
+        # THIS IS IMPORTANT: Check if FB accepted the message
+        print(f"DEBUG: FB API Response: {res.status_code} - {res.text}")
 
 @app.get("/go")
 async def messenger_bridge(ref: str):
@@ -134,17 +138,29 @@ async def receive_message(request: Request):
                             
                             msg_text = (
                                 f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa!\n\n"
-                                f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}. "
-                                f"Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke.\n\n"
-                                f"DETALYE SA SCAN\n"
-                                f"Tanom: {crop_bisaya}\n"
-                                f"Grade: {grade}\n"
-                                f"Timbang: {qty}kg\n\n"
+                                f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}.\n\n"
                                 f"Presyo: ₱{p:.2f}/kg\n"
                                 f"Total: ₱{total:,.2f}"
                             )
-                            
-                            buttons = {"attachment": {"type": "template", "payload": {"template_type": "button", "text": msg_text, "buttons": [{"type": "postback", "title": "IBALIGYA", "payload": json.dumps({"action": "LIST", "c": crop, "g": grade, "q": qty, "p": p})}]}}}
+
+                            # 1. SEND PLAIN TEXT FIRST (Works 100% on Free Data)
+                            await send_fb_message(sender_id, {"text": msg_text})
+
+                            # 2. SEND THE BUTTONS (Might require 'See Photos' on Free Data)
+                            buttons = {
+                                "attachment": {
+                                    "type": "template",
+                                    "payload": {
+                                        "template_type": "button",
+                                        "text": "Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke.",
+                                        "buttons": [{
+                                            "type": "postback",
+                                            "title": "IBALIGYA",
+                                            "payload": json.dumps({"action": "LIST", "c": crop, "g": grade, "q": qty, "p": p})
+                                        }]
+                                    }
+                                }
+                            }
                             await send_fb_message(sender_id, buttons)
                             print(f"DEBUG: Reply message sent to {sender_id}")
                         else:
