@@ -144,20 +144,21 @@
         else if (maxFresh > 0.50) grade = "B"; 
         else if (maxFresh > 0.30) grade = "C";
 
-        const rawData = `${crop}|${qty}|${grade}`;
-        // Base64 without '=' padding (Facebook ref is strict)
+const rawData = `${crop}|${qty}|${grade}`;
+        // Base64 without any padding characters (=)
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-        // THE ONLY LINK THAT WORKS ON FREE DATA & TRIGGERS REFERRALS
+        // The m.me link is the only one telcos allow for free
         const mMeUrl = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
 
         const messengerBtn = document.getElementById('messenger-link');
         messengerBtn.href = mMeUrl;
         
-        // This attribute is CRITICAL for PWAs to hand off the ref data to the system browser
+        // CRITICAL: target="_blank" and rel="noreferrer" forces the PWA 
+        // to "pop out" to Chrome/Safari, which then triggers Messenger correctly.
+        messengerBtn.setAttribute('target', '_blank');
         messengerBtn.setAttribute('rel', 'noreferrer');
 
-        // Show the UI Card
         document.getElementById('display-grade').innerText = `GRADE ${grade}`;
         document.getElementById('display-details').innerText = `${qty}kg of ${crop}`;
         document.getElementById('result-overlay').style.display = 'flex';

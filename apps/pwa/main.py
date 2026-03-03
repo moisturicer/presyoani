@@ -137,31 +137,25 @@ async def receive_message(request: Request):
                             crop_bisaya = bisaya_crops.get(crop.lower(), crop).capitalize()
                             
                             msg_text = (
-                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa!\n\n"
-                                f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}.\n\n"
-                                f"Presyo: ₱{p:.2f}/kg\n"
-                                f"Total: ₱{total:,.2f}"
+                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg!\n\n"
+                                f"Timbang: {qty}kg\n"
+                                f"Total: ₱{total:,.2f}\n\n"
+                                f"I-click ang 'IBALIGYA' sa ubos para ma-post sa palengke."
                             )
 
-                            # 1. SEND PLAIN TEXT FIRST (Works 100% on Free Data)
-                            await send_fb_message(sender_id, {"text": msg_text})
-
-                            # 2. SEND THE BUTTONS (Might require 'See Photos' on Free Data)
-                            buttons = {
-                                "attachment": {
-                                    "type": "template",
-                                    "payload": {
-                                        "template_type": "button",
-                                        "text": "Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke.",
-                                        "buttons": [{
-                                            "type": "postback",
-                                            "title": "IBALIGYA",
-                                            "payload": json.dumps({"action": "LIST", "c": crop, "g": grade, "q": qty, "p": p})
-                                        }]
+                            # USE QUICK REPLIES INSTEAD OF BUTTONS
+                            # Quick Replies work on Free Mode/Zero Load
+                            payload = {
+                                "text": msg_text,
+                                "quick_replies": [
+                                    {
+                                        "content_type": "text",
+                                        "title": "IBALIGYA",
+                                        "payload": json.dumps({"action": "LIST", "c": crop, "g": grade, "q": qty, "p": p})
                                     }
-                                }
+                                ]
                             }
-                            await send_fb_message(sender_id, buttons)
+                            await send_fb_message(sender_id, payload)
                             print(f"DEBUG: Reply message sent to {sender_id}")
                         else:
                             print(f"DEBUG: No price found for {crop}")
