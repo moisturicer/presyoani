@@ -56,10 +56,10 @@ async def notify_farmer(request: Request):
 
         supabase.table("market_listings").update({"status": False}).eq("id", listing_id).execute()
 
-        bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
-        crop_bisaya = bisaya_crops.get(crop.lower(), crop)
+        tagalog_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
+        crop_tagalog = tagalog_crops.get(crop.lower(), crop)
 
-        msg = f"🔔Naay nipalit sa imohang {qty} nga {crop_bisaya}. Kuhaon sa tig-deliver ig 5PM. Dili na nimo kini mabawe (Withdraw disabled)."
+        msg = f"🔔 May bumili sa iyong {qty}kg na {crop_tagalog}! Kukunin ng delivery ng alas-singko ng hapon. Hindi mo na ito mababawi."
         
         await send_fb_message(farmer_id, {"text": msg})
         return JSONResponse({"status": "success"})
@@ -108,20 +108,20 @@ async def receive_message(request: Request):
                         if res.data:
                             p = float(res.data[0]['price'])
                             total = p * float(qty)
-                            bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
-                            crop_bisaya = bisaya_crops.get(crop.lower(), crop).capitalize()
+                            tagalog_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
+                            crop_tagalog = tagalog_crops.get(crop.lower(), crop).capitalize()
 
                             today = datetime.now().strftime("%B %-d, %Y")
                             msg_text = (
-                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa ({today})!\n\n"
-                                f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}. "
-                                f"Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke.\n\n"
-                                f"DETALYE SA SCAN\n"
-                                f"Tanom: {crop_bisaya}\n"
-                                f"Grade: {grade}\n"
+                                f"Ang iyong grade {grade} na {crop_tagalog} ay nagkakahalaga ng ₱{p:.2f}/kg ngayon ({today})!\n\n"
+                                f"Mayroon kang {qty}kg na {crop_tagalog}, matatanggap mo ang ₱{total:,.2f}. "
+                                f"Pindutin ang 'IBENTA' sa ibaba kung nais mong i-post sa palengke.\n\n"
+                                f"DETALYE NG SCAN\n"
+                                f"Pananim: {crop_tagalog}\n"
+                                f"Grado: {grade}\n"
                                 f"Timbang: {qty}kg\n\n"
                                 f"Presyo: ₱{p:.2f}/kg\n"
-                                f"Total: ₱{total:,.2f}"
+                                f"Kabuuan: ₱{total:,.2f}"
                             )
                             buttons = {
                                 "attachment": {
@@ -131,7 +131,7 @@ async def receive_message(request: Request):
                                         "text": msg_text,
                                         "buttons": [{
                                             "type": "postback",
-                                            "title": "IBALIGYA",
+                                            "title": "IBENTA",
                                             "payload": json.dumps(
                                                 {"action": "LIST", "c": crop, "g": grade, "q": qty, "p": p})
                                         }]
@@ -158,18 +158,18 @@ async def receive_message(request: Request):
                         p = float(res.data[0]['price']) if res.data else 0.0
                         total = p * float(qty)
 
-                        bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
-                        crop_bisaya = bisaya_crops.get(crop.lower(), crop).capitalize()
+                        tagalog_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
+                        crop_tagalog = tagalog_crops.get(crop.lower(), crop).capitalize()
 
                         today = datetime.now().strftime("%B %-d, %Y")
                         msg_text = (
-                            f"✅ DETALYE SA SCAN\n\n"
-                            f"Tanom: {crop_bisaya}\n"
-                            f"Grade: {grade}\n"
+                            f"✅ DETALYE NG SCAN\n\n"
+                            f"Pananim: {crop_tagalog}\n"
+                            f"Grado: {grade}\n"
                             f"Timbang: {qty}kg\n\n"
                             f"Presyo: ₱{p:.2f}/kg ({today})\n"
-                            f"Total: ₱{total:,.2f}\n\n"
-                            f"Pinduta ang IBALIGYA sa ubos para ma-post kini sa palengke."
+                            f"Kabuuan: ₱{total:,.2f}\n\n"
+                            f"Pindutin ang IBENTA sa ibaba para ma-post ito sa palengke."
                         )
 
                         buttons = {
@@ -180,7 +180,7 @@ async def receive_message(request: Request):
                                     "text": msg_text,
                                     "buttons": [{
                                         "type": "postback",
-                                        "title": "IBALIGYA",
+                                        "title": "IBENTA",
                                         "payload": json.dumps(
                                             {"action": "LIST", "c": crop, "g": grade, "q": qty, "p": p})
                                     }]
@@ -192,7 +192,7 @@ async def receive_message(request: Request):
                         raise ValueError("Not a valid hash")
                 except:
                     await send_fb_message(sender_id, {
-                        "text": "I-paste diri ang code gikan sa PresyoAni Scanner app para mabaligya nimo imong tanom."
+                        "text": "I-paste dito ang code mula sa PresyoAni Scanner app para maibenta mo ang iyong pananim."
                     })
 
             # --- 3. BUTTON CLICKS ---
@@ -204,11 +204,10 @@ async def receive_message(request: Request):
 
                     if action == "LIST":
                         commodity_normalized = p_load['c'].lower().strip()
-                        existing = supabase.table("market_listings").select("id").eq("farmers_psid", sender_id).ilike(
-                            "commodity", commodity_normalized).eq("status", True).execute()
+                        existing = supabase.table("market_listings").select("id").eq("farmers_psid", sender_id).eq("commodity", p_load['c']).eq("status", True).execute()
 
-                        crop_bisaya_map = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
-                        crop_display = crop_bisaya_map.get(p_load['c'].lower(), p_load['c']).capitalize()
+                        tagalog_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
+                        crop_display = tagalog_crops.get(p_load['c'].lower(), p_load['c']).capitalize()
 
                         if existing.data:
                             await send_fb_message(sender_id, {
@@ -216,12 +215,12 @@ async def receive_message(request: Request):
                                     "type": "template",
                                     "payload": {
                                         "template_type": "button",
-                                        "text": f"⚠️ Naa nay aktibo nga listing para sa imong {crop_display}. I-scan ang laing ani para makahimo og bag-ong listing.",
+                                        "text": f"⚠️ Mayroon ka nang aktibong listing para sa iyong {crop_display}. I-scan ang ibang ani para gumawa ng bagong listing.",
                                         "buttons": [
-                                            {"type": "postback", "title": "📋 TAN-AWON BALIGYA",
+                                            {"type": "postback", "title": "📋 TINGNAN ANG BENTA",
                                              "payload": json.dumps({"action": "VIEW"})},
                                             {"type": "web_url", "url": "https://presyoani.onrender.com",
-                                             "title": "➕ DAGDAG OG ANI"}
+                                             "title": "➕ DAGDAG NA ANI"}
                                         ]
                                     }
                                 }
@@ -241,7 +240,7 @@ async def receive_message(request: Request):
 
                             if res.data:
                                 listing_id = res.data[0]['id']
-                                success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
+                                success_msg = "✅ Na-post na sa palengke! Makakatanggap ka ng mensahe dito kapag may bumili."
 
                                 await send_fb_message(sender_id, {
                                     "attachment": {
@@ -250,12 +249,12 @@ async def receive_message(request: Request):
                                             "template_type": "button",
                                             "text": success_msg,
                                             "buttons": [
-                                                {"type": "postback", "title": "🚫 BAWION",
+                                                {"type": "postback", "title": "🚫 BAWIIN",
                                                  "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
-                                                {"type": "postback", "title": "📋 TAN-AWON BALIGYA",
+                                                {"type": "postback", "title": "📋 TINGNAN ANG BENTA",
                                                  "payload": json.dumps({"action": "VIEW"})},
                                                 {"type": "web_url", "url": "https://presyoani.onrender.com",
-                                                 "title": "➕ DAGDAG OG ANI"}
+                                                 "title": "➕ DAGDAG NA ANI"}
                                             ]
                                         }
                                     }
@@ -273,11 +272,11 @@ async def receive_message(request: Request):
                                 listing_id = item['id']
 
                                 item_msg = (
-                                    f"🌾 {crop_name} ({item['grade']})\n"
+                                    f"🌾 {crop_name} (Grado {item['grade']})\n"
                                     f"📋 Listing ID: {listing_id}\n"
                                     f"⚖️ Timbang: {weight}kg\n"
                                     f"💰 Presyo: ₱{price:.2f}/kg\n"
-                                    f"💵 Kinatibuk-an (Total): ₱{total:,.2f}"
+                                    f"💵 Kabuuan: ₱{total:,.2f}"
                                 )
                                 await send_fb_message(sender_id, {
                                     "attachment": {
@@ -286,10 +285,10 @@ async def receive_message(request: Request):
                                             "template_type": "button",
                                             "text": item_msg,
                                             "buttons": [
-                                                {"type": "postback", "title": "🚫 BAWION",
+                                                {"type": "postback", "title": "🚫 BAWIIN",
                                                  "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
                                                 {"type": "web_url", "url": "https://presyoani.onrender.com",
-                                                 "title": "➕ DAGDAG OG ANI"}
+                                                 "title": "➕ DAGDAG NA ANI"}
                                             ]
                                         }
                                     }
@@ -300,11 +299,11 @@ async def receive_message(request: Request):
                                     "type": "template",
                                     "payload": {
                                         "template_type": "button",
-                                        "text": "Wala kay active nga baligya karon.",
+                                        "text": "Wala kang aktibong benta sa ngayon.",
                                         "buttons": [{
                                             "type": "web_url",
                                             "url": "https://presyoani.onrender.com",
-                                            "title": "➕ DAGDAG OG ANI"
+                                            "title": "➕ DAGDAG NA ANI"
                                         }]
                                     }
                                 }
@@ -320,9 +319,9 @@ async def receive_message(request: Request):
 
                         if not check.data:
                             await send_fb_message(sender_id,
-                                                  {"text": "⚠️ Dili na makita ang listing. Basin nakuha na o nabaligya na."})
+                                                  {"text": "⚠️ Hindi na makita ang listing. Baka nabawi na o naibenta na."})
                         elif check.data[0]['status'] == False:
-                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawi. Naa nay nipalit ani."})
+                            await send_fb_message(sender_id, {"text": "⚠️ Hindi na mababawi. May bumili na nito."})
                         else:
                             listing = check.data[0]
                             crop_name = listing['commodity'].capitalize()
@@ -332,11 +331,11 @@ async def receive_message(request: Request):
                                     "type": "template",
                                     "payload": {
                                         "template_type": "button",
-                                        "text": f"⚠️ Sigurado ka bang gusto mong bawion ang imong {weight}kg nga {crop_name}?",
+                                        "text": f"⚠️ Sigurado ka bang nais mong bawiin ang iyong {weight}kg na {crop_name}?",
                                         "buttons": [
-                                            {"type": "postback", "title": "✅ OO, BAWION",
+                                            {"type": "postback", "title": "✅ OO, BAWIIN",
                                              "payload": json.dumps({"action": "CONFIRM_CANCEL", "id": listing_id})},
-                                            {"type": "postback", "title": "❌ DILI, IBALIK",
+                                            {"type": "postback", "title": "❌ HINDI, IBALIK",
                                              "payload": json.dumps({"action": "VIEW"})}
                                         ]
                                     }
@@ -349,20 +348,19 @@ async def receive_message(request: Request):
                         check = supabase.table("market_listings").select("status").eq("id", listing_id).execute()
                         if check.data and check.data[0]['status'] == False:
                             await send_fb_message(sender_id,
-                                                  {"text": "⚠️ Dili na mabawe. Napalit na kini sa usa ka buyer."})
+                                                  {"text": "⚠️ Hindi na mababawi. Nabili na ito ng isang mamimili."})
                         else:
-                            supabase.table("market_listings").update({"status": False}).eq("id",
-                                                                                           listing_id).execute()
+                            supabase.table("market_listings").update({"status": False}).eq("id", listing_id).execute()
                             await send_fb_message(sender_id, {
                                 "attachment": {
                                     "type": "template",
                                     "payload": {
                                         "template_type": "button",
-                                        "text": "🚫 Gikuha na ang imong listing sa palengke.",
+                                        "text": "🚫 Inalis na ang iyong listing sa palengke.",
                                         "buttons": [{
                                             "type": "web_url",
                                             "url": "https://presyoani.onrender.com",
-                                            "title": "SCAN OG BALIK"
+                                            "title": "I-SCAN ULIT"
                                         }]
                                     }
                                 }

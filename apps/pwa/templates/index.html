@@ -34,7 +34,7 @@
 <!-- initial loader screen -->
 <div id="loading">
     <div style="border: 4px solid #333; border-top: 4px solid #2ecc71; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite;"></div>
-    <p style="margin-top:20px;">Setting up offline AI...</p>
+    <p style="margin-top:20px;">Inihahanda ang offline AI...</p>
 </div>
 
 <div id="camera-container">
@@ -44,11 +44,11 @@
 
             <!-- this shows after scanning -->
             <div id="result-box">
-                <p style="margin:0; font-size:13px; font-weight:bold; color:#27ae60;">SUCCESSFULLY SCANNED</p>
-                <p style="margin:5px 0; font-size:11px; color:#666;">Copy and paste this code to Messenger:</p>
+                <p style="margin:0; font-size:13px; font-weight:bold; color:#27ae60;">MATAGUMPAY NA NA-SCAN</p>
+                <p style="margin:5px 0; font-size:11px; color:#666;">Kopyahin at i-paste ang code na ito sa PresyoAni Messenger</p>
                 <div class="code-display">
                     <input type="text" id="share-code" readonly>
-                    <button id="copy-btn">COPY</button>
+                    <button id="copy-btn">KOPYAHIN</button>
                 </div>
             </div>
 
@@ -58,8 +58,8 @@
                 <option value="chili">Chili (Sili)</option>
                 <option value="sweet_potato">Sweet Potato (Kamote)</option>
             </select>
-            <input type="number" id="quantity" placeholder="Weight in kg (e.g. 5.5)" inputmode="decimal">
-            <button class="btn" id="scan-btn">⚡ SCAN CROP</button>
+            <input type="number" id="quantity" placeholder="Timbang sa kg (hal. 5.5)" inputmode="decimal">
+            <button class="btn" id="scan-btn">⚡ I-SCAN ANG ANI</button>
         </div>
     </div>
 </div>
@@ -102,7 +102,7 @@
             document.getElementById('loading').style.display = 'none';
         } catch (err) {
             console.error(err);
-            document.getElementById('loading').innerHTML = "<p>Camera error. Please reload.</p>";
+            document.getElementById('loading').innerHTML = "<p>Error sa camera. Paki-reload ang website.</p>";
         }
     }
 
@@ -112,7 +112,7 @@
         const crop = document.getElementById('crop-type').value;
 
         if (!qty || qty <= 0) {
-            alert("Enter weight first.");
+            alert("Ilagay muna ang timbang.");
             return;
         }
 
@@ -136,13 +136,13 @@
 
         // check if visible
         if (maxFresh < 0.25 && maxRotten < 0.25) {
-            alert("Cannot see crop clearly.");
+            alert("Hindi malinaw ang nakikitang ani. Pakiulit.");
             return;
         }
 
         // check if bad
         if (maxRotten > maxFresh && maxRotten > 0.40) {
-            alert("REJECTED: Crop looks rotten.");
+            alert("TINANGGIHAN: Mukhang bulok ang ani.");
             return;
         }
 
@@ -162,9 +162,9 @@
         // try to auto copy
         try {
             await navigator.clipboard.writeText(secretHash);
-            alert("Code copied! Paste it in Messenger.");
+            alert("Nakopya ang code! I-paste ito sa PresyoAniMessenger.");
         } catch (e) {
-            alert("Scan done! Copy the code manually.");
+            alert("Tapos na ang scan! Mano-manong kopyahin ang code.");
         }
     });
 
@@ -173,7 +173,7 @@
         const codeField = document.getElementById('share-code');
         codeField.select();
         document.execCommand('copy');
-        alert("Copied!");
+        alert("Nakopya ang code!");
     });
 
     // begin initialization
