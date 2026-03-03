@@ -149,26 +149,56 @@ async def receive_message(request: Request):
                     action = p_load.get("action")
 
                     if action == "LIST":
-                        supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
-                        res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
+                        # Check for existing active listing for same crop
+                        existing = supabase.table("market_listings").select("id").eq("farmers_psid", sender_id).eq("commodity", p_load['c']).eq("status", True).execute()
+                        
+                        if existing.data:
+                            crop_bisaya_map = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
+                            crop_display = crop_bisaya_map.get(p_load['c'].lower(), p_load['c']).capitalize()
+                            await send_fb_message(sender_id, {"text": f"⚠️ Naa nay aktibo nga listing para sa imong {crop_display}. Bawion una ang daan kung gusto nimong mag-post og bago."})
+                        else:
+                            supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
+                            res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
 
-                        if res.data:
-                            listing_id = res.data[0]['id']
-                            success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
-                            
-                            await send_fb_message(sender_id, {
-                                "attachment": {
-                                    "type": "template",
-                                    "payload": {
-                                        "template_type": "button",
-                                        "text": success_msg,
-                                        "buttons": [
-                                            {"type": "postback", "title": "BAWION (Withdraw)", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
-                                            {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})}
-                                        ]
+                            if res.data:
+                                listing_id = res.data[0]['id']
+                                success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
+                                
+                                await send_fb_message(sender_id, {
+                                    "attachment": {
+                                        "type": "template",
+                                        "payload": {
+                                            "template_type": "button",
+                                            "text": success_msg,
+                                            "buttons": [
+                                                {"type": "postback", "title": "BAWION (Withdraw)", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
+                                                {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})}
+                                            ]
+                                        }
                                     }
-                                }
-                            })
+                                })
+
+                    # if action == "LIST":
+                    #     supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
+                    #     res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
+
+                    #     if res.data:
+                    #         listing_id = res.data[0]['id']
+                    #         success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
+                            
+                    #         await send_fb_message(sender_id, {
+                    #             "attachment": {
+                    #                 "type": "template",
+                    #                 "payload": {
+                    #                     "template_type": "button",
+                    #                     "text": success_msg,
+                    #                     "buttons": [
+                    #                         {"type": "postback", "title": "BAWION (Withdraw)", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
+                    #                         {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})}
+                    #                     ]
+                    #                 }
+                    #             }
+                    #         })
 
                     elif action == "VIEW":
                         res = supabase.table("market_listings").select("*").eq("farmers_psid", sender_id).eq("status", True).execute()
