@@ -54,15 +54,18 @@ async def notify_farmer(request: Request):
         listing_id = data.get("listing_id")
 
         if listing_id:
+            # Mark as False so withdrawal is disabled in the bot
             supabase.table("market_listings").update({"status": False}).eq("id", listing_id).execute()
 
         bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
         crop_bisaya = bisaya_crops.get(crop.lower(), crop)
 
+        # Notification message
         msg = f"🔔Naay nipalit sa imohang {qty}kg nga {crop_bisaya}. Kuhaon sa tig-deliver ig 5PM."
         await send_fb_message(farmer_id, {"text": msg})
         return JSONResponse({"status": "success"})
     except Exception as e:
+        print(f"Notify error: {e}")
         return JSONResponse({"status": "error"}, status_code=500)
 
 @app.get("/")
@@ -94,11 +97,13 @@ async def receive_message(request: Request):
 
             if ref_data:
                 try:
+                    # Decode scan data
                     decoded = base64.urlsafe_b64decode(ref_data + "===").decode('utf-8')
                     parts = decoded.split("|")
                     if len(parts) >= 3:
                         crop, qty, grade = parts[0], parts[1], parts[2]
                         res = supabase.table("dpi_prices").select("price").ilike("commodity", f"%{crop}%").order("date_updated", desc=True).limit(1).execute()
+                        
                         if res.data:
                             p = float(res.data[0]['price'])
                             total = p * float(qty)
@@ -117,7 +122,6 @@ async def receive_message(request: Request):
                                 f"Total: ₱{total:,.2f}"
                             )
                             
-                            # Standard Postback Button (Works on Free Data)
                             buttons = {"attachment": {"type": "template", "payload": {"template_type": "button", "text": msg_text, "buttons": [{"type": "postback", "title": "IBALIGYA", "payload": json.dumps({"action": "LIST", "c": crop, "g": grade, "q": qty, "p": p})}]}}}
                             await send_fb_message(sender_id, buttons)
                 except Exception as e: print(f"Scan error: {e}")
@@ -136,7 +140,7 @@ async def receive_message(request: Request):
                             listing_id = res.data[0]['id']
                             success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
                             
-                            # BOTH BAWION and VIEW are Postbacks
+                            # BOTH BAWION and VIEW are Postbacks (Free Data Friendly)
                             await send_fb_message(sender_id, {
                                 "attachment": {
                                     "type": "template",
@@ -152,7 +156,6 @@ async def receive_message(request: Request):
                             })
 
                     elif action == "VIEW":
-                        # Postback action to list all crops
                         res = supabase.table("market_listings").select("*").eq("farmers_psid", sender_id).eq("status", True).execute()
                         if res.data:
                             items_text = "\n".join([f"• {i['commodity'].capitalize()} ({i['weight']}kg) - Grade {i['grade']}" for i in res.data])
@@ -163,15 +166,14 @@ async def receive_message(request: Request):
 
                     elif action == "CANCEL":
                         listing_id = p_load.get("id")
-                        
-                        # CONDITION Check: If status is already False, someone placed an order
                         check = supabase.table("market_listings").select("status").eq("id", listing_id).execute()
                         
+                        # CONDITION: If status is False, block withdrawal
                         if check.data and check.data[0]['status'] == False:
-                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Naa nay nipalit ani o nakuha na sa system."})
+                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Naa nay nipalit ani o nakuha na sa tig-deliver."})
                         else:
                             supabase.table("market_listings").delete().eq("id", listing_id).execute()
-                            # Message with SCAN OG BALIK (web_url)
+                            # Message with SCAN OG BALIK (Opens PWA)
                             await send_fb_message(sender_id, {
                                 "attachment": {
                                     "type": "template",

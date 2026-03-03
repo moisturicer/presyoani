@@ -44,7 +44,7 @@
 <canvas id="canvas" style="display:none;"></canvas>
 
 <script>
-    // 1. REGISTER SERVICE WORKER (This makes it work without internet)
+    // Register Service Worker for Offline capability
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js');
@@ -68,75 +68,54 @@
             document.getElementById('loading').style.display = 'none';
         } catch (err) {
             console.error(err);
-            alert("Scanner Error: Ensure you have granted camera permissions.");
+            alert("Scanner Error: Please allow camera access.");
         }
     }
 
-document.getElementById('scan-btn').addEventListener('click', async () => {
+    document.getElementById('scan-btn').addEventListener('click', async () => {
         const qty = document.getElementById('quantity').value;
         const crop = document.getElementById('crop-type').value;
         if (!qty || qty <= 0) return alert("Please enter weight first!");
 
-        // capture image
         const ctx = canvas.getContext('2d');
         canvas.width = 416; canvas.height = 416;
         ctx.drawImage(video, 0, 0, 416, 416);
 
-        // AI prediction
         const tensor = tf.tidy(() => tf.browser.fromPixels(canvas).div(255.0).expandDims(0));
         const prediction = await model.predict(tensor);
         const data = await prediction.data();
 
-        // Parse prediction results
         let maxFresh = 0, maxRotten = 0;
         for (let i = 0; i < 3549; i++) {
-            // Assuming your model classes: [..., Fresh, Rotten, ...]
-            // We take the highest confidence score found in the AI output
             maxFresh = Math.max(maxFresh, data[4*3549+i], data[7*3549+i]); 
             maxRotten = Math.max(maxRotten, data[5*3549+i], data[6*3549+i], data[8*3549+i]);
         }
 
-        // --- THE "FALSE REDIRECT" FIX ---
-        
-        // 1. STRICT THRESHOLD: If confidence is lower than 40%, assume nothing is there
         const confidenceScore = Math.max(maxFresh, maxRotten);
         if (confidenceScore < 0.40) {
-            return alert(`AI Error: Wala nako nakita nga ${crop}. Palihog paduol sa camera or tarunga ang suga.`);
+            return alert(`AI Error: Wala nako nakita nga ${crop}. Palihog paduol sa camera.`);
         }
 
-        // 2. ROTTEN CHECK: If it looks more rotten than fresh
         if (maxRotten > maxFresh && maxRotten > 0.45) {
-            return alert("REJECTED: Produce appears rotten or damaged. Dili nimo ni mabaligya.");
+            return alert("REJECTED: Produce appears rotten or damaged.");
         }
 
-        // 3. ASSIGN GRADE
         let grade = "D";
-        if (maxFresh > 0.85) grade = "A";      // Very strict for Grade A
+        if (maxFresh > 0.85) grade = "A";
         else if (maxFresh > 0.65) grade = "B"; 
         else if (maxFresh > 0.40) grade = "C";
-        else grade = "D";
 
-        // Generate Ref Data
         const rawData = `${crop}|${qty}|${grade}`;
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-        // --- REDIRECT LOGIC ---
-        const androidIntent = `intent://user-thread/${PAGE_ID}?ref=${safeHash}#Intent;scheme=fb-messenger;package=com.facebook.orca;end`;
-        const iosDeepLink = `fb-messenger://user-thread/${PAGE_ID}?ref=${safeHash}`;
-        const mMeUrl = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
+        // FINAL REDIRECT LOGIC FOR PH FREE DATA
+        // Using the standard m.me URL is actually more reliable for keeping the 'ref' parameter
+        // as long as it's triggered by a direct window.location change.
+        const messengerUrl = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
         
-
-        if (/android/i.test(navigator.userAgent)) {
-            window.location.href = androidIntent;
-        } else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
-            window.location.href = iosDeepLink;
-        } else {
-            window.location.href = mMeUrl;
-        }
-
-        // Fallback
-        setTimeout(() => { if(!document.hidden) window.location.href = mMeUrl; }, 1500);
+        window.location.href = messengerUrl;
     });
+
     init();
 </script>
 </body>
