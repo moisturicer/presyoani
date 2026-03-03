@@ -79,7 +79,10 @@
   }
 
   .farmer-orbit-ring {
-    animation: farmer-orbit-rotate linear infinite;
+    transform-origin: center center;
+    animation:
+      farmer-orbit-intro 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+      farmer-orbit-rotate linear infinite 0.5s;
   }
 
   /* Counter-rotate: keeps boxes upright as the ring rotates */
@@ -91,6 +94,25 @@
   .farmer-orbit-box {
     animation: farmer-orbit-scale ease-in-out infinite;
     will-change: transform;
+  }
+
+  /* Initial “grow from center” intro for the whole orbit */
+  @keyframes farmer-orbit-intro {
+    0% {
+      opacity: 0;
+      filter: blur(6px);
+      transform: scale(1) rotate(-8deg);
+    }
+    35% {
+      opacity: 0.7;
+      filter: blur(1.5px);
+      transform: scale(1) rotate(-3deg);
+    }
+    100% {
+      opacity: 1;
+      filter: blur(0);
+      transform: scale(1) rotate(0deg);
+    }
   }
 
   @keyframes farmer-orbit-rotate {
@@ -119,13 +141,11 @@
     100% {
       transform: scale(1.5);
       opacity: 1;
-      filter: blur(0);
     }
     25%,
     75% {
       transform: scale(1);
       opacity: 0.6;
-      filter: blur(4px);
     }
   }
 
