@@ -104,8 +104,9 @@ async def receive_message(request: Request):
                             total = p * float(qty)
                             bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
                             crop_bisaya = bisaya_crops.get(crop.lower(), crop).capitalize()
+                            
                             msg_text = (
-                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa ({today})!\n\n"
+                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa!\n\n"
                                 f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}. "
                                 f"Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke.\n\n"
                                 f"DETALYE SA SCAN\n"
@@ -115,6 +116,8 @@ async def receive_message(request: Request):
                                 f"Presyo: ₱{p:.2f}/kg\n"
                                 f"Total: ₱{total:,.2f}"
                             )
+                            
+                            # Standard Postback Button (Works on Free Data)
                             buttons = {"attachment": {"type": "template", "payload": {"template_type": "button", "text": msg_text, "buttons": [{"type": "postback", "title": "IBALIGYA", "payload": json.dumps({"action": "LIST", "c": crop, "g": grade, "q": qty, "p": p})}]}}}
                             await send_fb_message(sender_id, buttons)
                 except Exception as e: print(f"Scan error: {e}")
@@ -124,29 +127,66 @@ async def receive_message(request: Request):
                 try:
                     p_load = json.loads(payload_raw)
                     action = p_load.get("action")
+
                     if action == "LIST":
                         supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
                         res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
+                        
                         if res.data:
                             listing_id = res.data[0]['id']
                             success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
-                            await send_fb_message(sender_id, {"attachment": {"type": "template", "payload": {"template_type": "button", "text": success_msg, "buttons": [{"type": "postback", "title": "BAWION", "payload": json.dumps({"action": "CANCEL", "id": listing_id})}, {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})}]}}})
+                            
+                            # BOTH BAWION and VIEW are Postbacks
+                            await send_fb_message(sender_id, {
+                                "attachment": {
+                                    "type": "template",
+                                    "payload": {
+                                        "template_type": "button",
+                                        "text": success_msg,
+                                        "buttons": [
+                                            {"type": "postback", "title": "BAWION", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
+                                            {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})}
+                                        ]
+                                    }
+                                }
+                            })
 
                     elif action == "VIEW":
+                        # Postback action to list all crops
                         res = supabase.table("market_listings").select("*").eq("farmers_psid", sender_id).eq("status", True).execute()
                         if res.data:
-                            list_msg = "IMONG MGA BALIGYA:\n" + "\n".join([f"• {item['commodity'].capitalize()} ({item['weight']}kg) - ID: {item['id']}" for item in res.data])
-                        else: list_msg = "Wala kay active nga baligya karon."
+                            items_text = "\n".join([f"• {i['commodity'].capitalize()} ({i['weight']}kg) - Grade {i['grade']}" for i in res.data])
+                            list_msg = f"IMONG MGA BALIGYA KARON:\n\n{items_text}"
+                        else:
+                            list_msg = "Wala kay active nga baligya karon."
                         await send_fb_message(sender_id, {"text": list_msg})
 
                     elif action == "CANCEL":
                         listing_id = p_load.get("id")
+                        
+                        # CONDITION Check: If status is already False, someone placed an order
                         check = supabase.table("market_listings").select("status").eq("id", listing_id).execute()
+                        
                         if check.data and check.data[0]['status'] == False:
-                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Naa nay nipalit ani."})
+                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Naa nay nipalit ani o nakuha na sa system."})
                         else:
                             supabase.table("market_listings").delete().eq("id", listing_id).execute()
-                            await send_fb_message(sender_id, {"attachment": {"type": "template", "payload": {"template_type": "button", "text": "🚫 Gikuha na ang imong listing.", "buttons": [{"type": "web_url", "url": "https://presyoani.onrender.com", "title": "SCAN OG BALIK"}]}}})
+                            # Message with SCAN OG BALIK (web_url)
+                            await send_fb_message(sender_id, {
+                                "attachment": {
+                                    "type": "template",
+                                    "payload": {
+                                        "template_type": "button",
+                                        "text": "🚫 Gikuha na ang imong listing sa palengke.",
+                                        "buttons": [{
+                                            "type": "web_url",
+                                            "url": "https://presyoani.onrender.com",
+                                            "title": "SCAN OG BALIK"
+                                        }]
+                                    }
+                                }
+                            })
+
                 except Exception as e: print(f"Postback error: {e}")
 
     return PlainTextResponse("EVENT_RECEIVED", status_code=200)
