@@ -58,6 +58,26 @@ export default function CartPage() {
     [items],
   )
 
+  const {
+    feeTotal,
+    platformFee,
+    farmerFee,
+    grandTotal,
+  } = useMemo(() => {
+    const platformRate = 0.1
+    const buyerRate = 0.05
+    const totalFeeRate = platformRate + buyerRate
+
+    const feeTotalCalc = total * totalFeeRate
+
+    return {
+      feeTotal: feeTotalCalc,
+      platformFee: total * platformRate,
+      farmerFee: total * buyerRate,
+      grandTotal: total + feeTotalCalc,
+    }
+  }, [total])
+
   // --- NEW: FUNCTION TO NOTIFY FARMERS ---
   const notifyFarmers = async () => {
     const BACKEND_URL = "https://presyoani.onrender.com/notify-farmer";
@@ -262,8 +282,31 @@ export default function CartPage() {
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-semibold text-foreground">Checkout</p>
                     <p className="text-sm font-semibold text-foreground">
-                      Total: ₱{total.toFixed(0)}
+                      Total (before fees): ₱{total.toFixed(0)}
                     </p>
+                  </div>
+                  <div className="rounded-lg border border-dashed border-border/70 bg-muted/30 px-3 py-2 text-xs text-muted-foreground space-y-1">
+                    <p className="font-semibold text-foreground text-xs">
+                      15% fee applied to your order
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span>Service fee (15%)</span>
+                      <span className="font-medium text-foreground">₱{feeTotal.toFixed(0)}</span>
+                    </div>
+                    <div className="flex items-center justify-between pl-3">
+                      <span>Our share (10%)</span>
+                      <span>₱{platformFee.toFixed(0)}</span>
+                    </div>
+                    <div className="flex items-center justify-between pl-3">
+                      <span>Farmer share (5%)</span>
+                      <span>₱{farmerFee.toFixed(0)}</span>
+                    </div>
+                    <div className="mt-1 flex items-center justify-between border-t border-border/40 pt-1">
+                      <span className="font-semibold text-foreground">Total with fees</span>
+                      <span className="font-semibold text-foreground">
+                        ₱{grandTotal.toFixed(0)}
+                      </span>
+                    </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <Button
@@ -305,7 +348,7 @@ export default function CartPage() {
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-semibold text-foreground">Payment</p>
                     <p className="text-sm font-semibold text-foreground">
-                      Total: ₱{total.toFixed(0)}
+                      Total with fees: ₱{grandTotal.toFixed(0)}
                     </p>
                   </div>
                   <p className="text-xs text-muted-foreground">
