@@ -3,6 +3,7 @@ import json
 import base64
 import httpx
 import uvicorn
+from datetime import datetime
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse, JSONResponse, FileResponse
@@ -104,7 +105,7 @@ async def receive_message(request: Request):
                             bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
                             crop_bisaya = bisaya_crops.get(crop.lower(), crop).capitalize()
                             msg_text = (
-                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa!\n\n"
+                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa ({today})!\n\n"
                                 f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}. "
                                 f"Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke.\n\n"
                                 f"DETALYE SA SCAN\n"

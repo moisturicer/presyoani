@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Leaf, Users, ShoppingCart, Star } from 'lucide-react'
+import { MapPin, Leaf, Users, ShoppingCart, Star } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -213,6 +213,12 @@ export function BuyerDashboard() {
                       )}
                     </div>
                     <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-0.5 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <MapPin className="h-3.5 w-3.5" />
+                        {harvest.lat !== null && harvest.lng !== null
+                          ? `${harvest.lat.toFixed(2)}, ${harvest.lng.toFixed(2)}`
+                          : 'Cebu'}
+                      </span>
                       <span>{harvest.weightKg}kg</span>
                       <span className="flex items-center gap-1">
                         <Star className="h-3.5 w-3.5" />
