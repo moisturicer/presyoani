@@ -4,8 +4,8 @@ const ASSETS = [
   '/static/manifest.json',
   '/static/model.tflite',
   '/static/tf.min.js',
-  '/static/tf-tflite.min.js', // Added missing comma here
-  '/static/tflite_web_api_cc.js',
+  '/static/tf-tflite.min.js',
+   '/static/tflite_web_api_cc.js',
   '/static/tflite_web_api_cc.wasm',
   '/static/tflite_web_api_cc_simd.js',
   '/static/tflite_web_api_cc_simd.wasm'

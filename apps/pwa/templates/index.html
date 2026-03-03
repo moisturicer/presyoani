@@ -87,8 +87,8 @@ document.getElementById('scan-btn').addEventListener('click', async () => {
 
         let maxFresh = 0, maxRotten = 0;
         for (let i = 0; i < 3549; i++) {
-            maxFresh = Math.max(maxFresh, data[4*3549+i], data[7*3549+i]);
-            maxRotten = Math.max(maxRotten, data[5*3549+i], data[6*3549+i], data[8*3549+i]);
+            maxFresh = Math.max(maxFresh, data[4*3549+i], data[7*3549+i]); // Fresh classes
+            maxRotten = Math.max(maxRotten, data[5*3549+i], data[6*3549+i], data[8*3549+i]); // Rotten classes
         }
 
         let grade = "D";
