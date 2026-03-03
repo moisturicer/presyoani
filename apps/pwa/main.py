@@ -59,7 +59,8 @@ async def notify_farmer(request: Request):
         bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
         crop_bisaya = bisaya_crops.get(crop.lower(), crop)
 
-        msg = f"🔔Naay nipalit sa imohang {qty}kg nga {crop_bisaya}. Kuhaon sa tig-deliver ig 5PM."
+        msg = f"🔔Naay nipalit sa imohang {qty}kg nga {crop_bisaya}. Kuhaon sa tig-deliver ig 5PM. Dili na nimo kini mabawe (Withdraw disabled)."
+
         await send_fb_message(farmer_id, {"text": msg})
         return JSONResponse({"status": "success"})
     except Exception as e:
@@ -199,46 +200,13 @@ async def receive_message(request: Request):
                     p_load = json.loads(payload_raw)
                     action = p_load.get("action")
                     if action == "LIST":
-                        commodity_normalized = p_load['c'].lower().strip()
-                        existing = supabase.table("market_listings").select("id").eq("farmers_psid", sender_id).ilike(
-                            "commodity", commodity_normalized).eq("status", True).execute()
+                        supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
+                        res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
 
-                        crop_bisaya_map = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
-                        crop_display = crop_bisaya_map.get(p_load['c'].lower(), p_load['c']).capitalize()
-
-                        if existing.data:
-                            await send_fb_message(sender_id, {
-                                "attachment": {
-                                    "type": "template",
-                                    "payload": {
-                                        "template_type": "button",
-                                        "text": f"⚠️ Naa nay aktibo nga listing para sa imong {crop_display}. I-scan ang laing ani para makahimo og bag-ong listing.",
-                                        "buttons": [
-                                            {"type": "postback", "title": "📋 TAN-AWON BALIGYA",
-                                             "payload": json.dumps({"action": "VIEW"})},
-                                            {"type": "web_url", "url": "https://presyoani.onrender.com",
-                                             "title": "➕ DAGDAG OG ANI"}
-                                        ]
-                                    }
-                                }
-                            })
-                        else:
-                            supabase.table("farmers").upsert(
-                                {"farmer_psid": sender_id, "messenger_id": sender_id,
-                                 "quality_rating": 5.0}).execute()
-                            res = supabase.table("market_listings").insert({
-                                "farmers_psid": sender_id,
-                                "commodity": p_load['c'],
-                                "grade": p_load['g'],
-                                "weight": float(p_load['q']),
-                                "price": float(p_load['p']),
-                                "status": True
-                            }).execute()
-
-                            if res.data:
+                        if res.data:
                                 listing_id = res.data[0]['id']
                                 success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
-
+                                
                                 await send_fb_message(sender_id, {
                                     "attachment": {
                                         "type": "template",
@@ -246,17 +214,14 @@ async def receive_message(request: Request):
                                             "template_type": "button",
                                             "text": success_msg,
                                             "buttons": [
-                                                {"type": "postback", "title": "🚫 BAWION",
-                                                 "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
-                                                {"type": "postback", "title": "📋 TAN-AWON BALIGYA",
-                                                 "payload": json.dumps({"action": "VIEW"})},
-                                                {"type": "web_url", "url": "https://presyoani.onrender.com",
-                                                 "title": "➕ DAGDAG OG ANI"}
+                                                {"type": "postback", "title": "BAWION (Withdraw)", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
+                                                {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})},
+                                                {"type": "web_url", "url": "https://presyoani.onrender.com", "title": "➕ DAGDAG OG ANI"}
                                             ]
                                         }
                                     }
                                 })
-
+                                
                     elif action == "VIEW":
                         res = supabase.table("market_listings").select("*").eq("farmers_psid", sender_id).eq("status",
                                                                                                              True).execute()
@@ -368,7 +333,6 @@ async def receive_message(request: Request):
                     print(f"Postback error: {e}")
 
     return PlainTextResponse("EVENT_RECEIVED", status_code=200)
-
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
