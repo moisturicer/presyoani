@@ -18,21 +18,22 @@
         #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:100; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* UI for the Result Card (Free Data Fix) */
+        /* RESULT OVERLAY */
         #result-overlay { 
-            display: none; 
+            display: none; /* Hidden by default */
             position: fixed; 
             top: 0; left: 0; 
             width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); 
-            z-index: 200; 
+            background: rgba(0,0,0,0.9); 
+            z-index: 9999; 
             flex-direction: column; 
             justify-content: center; 
+            align-items: center;
             padding: 20px; 
             box-sizing: border-box; 
         }
-        .result-card { background: white; color: black; padding: 30px; border-radius: 25px; text-align: center; }
-        .grade-badge { font-size: 48px; font-weight: bold; color: #2ecc71; margin: 10px 0; }
+        .result-card { background: white; color: black; padding: 30px; border-radius: 25px; text-align: center; width: 100%; max-width: 400px; }
+        .grade-text { font-size: 48px; font-weight: bold; color: #2ecc71; margin: 10px 0; }
         .messenger-btn { 
             display: block; 
             background: #0084ff; 
@@ -41,32 +42,30 @@
             border-radius: 50px; 
             text-decoration: none; 
             font-weight: bold; 
-            font-size: 20px; 
+            font-size: 18px; 
             margin-top: 20px;
         }
-        .retry-btn { margin-top: 15px; background: none; border: none; color: #666; font-size: 14px; text-decoration: underline; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div id="loading">
     <div style="border: 4px solid #f3f3f3; border-top: 4px solid #2ecc71; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite;"></div>
-    <p>Initializing Offline AI...</p>
+    <p>Initializing AI...</p>
 </div>
 
-<!-- Result Card Overlay -->
+<!-- SUCCESS CARD -->
 <div id="result-overlay">
     <div class="result-card">
-        <p style="margin:0; color: #888; text-transform: uppercase; letter-spacing: 1px;">AI Result</p>
-        <div id="display-grade" class="grade-badge">GRADE A</div>
-        <p id="display-details" style="font-size: 16px; color: #333;">Tomato • 5kg</p>
+        <p style="color: #666; margin: 0;">SCAN COMPLETE</p>
+        <div id="display-grade" class="grade-text">GRADE A</div>
+        <p id="display-details" style="color: #333;">Tomato • 5kg</p>
         
-        <!-- Physical <a> tag is best for Free Data/installed App redirects -->
         <a id="messenger-link" href="#" class="messenger-btn">
-            IBALIGYA SA MESSENGER
+            SEND TO MESSENGER
         </a>
         
-        <button class="retry-btn" onclick="location.reload()">Scan og balik</button>
+        <button onclick="location.reload()" style="background:none; border:none; color:#888; margin-top:20px; text-decoration:underline;">Scan again</button>
     </div>
 </div>
 
@@ -79,7 +78,7 @@
                 <option value="chili">Chili</option>
                 <option value="sweet_potato">Sweet Potato</option>
             </select>
-            <input type="number" id="quantity" placeholder="Weight in kg (e.g. 5.5)" inputmode="decimal">
+            <input type="number" id="quantity" placeholder="Weight in kg" inputmode="decimal">
             <button class="btn" id="scan-btn">⚡ SCAN & SEND</button>
         </div>
     </div>
@@ -88,11 +87,9 @@
 <canvas id="canvas" style="display:none;"></canvas>
 
 <script>
-    // 1. Register Service Worker for Offline capability
+    // Register Service Worker
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js');
-        });
+        navigator.serviceWorker.register('/sw.js');
     }
 
     let model;
@@ -112,26 +109,21 @@
             document.getElementById('loading').style.display = 'none';
         } catch (err) {
             console.error(err);
-            alert("Scanner Error: Ensure camera permissions are enabled.");
+            alert("Camera error. Please refresh.");
         }
     }
 
     document.getElementById('scan-btn').addEventListener('click', async () => {
-        const btn = document.getElementById('scan-btn');
         const qty = document.getElementById('quantity').value;
         const crop = document.getElementById('crop-type').value;
-        
-        if (!qty || qty <= 0) return alert("Please enter weight first!");
+        if (!qty || qty <= 0) return alert("Enter weight!");
 
-        btn.innerText = "Analyzing...";
-        btn.disabled = true;
+        document.getElementById('scan-btn').innerText = "Analyzing...";
 
-        // capture image
         const ctx = canvas.getContext('2d');
         canvas.width = 416; canvas.height = 416;
         ctx.drawImage(video, 0, 0, 416, 416);
 
-        // AI prediction
         const tensor = tf.tidy(() => tf.browser.fromPixels(canvas).div(255.0).expandDims(0));
         const prediction = await model.predict(tensor);
         const data = await prediction.data();
@@ -142,37 +134,30 @@
             maxRotten = Math.max(maxRotten, data[5*3549+i], data[6*3549+i], data[8*3549+i]);
         }
 
-        // Logic check
-        if (Math.max(maxFresh, maxRotten) < 0.40) {
-            btn.innerText = "⚡ SCAN & SEND";
-            btn.disabled = false;
-            return alert(`AI Error: Wala nako nakita nga ${crop}.`);
-        }
-
-        if (maxRotten > maxFresh && maxRotten > 0.45) {
-            btn.innerText = "⚡ SCAN & SEND";
-            btn.disabled = false;
-            return alert("REJECTED: Produce appears rotten.");
+        if (Math.max(maxFresh, maxRotten) < 0.35) {
+            document.getElementById('scan-btn').innerText = "⚡ SCAN & SEND";
+            return alert("AI could not find the crop.");
         }
 
         let grade = "D";
-        if (maxFresh > 0.85) grade = "A";
-        else if (maxFresh > 0.65) grade = "B"; 
-        else if (maxFresh > 0.40) grade = "C";
+        if (maxFresh > 0.80) grade = "A";
+        else if (maxFresh > 0.50) grade = "B"; 
+        else if (maxFresh > 0.30) grade = "C";
 
         const rawData = `${crop}|${qty}|${grade}`;
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-        // --- THE FIX: SHOW UI INSTEAD OF AUTO-REDIRECT ---
+        // --- UI UPDATE: SHOW THE CARD ---
         document.getElementById('display-grade').innerText = `GRADE ${grade}`;
-        document.getElementById('display-details').innerText = `${qty}kg of ${crop} detected.`;
+        document.getElementById('display-details').innerText = `${qty}kg of ${crop}`;
         
-        // Link used for the physical button
+        // Update the link but DO NOT redirect automatically
         const messengerUrl = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
         document.getElementById('messenger-link').href = messengerUrl;
 
-        // Show the overlay
+        // Show card
         document.getElementById('result-overlay').style.display = 'flex';
+        document.getElementById('scan-btn').innerText = "⚡ SCAN & SEND";
     });
 
     init();
