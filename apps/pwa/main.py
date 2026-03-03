@@ -208,7 +208,7 @@ async def receive_message(request: Request):
 
                         if res.data:
                                 listing_id = res.data[0]['id']
-                                success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
+                                success_msg = "✅ Na-post na sa palengke! Makakatanggap ka ng mensahe dito kapag may bumili."
                                 
                                 await send_fb_message(sender_id, {
                                     "attachment": {
@@ -218,7 +218,7 @@ async def receive_message(request: Request):
                                             "text": success_msg,
                                             "buttons": [
                                                 {"type": "postback", "title": "🚫 BAWIIN", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
-                                                {"type": "postback", "title": "🔍 TINGNAN ANG BENTA", "payload": json.dumps({"action": "VIEW"})},
+                                                {"type": "postback", "title": "🔍 TINGNAN ANG IYONG MGA BENTA", "payload": json.dumps({"action": "VIEW"})},
                                                 {"type": "web_url", "url": "https://presyoani.onrender.com", "title": "➕ DAGDAG OG ANI"}
                                             ]
                                         }
@@ -251,9 +251,7 @@ async def receive_message(request: Request):
                                             "text": item_msg,
                                             "buttons": [
                                                 {"type": "postback", "title": "🚫 BAWIIN",
-                                                 "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
-                                                {"type": "web_url", "url": "https://presyoani.onrender.com",
-                                                 "title": "➕ DAGDAG NA ANI"}
+                                                 "payload": json.dumps({"action": "CANCEL", "id": listing_id})}
                                             ]
                                         }
                                     }
@@ -322,11 +320,8 @@ async def receive_message(request: Request):
                                     "payload": {
                                         "template_type": "button",
                                         "text": "🚫 Inalis na ang iyong listing sa palengke.",
-                                        "buttons": [{
-                                            "type": "web_url",
-                                            "url": "https://presyoani.onrender.com",
-                                            "title": "I-SCAN ULIT"
-                                        }]
+                                
+                                        "buttons": [{"type": "postback", "title": "🔍 TINGNAN ANG IYONG MGA BENTA", "payload": json.dumps({"action": "VIEW"})}]
                                     }
                                 }
                             })
