@@ -144,18 +144,35 @@
         else if (maxFresh > 0.50) grade = "B"; 
         else if (maxFresh > 0.30) grade = "C";
 
-        const rawData = `${crop}|${qty}|${grade}`;
+const rawData = `${crop}|${qty}|${grade}`;
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-        // --- UI UPDATE: SHOW THE CARD ---
+        // --- THE DEEP LINK FIX ---
+        
+        // 1. Standard Web Link (Fallback)
+        const mMeUrl = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
+        
+        // 2. Android Intent (Best for PH Free Data)
+        // This forces the phone to open the Orca (Messenger) app directly
+        const androidIntent = `intent://user-thread/${PAGE_ID}?ref=${safeHash}#Intent;scheme=fb-messenger;package=com.facebook.orca;end`;
+        
+        // 3. iOS Deep Link
+        const iosDeepLink = `fb-messenger://user-thread/${PAGE_ID}?ref=${safeHash}`;
+
+        const messengerBtn = document.getElementById('messenger-link');
+
+        // Detect device and set the correct link
+        if (/android/i.test(navigator.userAgent)) {
+            messengerBtn.href = androidIntent;
+        } else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+            messengerBtn.href = iosDeepLink;
+        } else {
+            messengerBtn.href = mMeUrl;
+        }
+
+        // Show the Result Card
         document.getElementById('display-grade').innerText = `GRADE ${grade}`;
         document.getElementById('display-details').innerText = `${qty}kg of ${crop}`;
-        
-        // Update the link but DO NOT redirect automatically
-        const messengerUrl = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
-        document.getElementById('messenger-link').href = messengerUrl;
-
-        // Show card
         document.getElementById('result-overlay').style.display = 'flex';
         document.getElementById('scan-btn').innerText = "⚡ SCAN & SEND";
     });
