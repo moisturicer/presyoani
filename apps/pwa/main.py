@@ -151,7 +151,7 @@ async def receive_message(request: Request):
 
                     if action == "LIST":
                         commodity_normalized = p_load['c'].lower().strip()
-                        existing = supabase.table("market_listings").select("id, status").eq("farmers_psid", sender_id).ilike("commodity", commodity_normalized).execute()
+                        existing = supabase.table("market_listings").select("id").eq("farmers_psid", sender_id).eq("commodity", p_load['c']).eq("status", True).execute()
                         
                         crop_bisaya_map = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
                         crop_display = crop_bisaya_map.get(p_load['c'].lower(), p_load['c']).capitalize()
