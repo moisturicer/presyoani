@@ -72,22 +72,19 @@
         }
     }
 
-   document.getElementById('scan-btn').addEventListener('click', async () => {
+document.getElementById('scan-btn').addEventListener('click', async () => {
         const qty = document.getElementById('quantity').value;
         const crop = document.getElementById('crop-type').value;
         if (!qty || qty <= 0) return alert("Please enter weight first!");
 
-        // capture image
         const ctx = canvas.getContext('2d');
         canvas.width = 416; canvas.height = 416;
         ctx.drawImage(video, 0, 0, 416, 416);
 
-        // AI prediction
         const tensor = tf.tidy(() => tf.browser.fromPixels(canvas).div(255.0).expandDims(0));
         const prediction = await model.predict(tensor);
         const data = await prediction.data();
 
-        // grading & rejection standards
         let maxFresh = 0, maxRotten = 0;
         for (let i = 0; i < 3549; i++) {
             maxFresh = Math.max(maxFresh, data[4*3549+i], data[7*3549+i]); // Fresh classes
@@ -98,19 +95,15 @@
         if (maxFresh < 0.25 && maxRotten < 0.25) return alert("AI cannot see the crop clearly.");
         if (maxRotten > maxFresh && maxRotten > 0.40) return alert("REJECTED: Produce is rotten.");
 
-        // grading logic
         if (maxFresh > 0.75) grade = "A";
         else if (maxFresh > 0.45) grade = "B";
         else if (maxFresh > 0.25) grade = "C";
-        else grade = "D";
 
         // Generate Ref Data
         const rawData = `${crop}|${qty}|${grade}`;
-        
-        // 2. Base64 encode it safely for URLs
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-         // --- PH FREE DATA FIX: DIRECT APP REDIRECT ---
+        // --- PH FREE DATA FIX: DIRECT APP REDIRECT ---
         const messengerAppUrl = `fb-messenger://user-thread/${PAGE_ID}/?ref=${safeHash}`;
         const messengerWebUrl = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
 
@@ -122,7 +115,6 @@
             window.location.href = messengerWebUrl;
         }, 500);
     });
-
 
     init();
 </script>
