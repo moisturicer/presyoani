@@ -144,23 +144,34 @@
         else if (maxFresh > 0.50) grade = "B"; 
         else if (maxFresh > 0.30) grade = "C";
 
+const rawData = `${crop}|${qty}|${grade}`;
     const rawData = `${crop}|${qty}|${grade}`;
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-        // --- THE BRIDGE FIX ---
-        // Instead of going to m.me, we go to your Render URL first
-        const bridgeUrl = `https://presyoani.onrender.com/go?ref=${safeHash}`;
+        // --- THE DEEP LINK FIX ---
+        
+        // 1. Standard Web Link (Fallback)
+        const mMeUrl = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
+        
+        // 2. Android Intent (Best for PH Free Data)
+        // This forces the phone to open the Orca (Messenger) app directly
+        const androidIntent = `intent://user-thread/${PAGE_ID}?ref=${safeHash}#Intent;scheme=fb-messenger;package=com.facebook.orca;end`;
+        
+        // 3. iOS Deep Link
+        const iosDeepLink = `fb-messenger://user-thread/${PAGE_ID}?ref=${safeHash}`;
 
         const messengerBtn = document.getElementById('messenger-link');
-        
-        // Use the bridge URL for ALL devices
-        messengerBtn.href = bridgeUrl;
-        
-        // IMPORTANT: target="_blank" forces the PWA to open the system browser, 
-        // which then triggers Messenger correctly.
-        messengerBtn.setAttribute('target', '_blank');
 
-        // Show the Result UI
+        // Detect device and set the correct link
+        if (/android/i.test(navigator.userAgent)) {
+            messengerBtn.href = androidIntent;
+        } else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+            messengerBtn.href = iosDeepLink;
+        } else {
+            messengerBtn.href = mMeUrl;
+        }
+
+        // Show the Result Card
         document.getElementById('display-grade').innerText = `GRADE ${grade}`;
         document.getElementById('display-details').innerText = `${qty}kg of ${crop}`;
         document.getElementById('result-overlay').style.display = 'flex';
