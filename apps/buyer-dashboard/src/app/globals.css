@@ -73,7 +73,112 @@
     pointer-events: none;
   }
 
-  /* Minimal dotted grid for app/dashboard backgrounds */
+  /* Farmer orbit (8 boxes for SDG 8) – scale up at middle Y */
+  .farmer-orbit-container {
+    overflow: visible;
+  }
+
+  .farmer-orbit-ring {
+    animation: farmer-orbit-rotate linear infinite;
+  }
+
+  /* Counter-rotate: keeps boxes upright as the ring rotates */
+  .farmer-orbit-box-counter {
+    animation: farmer-orbit-counter-rotate linear infinite;
+    will-change: transform;
+  }
+
+  .farmer-orbit-box {
+    animation: farmer-orbit-scale ease-in-out infinite;
+    will-change: transform;
+  }
+
+  @keyframes farmer-orbit-rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes farmer-orbit-counter-rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(-360deg);
+    }
+  }
+
+  /* Scale up when at middle Y (left/right); scale down when at top/bottom.
+     Box + border fade and blur together when shrunk so border doesn't float. */
+  @keyframes farmer-orbit-scale {
+    0%,
+    50%,
+    100% {
+      transform: scale(1.5);
+      opacity: 1;
+      filter: blur(0);
+    }
+    25%,
+    75% {
+      transform: scale(1);
+      opacity: 0.6;
+      filter: blur(4px);
+    }
+  }
+
+  /* Mute images when shrunk; fully showcase when upsized at middle Y */
+
+  .farmer-orbit-img {
+    animation: farmer-orbit-img-mute ease-in-out infinite;
+  }
+
+  .farmer-orbit-overlay {
+    animation: farmer-orbit-overlay-mute ease-in-out infinite;
+  }
+
+  /* Disable FarmerOrbit visuals/animations on small phone screens for better performance */
+  @media (max-width: 640px) {
+    .farmer-orbit-container {
+      display: none !important;
+    }
+
+    .farmer-orbit-ring,
+    .farmer-orbit-box-counter,
+    .farmer-orbit-box,
+    .farmer-orbit-img,
+    .farmer-orbit-overlay {
+      animation: none !important;
+    }
+  }
+
+  @keyframes farmer-orbit-img-mute {
+    0%,
+    50%,
+    100% {
+      opacity: 1;
+    }
+    25%,
+    75% {
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes farmer-orbit-overlay-mute {
+    0%,
+    50%,
+    100% {
+      opacity: 0.15;
+    }
+    25%,
+    75% {
+      opacity: 0.75;
+    }
+  }
+
+  /* Dotted grid for dashboard/login backgrounds */
   .dotted-grid-bg {
     background-image: radial-gradient(
       circle at center,
@@ -81,5 +186,13 @@
       transparent 2px
     );
     background-size: 28px 28px;
+  }
+
+  /* Grid lines for landing page only */
+  .grid-lines-bg {
+    background-image:
+      linear-gradient(to right, hsl(var(--primary) / 0.25) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--primary) / 0.25) 1px, transparent 1px);
+    background-size: 48px 48px;
   }
 }
