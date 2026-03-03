@@ -44,7 +44,6 @@ async def send_fb_message(recipient_id, message_payload):
 async def serve_sw():
     return FileResponse("static/sw.js", media_type="application/javascript")
 
-# --- TRIGGERED BY WEBSITE WHEN ORDER IS PLACED ---
 @app.post("/notify-farmer")
 async def notify_farmer(request: Request):
     try:
@@ -52,19 +51,19 @@ async def notify_farmer(request: Request):
         farmer_id = data.get("farmer_psid")
         crop = data.get("commodity", "tanom")
         qty = data.get("weight", "0")
-        listing_id = data.get("listing_id") 
+        listing_id = data.get("listing_id")
 
-        supabase.table("market_listings").update({"status": False}).eq("id", listing_id).execute()
+        if listing_id:
+            supabase.table("market_listings").update({"status": False}).eq("id", listing_id).execute()
 
         bisaya_crops = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
         crop_bisaya = bisaya_crops.get(crop.lower(), crop)
 
-        msg = f"🔔Naay nipalit sa imohang {qty} nga {crop_bisaya}. Kuhaon sa tig-deliver ig 5PM. Dili na nimo kini mabawe (Withdraw disabled)."
+        msg = f"🔔Naay nipalit sa imohang {qty}kg nga {crop_bisaya}. Kuhaon sa tig-deliver ig 5PM. Dili na nimo kini mabawe (Withdraw disabled)."
 
         await send_fb_message(farmer_id, {"text": msg})
         return JSONResponse({"status": "success"})
     except Exception as e:
-        print(f"Notify error: {e}")
         return JSONResponse({"status": "error"}, status_code=500)
 
 @app.get("/")
@@ -200,7 +199,6 @@ async def receive_message(request: Request):
                 try:
                     p_load = json.loads(payload_raw)
                     action = p_load.get("action")
-
                     if action == "LIST":
                         supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
                         res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
