@@ -72,7 +72,7 @@
         }
     }
 
-   document.getElementById('scan-btn').addEventListener('click', async () => {
+document.getElementById('scan-btn').addEventListener('click', async () => {
         const qty = document.getElementById('quantity').value;
         const crop = document.getElementById('crop-type').value;
         if (!qty || qty <= 0) return alert("Please enter weight first!");
@@ -103,8 +103,17 @@
         const rawData = `${crop}|${qty}|${grade}`;
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-        // Jump to Messenger (This works on PH Free Data)
-        window.location.href = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
+        // --- PH FREE DATA FIX: DIRECT APP REDIRECT ---
+        const messengerAppUrl = `fb-messenger://user-thread/${PAGE_ID}/?ref=${safeHash}`;
+        const messengerWebUrl = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
+
+        // 1. Try to open the Messenger App directly (Bypasses Browser SSL check)
+        window.location.href = messengerAppUrl;
+
+        // 2. Fallback: If the app doesn't open in 500ms, try the web URL
+        setTimeout(() => {
+            window.location.href = messengerWebUrl;
+        }, 500);
     });
 
     init();

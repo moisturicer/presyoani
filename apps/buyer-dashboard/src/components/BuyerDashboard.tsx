@@ -18,7 +18,7 @@ const HarvestMap = dynamic(
 )
 
 // Exported so Vercel doesn't complain about an unused variable
-const handlePlaceOrder = async (itemsInCart: any[]) => {
+export const handlePlaceOrder = async (itemsInCart: any[]) => {
   const BACKEND_URL = "https://presyoani.onrender.com/notify-farmer";
 
   for (const item of itemsInCart) {
