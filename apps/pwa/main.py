@@ -180,13 +180,17 @@ async def receive_message(request: Request):
                     
                     elif action == "CANCEL":
                         listing_id = p_load.get("id")
+                        print(f">>> CANCEL attempted, listing_id: {listing_id}")  # keep for debugging
                         
-                        # Check if it's already sold (status=False)
-                        check = supabase.table("market_listings").select("status").eq("id", listing_id).execute()
-                        if check.data and check.data[0]['status'] == False:
+                        check = supabase.table("market_listings").select("status, commodity, weight").eq("id", listing_id).execute()
+                        print(f">>> Supabase result: {check.data}")  # keep for debugging
+                        
+                        if not check.data:
+                            # Listing doesn't exist at all (already deleted or wrong ID)
+                            await send_fb_message(sender_id, {"text": "⚠️ Dili na makita ang listing. Basin nakuha na o nabaligya na."})
+                        elif check.data[0]['status'] == False:
                             await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Naa nay nipalit ani o nakuha na sa system."})
                         else:
-                            # Ask for confirmation instead of immediately deleting
                             listing = check.data[0]
                             crop_name = listing['commodity'].capitalize()
                             weight = listing['weight']
@@ -195,15 +199,65 @@ async def receive_message(request: Request):
                                     "type": "template",
                                     "payload": {
                                         "template_type": "button",
-                                        "text": f"⚠️ Sigurado ka bang gusto mong bawion ang imong {weight}kg nga {crop_name}?",
+                                        "text": f"⚠️ Sigurado ka bang gusto mong bawion ang imong {weight}kg nga {crop_name}? Makuha kini sa palengke.",
                                         "buttons": [
                                             {"type": "postback", "title": "✅ OO, BAWION", "payload": json.dumps({"action": "CONFIRM_CANCEL", "id": listing_id})},
-                                            {"type": "postback", "title": "❌ DILI, BALIK", "payload": json.dumps({"action": "VIEW"})}
+                                            {"type": "postback", "title": "❌ DILI, IBALIK", "payload": json.dumps({"action": "VIEW"})}
                                         ]
                                     }
                                 }
                             })
 
+                    # elif action == "CANCEL":
+                    #     listing_id = p_load.get("id")
+                        
+                    #     # Check if it's already sold (status=False)
+                    #     check = supabase.table("market_listings").select("status").eq("id", listing_id).execute()
+                    #     if check.data and check.data[0]['status'] == False:
+                    #         await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Naa nay nipalit ani o nakuha na sa system."})
+                    #     else:
+                    #         # Ask for confirmation instead of immediately deleting
+                    #         listing = check.data[0]
+                    #         crop_name = listing['commodity'].capitalize()
+                    #         weight = listing['weight']
+                    #         await send_fb_message(sender_id, {
+                    #             "attachment": {
+                    #                 "type": "template",
+                    #                 "payload": {
+                    #                     "template_type": "button",
+                    #                     "text": f"⚠️ Sigurado ka bang gusto mong bawion ang imong {weight}kg nga {crop_name}?",
+                    #                     "buttons": [
+                    #                         {"type": "postback", "title": "✅ OO, BAWION", "payload": json.dumps({"action": "CONFIRM_CANCEL", "id": listing_id})},
+                    #                         {"type": "postback", "title": "❌ DILI, BALIK", "payload": json.dumps({"action": "VIEW"})}
+                    #                     ]
+                    #                 }
+                    #             }
+                    #         })
+
+                    #         supabase.table("market_listings").delete().eq("id", listing_id).execute()
+                    #         await send_fb_message(sender_id, {
+                    #             "attachment": {
+                    #                 "type": "template",
+                    #                 "payload": {
+                    #                     "template_type": "button",
+                    #                     "text": "🚫 Gikuha na ang imong listing sa palengke.",
+                    #                     "buttons": [{
+                    #                         "type": "web_url",
+                    #                         "url": "https://presyoani.onrender.com",
+                    #                         "title": "SCAN OG BALIK"
+                    #                     }]
+                    #                 }
+                    #             }
+                    #         })
+
+                    elif action == "CONFIRM_CANCEL":
+                        listing_id = p_load.get("id")
+                        
+                        # Re-check status in case it was sold while they were deciding
+                        check = supabase.table("market_listings").select("status").eq("id", listing_id).execute()
+                        if check.data and check.data[0]['status'] == False:
+                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Napalit na kini sa usa ka buyer."})
+                        else:
                             supabase.table("market_listings").delete().eq("id", listing_id).execute()
                             await send_fb_message(sender_id, {
                                 "attachment": {
