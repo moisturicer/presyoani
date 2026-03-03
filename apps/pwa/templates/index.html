@@ -145,29 +145,20 @@
         else if (maxFresh > 0.30) grade = "C";
 
     const rawData = `${crop}|${qty}|${grade}`;
-        // Remove ANY padding (=) as Facebook ref parameters often fail if they contain '='
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-        // --- THE RELIABLE REDIRECT FIX ---
-        
-        // 1. Standard Web Link
-        const mMeUrl = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
-        
-        // 2. Updated Android Intent (Notice the extra slashes and 'ref' placement)
-        const androidIntent = `intent://user-thread/${PAGE_ID}/?ref=${safeHash}#Intent;scheme=fb-messenger;package=com.facebook.orca;end`;
-        
-        // 3. Updated iOS Link
-        const iosDeepLink = `fb-messenger://user-thread/${PAGE_ID}/?ref=${safeHash}`;
+        // --- THE BRIDGE FIX ---
+        // Instead of going to m.me, we go to your Render URL first
+        const bridgeUrl = `https://presyoani.onrender.com/go?ref=${safeHash}`;
 
         const messengerBtn = document.getElementById('messenger-link');
-
-        if (/android/i.test(navigator.userAgent)) {
-            messengerBtn.href = androidIntent;
-        } else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
-            messengerBtn.href = iosDeepLink;
-        } else {
-            messengerBtn.href = mMeUrl;
-        }
+        
+        // Use the bridge URL for ALL devices
+        messengerBtn.href = bridgeUrl;
+        
+        // IMPORTANT: target="_blank" forces the PWA to open the system browser, 
+        // which then triggers Messenger correctly.
+        messengerBtn.setAttribute('target', '_blank');
 
         // Show the Result UI
         document.getElementById('display-grade').innerText = `GRADE ${grade}`;

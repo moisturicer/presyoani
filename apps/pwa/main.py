@@ -11,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
+from fastapi.responses import RedirectResponse
 
 load_dotenv()
 
@@ -39,6 +40,14 @@ async def send_fb_message(recipient_id, message_payload):
     fb_url = f"https://graph.facebook.com/v19.0/me/messages?access_token={token}"
     async with httpx.AsyncClient() as client:
         await client.post(fb_url, json={"recipient": {"id": recipient_id}, "message": message_payload})
+
+
+@app.get("/go")
+async def messenger_bridge(ref: str):
+    # This takes the data and jumps to Messenger
+    # Because it's a server-side redirect, the 'ref' is preserved
+    messenger_url = f"https://m.me/{page_id}?ref={ref}"
+    return RedirectResponse(url=messenger_url)
 
 @app.get("/sw.js")
 async def serve_sw():
@@ -192,6 +201,8 @@ async def receive_message(request: Request):
                 except Exception as e: print(f"Postback error: {e}")
 
     return PlainTextResponse("EVENT_RECEIVED", status_code=200)
+
+    
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
