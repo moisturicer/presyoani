@@ -185,7 +185,7 @@ async def receive_message(request: Request):
                                             "text": success_msg,
                                             "buttons": [
                                                 {"type": "postback", "title": "BAWION (Withdraw)", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
-                                                {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})}
+                                                {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})},
                                                 {"type": "web_url", "url": "https://presyoani.onrender.com", "title": "➕ Dagdag og Ani"}
                                             ]
                                         }
