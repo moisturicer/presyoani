@@ -195,10 +195,57 @@ async def receive_message(request: Request):
                     elif action == "VIEW":
                         res = supabase.table("market_listings").select("*").eq("farmers_psid", sender_id).eq("status", True).execute()
                         if res.data:
-                            list_msg = "🌾 IMONG MGA BALIGYA:\n" + "\n".join([f"• {item['commodity'].capitalize()} ({item['weight']}kg) - ID: {item['id']}" for item in res.data])
+                            # Send one bubble per listing
+                            for item in res.data:
+                                crop_name = item['commodity'].capitalize()
+                                weight = item['weight']
+                                price = item['price']
+                                total = weight * price
+                                listing_id = item['id']
+
+                                item_msg = (
+                                    f"🌾 {crop_name} ({item['grade']})\n"
+                                    f"📋 Listing ID: {listing_id}\n"
+                                    f"⚖️ Timbang: {weight}kg\n"
+                                    f"💰 Presyo: ₱{price:.2f}/kg\n"
+                                    f"💵 Kinatibuk-an (Total): ₱{total:,.2f}"
+                                )
+                                await send_fb_message(sender_id, {
+                                    "attachment": {
+                                        "type": "template",
+                                        "payload": {
+                                            "template_type": "button",
+                                            "text": item_msg,
+                                            "buttons": [
+                                                {"type": "postback", "title": "🚫 BAWION", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
+                                                {"type": "web_url", "url": "https://presyoani.onrender.com", "title": "➕ DAGDAG OG ANI"}
+                                            ]
+                                        }
+                                    }
+                                })
                         else:
-                            list_msg = "Wala kay active nga baligya karon."
-                        await send_fb_message(sender_id, {"text": list_msg})
+                            await send_fb_message(sender_id, {
+                                "attachment": {
+                                    "type": "template",
+                                    "payload": {
+                                        "template_type": "button",
+                                        "text": "Wala kay active nga baligya karon.",
+                                        "buttons": [{
+                                            "type": "web_url",
+                                            "url": "https://presyoani.onrender.com",
+                                            "title": "➕ DAGDAG OG ANI"
+                                        }]
+                                    }
+                                }
+                            })
+
+                    # elif action == "VIEW":
+                    #     res = supabase.table("market_listings").select("*").eq("farmers_psid", sender_id).eq("status", True).execute()
+                    #     if res.data:
+                    #         list_msg = "🌾 IMONG MGA BALIGYA:\n" + "\n".join([f"• {item['commodity'].capitalize()} ({item['weight']}kg) - ID: {item['id']}" for item in res.data])
+                    #     else:
+                    #         list_msg = "Wala kay active nga baligya karon."
+                    #     await send_fb_message(sender_id, {"text": list_msg})
                     
                     elif action == "CANCEL":
                         listing_id = p_load.get("id")
