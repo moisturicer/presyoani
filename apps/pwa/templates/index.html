@@ -144,33 +144,20 @@
         else if (maxFresh > 0.50) grade = "B"; 
         else if (maxFresh > 0.30) grade = "C";
 
-const rawData = `${crop}|${qty}|${grade}`;
+        const rawData = `${crop}|${qty}|${grade}`;
+        // Base64 without '=' padding (Facebook ref is strict)
         let safeHash = btoa(rawData).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-        // --- THE DEEP LINK FIX ---
-        
-        // 1. Standard Web Link (Fallback)
+        // THE ONLY LINK THAT WORKS ON FREE DATA & TRIGGERS REFERRALS
         const mMeUrl = `https://m.me/${PAGE_ID}?ref=${safeHash}`;
-        
-        // 2. Android Intent (Best for PH Free Data)
-        // This forces the phone to open the Orca (Messenger) app directly
-        const androidIntent = `intent://user-thread/${PAGE_ID}?ref=${safeHash}#Intent;scheme=fb-messenger;package=com.facebook.orca;end`;
-        
-        // 3. iOS Deep Link
-        const iosDeepLink = `fb-messenger://user-thread/${PAGE_ID}?ref=${safeHash}`;
 
         const messengerBtn = document.getElementById('messenger-link');
+        messengerBtn.href = mMeUrl;
+        
+        // This attribute is CRITICAL for PWAs to hand off the ref data to the system browser
+        messengerBtn.setAttribute('rel', 'noreferrer');
 
-        // Detect device and set the correct link
-        if (/android/i.test(navigator.userAgent)) {
-            messengerBtn.href = androidIntent;
-        } else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
-            messengerBtn.href = iosDeepLink;
-        } else {
-            messengerBtn.href = mMeUrl;
-        }
-
-        // Show the Result Card
+        // Show the UI Card
         document.getElementById('display-grade').innerText = `GRADE ${grade}`;
         document.getElementById('display-details').innerText = `${qty}kg of ${crop}`;
         document.getElementById('result-overlay').style.display = 'flex';

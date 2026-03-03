@@ -107,7 +107,8 @@ async def receive_message(request: Request):
             if ref_data:
                 try:
                     # Decode scan data
-                    decoded = base64.urlsafe_b64decode(ref_data + "===").decode('utf-8')
+                    clean_ref = ref_data.replace(" ", "+") 
+                    decoded = base64.urlsafe_b64decode(clean_ref + "===").decode('utf-8')
                     parts = decoded.split("|")
                     if len(parts) >= 3:
                         crop, qty, grade = parts[0], parts[1], parts[2]
