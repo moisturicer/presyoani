@@ -3,6 +3,7 @@ import json
 import base64
 import httpx
 import uvicorn
+from datetime import datetime
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse, JSONResponse
@@ -112,8 +113,9 @@ async def receive_message(request: Request):
                             crop_bisaya = bisaya_crops.get(crop.lower(), crop).capitalize()
 
                             # EXACT LAYOUT REQUESTED
+                            today = datetime.now().strftime("%B %-d, %Y")
                             msg_text = (
-                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa!\n\n"
+                                f"Imong grade {grade} na {crop_bisaya} kay tag ₱{p:.2f}/kg karong adlawa ({today})!\n\n"
                                 f"Naa kay {qty}kg na {crop_bisaya}, imong madawat kay ₱{total:,.2f}. "
                                 f"Pinduta ang 'IBALIGYA' sa ubos kung ganahan nimo i-post sa palengke.\n\n"
                                 f"DETALYE SA SCAN\n"
@@ -148,44 +150,105 @@ async def receive_message(request: Request):
                     action = p_load.get("action")
 
                     if action == "LIST":
-                        supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
-                        res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
+                        # Check for existing active listing for same crop
+                        existing = supabase.table("market_listings").select("id").eq("farmers_psid", sender_id).eq("commodity", p_load['c']).eq("status", True).execute()
+                        
+                        if existing.data:
+                            crop_bisaya_map = {"tomato": "kamatis", "chili": "sili", "sweet_potato": "kamote"}
+                            crop_display = crop_bisaya_map.get(p_load['c'].lower(), p_load['c']).capitalize()
+                            await send_fb_message(sender_id, {"text": f"⚠️ Naa nay aktibo nga listing para sa imong {crop_display}. Bawion una ang daan kung gusto nimong mag-post og bago."})
+                        else:
+                            supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
+                            res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
 
-                        if res.data:
-                            listing_id = res.data[0]['id']
-                            success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
-                            
-                            await send_fb_message(sender_id, {
-                                "attachment": {
-                                    "type": "template",
-                                    "payload": {
-                                        "template_type": "button",
-                                        "text": success_msg,
-                                        "buttons": [
-                                            {"type": "postback", "title": "BAWION (Withdraw)", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
-                                            {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})}
-                                        ]
+                            if res.data:
+                                listing_id = res.data[0]['id']
+                                success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
+                                
+                                await send_fb_message(sender_id, {
+                                    "attachment": {
+                                        "type": "template",
+                                        "payload": {
+                                            "template_type": "button",
+                                            "text": success_msg,
+                                            "buttons": [
+                                                {"type": "postback", "title": "BAWION (Withdraw)", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
+                                                {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})}
+                                            ]
+                                        }
                                     }
-                                }
-                            })
+                                })
+
+                    # if action == "LIST":
+                    #     supabase.table("farmers").upsert({"farmer_psid": sender_id, "messenger_id": sender_id, "quality_rating": 5.0}).execute()
+                    #     res = supabase.table("market_listings").insert({"farmers_psid": sender_id, "commodity": p_load['c'], "grade": p_load['g'], "weight": float(p_load['q']), "price": float(p_load['p']), "status": True}).execute()
+
+                    #     if res.data:
+                    #         listing_id = res.data[0]['id']
+                    #         success_msg = "✅ Napost na sa palengke! Makadawat ka og mensahe dinhi kung naay mupalit."
+                            
+                    #         await send_fb_message(sender_id, {
+                    #             "attachment": {
+                    #                 "type": "template",
+                    #                 "payload": {
+                    #                     "template_type": "button",
+                    #                     "text": success_msg,
+                    #                     "buttons": [
+                    #                         {"type": "postback", "title": "BAWION (Withdraw)", "payload": json.dumps({"action": "CANCEL", "id": listing_id})},
+                    #                         {"type": "postback", "title": "TAN-AWON BALIGYA", "payload": json.dumps({"action": "VIEW"})}
+                    #                     ]
+                    #                 }
+                    #             }
+                    #         })
 
                     elif action == "VIEW":
                         res = supabase.table("market_listings").select("*").eq("farmers_psid", sender_id).eq("status", True).execute()
                         if res.data:
-                            list_msg = "IMONG MGA BALIGYA:\n" + "\n".join([f"• {item['commodity'].capitalize()} ({item['weight']}kg) - ID: {item['id']}" for item in res.data])
+                            list_msg = "🌾 IMONG MGA BALIGYA:\n" + "\n".join([f"• {item['commodity'].capitalize()} ({item['weight']}kg) - ID: {item['id']}" for item in res.data])
                         else:
                             list_msg = "Wala kay active nga baligya karon."
                         await send_fb_message(sender_id, {"text": list_msg})
                     
                     elif action == "CANCEL":
                         listing_id = p_load.get("id")
+                        print(f">>> CANCEL attempted, listing_id: {listing_id}")  # keep for debugging
                         
-                        # Check if it's already sold (status=False)
+                        check = supabase.table("market_listings").select("status, commodity, weight").eq("id", listing_id).execute()
+                        print(f">>> Supabase result: {check.data}")  # keep for debugging
+                        
+                        if not check.data:
+                            # Listing doesn't exist at all (already deleted or wrong ID)
+                            await send_fb_message(sender_id, {"text": "⚠️ Dili na makita ang listing. Basin nakuha na o nabaligya na."})
+                        elif check.data[0]['status'] == False:
+                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawi. Naa nay nipalit ani o nakuha na sa system."})
+                        else:
+                            listing = check.data[0]
+                            crop_name = listing['commodity'].capitalize()
+                            weight = listing['weight']
+                            await send_fb_message(sender_id, {
+                                "attachment": {
+                                    "type": "template",
+                                    "payload": {
+                                        "template_type": "button",
+                                        "text": f"⚠️ Sigurado ka bang gusto mong bawion ang imong {weight}kg nga {crop_name}?",
+                                        "buttons": [
+                                            {"type": "postback", "title": "✅ OO, BAWION", "payload": json.dumps({"action": "CONFIRM_CANCEL", "id": listing_id})},
+                                            {"type": "postback", "title": "❌ DILI, IBALIK", "payload": json.dumps({"action": "VIEW"})}
+                                        ]
+                                    }
+                                }
+                            })
+
+                    elif action == "CONFIRM_CANCEL":
+                        listing_id = p_load.get("id")
+                        
+                        # Re-check status in case it was sold while they were deciding
                         check = supabase.table("market_listings").select("status").eq("id", listing_id).execute()
                         if check.data and check.data[0]['status'] == False:
-                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Naa nay nipalit ani o nakuha na sa system."})
+                            await send_fb_message(sender_id, {"text": "⚠️ Dili na mabawe. Napalit na kini sa usa ka buyer."})
                         else:
-                            supabase.table("market_listings").delete().eq("id", listing_id).execute()
+                            # supabase.table("market_listings").delete().eq("id", listing_id).execute()
+                            supabase.table("market_listings").update({"status": False}).eq("id", listing_id).execute() # Not deleted from database for checking
                             await send_fb_message(sender_id, {
                                 "attachment": {
                                     "type": "template",
